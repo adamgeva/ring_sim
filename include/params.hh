@@ -36,16 +36,16 @@ public:
 	}MyparamsGun;
 
 	struct MyparamsGeometry{
-		G4double worldXY = 50*cm; //half sizes
-		G4double worldZ = 50*cm;
+		G4double worldXY = 70*cm; //half sizes
+		G4double worldZ = 70*cm;
 		G4double phantomXY = 0.1*worldXY;
 		G4double phantomZ = 0.1*worldZ;
 		G4double boneX = 0.02*worldXY;
 		G4double boneY = 0.1*worldZ;
 		G4double boneZ = 0.02*worldXY;
-		G4double detectorXY = 0.15*worldXY;
-		G4double detectorZ = 5*mm; //detector depth
-		G4double radius = 0.4*worldXY;
+		G4double detectorXY = 2*mm; //half size
+		G4double detectorZ = 0.5*mm; //detector depth
+		G4double radius = 25*cm;
 		G4int numberOfDetectors = 5;
 	}MyparamsGeometry;
 

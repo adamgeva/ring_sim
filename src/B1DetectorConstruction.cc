@@ -46,19 +46,19 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4VPhysicalVolume* worldPHS = new G4PVPlacement(0, G4ThreeVector(),worldLV,"World",0,false,0,checkOverlaps);
 
 
-	// Water phantom
-
-	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
-	G4Box* waterPhantomS = new G4Box("water_phantom",parameters.MyparamsGeometry.phantomXY,parameters.MyparamsGeometry.phantomXY,parameters.MyparamsGeometry.phantomZ);
-	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
-	new G4PVPlacement(0,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
-
-	//bone
-	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
-	G4Box* boneS = new G4Box("bone",parameters.MyparamsGeometry.boneX, parameters.MyparamsGeometry.boneY, parameters.MyparamsGeometry.boneZ);
-	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
-	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
+//	// Water phantom
+//
+//	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
+//	G4Box* waterPhantomS = new G4Box("water_phantom",parameters.MyparamsGeometry.phantomXY,parameters.MyparamsGeometry.phantomXY,parameters.MyparamsGeometry.phantomZ);
+//	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
+//	new G4PVPlacement(0,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
+//
+//	//bone
+//	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
+//	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
+//	G4Box* boneS = new G4Box("bone",parameters.MyparamsGeometry.boneX, parameters.MyparamsGeometry.boneY, parameters.MyparamsGeometry.boneZ);
+//	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
+//	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
 
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
@@ -70,19 +70,26 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	// detector1
 	G4Box* detectorS = new G4Box("detector",detector_sizeXY, detector_sizeXY, detector_sizeZ);
 	detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
-	//initial location
-	for (G4int i=0;i<parameters.MyparamsGeometry.numberOfDetectors;i++)
-	{
-		G4double theta = i*(M_PI/4);
-		G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), 0, sin(theta)*(radius));
-		//G4ThreeVector detectorPosUpdated = G4ThreeVector(radius,0,0);
-		G4RotationMatrix* rotD = new G4RotationMatrix();
-		//rotD->rotateY(i*45.*deg);
-		G4double angle = -90 + i*45;
-		rotD->rotateY(angle*deg);
-		new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
-	}
 
+	//calculating angle between every detector
+	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorXY/parameters.MyparamsGeometry.radius);
+
+	G4int numOfItr = (2*M_PI)/alpha;
+	//correct for numeric errors - gap is spread
+	alpha = (2*M_PI)/numOfItr;
+	//initial location
+	for (G4int j=0;j<32;j++){
+		for (G4int i=0;i<2*numOfItr;i++)
+		{
+			G4double theta = i*alpha;
+			G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), j*2*parameters.MyparamsGeometry.detectorXY, sin(theta)*(radius));
+			//G4ThreeVector detectorPosUpdated = G4ThreeVector(radius,0,0);
+			G4RotationMatrix* rotD = new G4RotationMatrix();
+			//rotD->rotateY(i*45.*deg);
+			rotD->rotateY(-M_PI/2+theta);
+			new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
+		}
+	}
 
 	/*
 	//replicating colums
@@ -104,15 +111,15 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	detectorLV->SetVisAttributes(visAttributes);
 	fVisAttributes.push_back(visAttributes);
 
-	//bone
-	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
-	boneLV->SetVisAttributes(visAttributes);
-	fVisAttributes.push_back(visAttributes);
-
-	//water phantom
-	visAttributes = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
-	waterPhantomLV->SetVisAttributes(visAttributes);
-	fVisAttributes.push_back(visAttributes);
+//	//bone
+//	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
+//	boneLV->SetVisAttributes(visAttributes);
+//	fVisAttributes.push_back(visAttributes);
+//
+//	//water phantom
+//	visAttributes = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
+//	waterPhantomLV->SetVisAttributes(visAttributes);
+//	fVisAttributes.push_back(visAttributes);
 
 	//always return the physical World
 	return worldPHS;
