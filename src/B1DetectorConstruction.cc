@@ -4,18 +4,26 @@
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4VSensitiveDetector.hh"
+
+#include "G4MultiFunctionalDetector.hh"
+#include "G4VPrimitiveScorer.hh"
+#include "G4PSEnergyDeposit.hh"
+
 #include "G4SDManager.hh"
 #include "G4Box.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
+#include "G4PVReplica.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4VisAttributes.hh"
+
+#include "B1EnergyDeposit.hh"
 #include <math.h>
 
 
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
-  detectorLV(0),fVisAttributes()
+  detectorPixelLV(0),fVisAttributes()
 { }
 
 B1DetectorConstruction::~B1DetectorConstruction()
@@ -62,42 +70,40 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
-	G4double detector_sizeXY = parameters.MyparamsGeometry.detectorXY;
+	G4double detector_sizeX = parameters.MyparamsGeometry.detectorX;
+	G4double detector_sizeY = parameters.MyparamsGeometry.detectorY;
 	G4double detector_sizeZ = parameters.MyparamsGeometry.detectorZ;
-	G4double radius = parameters.MyparamsGeometry.radius;
+	G4double radius = parameters.MyparamsGeometry.radius + parameters.MyparamsGeometry.detectorZ;
 
 	//Todo: create detectors in a loop - generic way!
 	// detector1
-	G4Box* detectorS = new G4Box("detector",detector_sizeXY, detector_sizeXY, detector_sizeZ);
-	detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
+	G4Box* detectorS = new G4Box("detector",detector_sizeX, detector_sizeY, detector_sizeZ);
+	G4LogicalVolume* detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
 
 	//calculating angle between every detector
-	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorXY/parameters.MyparamsGeometry.radius);
+	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
 
 	G4int numOfItr = (2*M_PI)/alpha;
 	//correct for numeric errors - gap is spread
 	alpha = (2*M_PI)/numOfItr;
 	//initial location
-	for (G4int j=0;j<32;j++){
+	G4int X = parameters.MyparamsGeometry.detectorY + parameters.MyparamsGeometry.shift;
+	for (G4int j=0;j<2;j++){
 		for (G4int i=0;i<2*numOfItr;i++)
+		//for (G4int i=0;i<2;i++)
 		{
 			G4double theta = i*alpha;
-			G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), j*2*parameters.MyparamsGeometry.detectorXY, sin(theta)*(radius));
-			//G4ThreeVector detectorPosUpdated = G4ThreeVector(radius,0,0);
+			G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), -X +j*2*X, sin(theta)*(radius));
 			G4RotationMatrix* rotD = new G4RotationMatrix();
-			//rotD->rotateY(i*45.*deg);
 			rotD->rotateY(-M_PI/2+theta);
 			new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
 		}
 	}
 
-	/*
-	//replicating colums
-	detector1 - column
-	G4Box* detectorColumnS = new G4Box("detectorColumnBox",detector_sizeXY/10,detector_sizeXY,detector_sizeZ);
-	detectorColumnLV = new G4LogicalVolume(detectorColumnS,detectorMat,"detectorColumnLogical");
-	new G4PVReplica("detectorColumnPhysical",detectorColumnLV,detectorLV,kXAxis,10,detector_sizeXY/5);
-	 */
+	//Pixel
+	G4Box* detectorPixelS = new G4Box("detectorCell",detector_sizeX, detector_sizeY/parameters.MyparamsGeometry.numberOfRows, detector_sizeZ);
+	detectorPixelLV = new G4LogicalVolume(detectorPixelS, detectorMat,"detectorPixel");
+	new G4PVReplica("detectorPixelP",detectorPixelLV,detectorLV,kYAxis,parameters.MyparamsGeometry.numberOfRows,2*detector_sizeY/parameters.MyparamsGeometry.numberOfRows);
 
 	//setting visualization attributes to logical elements
 	//world
@@ -131,10 +137,18 @@ void B1DetectorConstruction::ConstructSDandField()
 	G4SDManager* SDman = G4SDManager::GetSDMpointer();
 	G4String SDname;
 
+	//detector1 - SD
+	//detector2 - Scorer
 	//creating my sensitive detector and adding it to the SD manager
-	G4VSensitiveDetector* detector1 = new myDetectorSD(SDname="/detector");
+	G4VSensitiveDetector* detector1 = new myDetectorSD(SDname="/detector1");
 	SDman->AddNewDetector(detector1);
 	//attaching my sensitive detector to the detector logical element
-	detectorLV -> SetSensitiveDetector(detector1);
-
+	SetSensitiveDetector(detectorPixelLV,detector1);
+	//creating scorer
+	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
+	SDman->AddNewDetector(detector2);
+    G4VPrimitiveScorer* primitive;
+    primitive = new B1EnergyDeposit("eDep");
+    detector2->RegisterPrimitive(primitive);
+    SetSensitiveDetector(detectorPixelLV,detector2);
 }

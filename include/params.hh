@@ -43,10 +43,14 @@ public:
 		G4double boneX = 0.02*worldXY;
 		G4double boneY = 0.1*worldZ;
 		G4double boneZ = 0.02*worldXY;
-		G4double detectorXY = 2*mm; //half size
-		G4double detectorZ = 0.5*mm; //detector depth
+		G4double detectorX = 2*mm; //half size
+		G4double detectorY = 64*mm; //2mm * numberOfRows
+		G4double detectorZ = 0.8*mm; //detector depth
 		G4double radius = 25*cm;
+		G4double shift = 1*cm; //shift of each ring
+		G4int numberOfRows = 32;
 		G4int numberOfDetectors = 5;
+
 	}MyparamsGeometry;
 
 	struct MyparamsHist{

@@ -16,7 +16,7 @@ class B1RunAction : public G4UserRunAction
 
     virtual void BeginOfRunAction(const G4Run*);
     virtual void   EndOfRunAction(const G4Run*);
-    //virtual G4Run* GenerateRun();
+    G4Run* GenerateRun();
     //virtual void   EndOfRunAction();
 };
 

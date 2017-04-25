@@ -16,6 +16,9 @@
 #include "G4ios.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4DynamicParticle.hh"
+#include "G4VUserTrackInformation.hh"
+#include "B1TrackInformation.hh"
+
 
 myDetectorSD::myDetectorSD(G4String name)
 : G4VSensitiveDetector(name), fHitsCollection(0), fHCID(-1)
@@ -56,6 +59,12 @@ G4bool myDetectorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
     	G4TouchableHistory* touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
 		G4int copyNo = touchable->GetVolume()->GetCopyNo();
+		G4int ReplicaNum0 = touchable->GetReplicaNumber(0);
+		G4int ReplicaNum1 = touchable->GetReplicaNumber(1);
+		G4int ReplicaNum2 = touchable->GetReplicaNumber(2);
+		G4int depth = touchable->GetHistoryDepth();
+
+		G4cout <<"Depth: "<<depth << " ReplicaNum0: "<<ReplicaNum0<<" ReplicaNum1: "<<ReplicaNum1<<" ReplicaNum2: "<<ReplicaNum2<<" copyNo: "<<copyNo<<G4endl;
 
 		G4double hitTime = preStepPoint->GetGlobalTime();
 		G4ThreeVector worldPos = preStepPoint->GetPosition();
@@ -63,6 +72,11 @@ G4bool myDetectorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
 		//test: getting information from tracks
 		G4Track* track = step->GetTrack();
+
+		G4VUserTrackInformation* info = track->GetUserInformation();
+		B1TrackInformation* theInfo = (B1TrackInformation*)info;
+		G4cout << "number of compt: "<< theInfo->GetNumberOfCompton() << " number of Rayl: " << theInfo->GetNumberOfRayl() << G4endl;
+
 		//const G4ParticleDefinition* particle = track->GetParticleDefinition();
 		//G4String particleName = particle->GetParticleName();
 		//G4double particleMass = particle->GetPDGMass();

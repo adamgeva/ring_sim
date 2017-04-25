@@ -23,7 +23,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 
   private:
     //logical detectors
-    G4LogicalVolume* detectorLV;
+    G4LogicalVolume* detectorPixelLV;
     std::vector<G4VisAttributes*> fVisAttributes;
 
 };

@@ -68,7 +68,7 @@ void B1EventAction::EndOfEventAction(const G4Event* event)
 					"Code001", JustWarning, msg);
 		return;
 	}
-
+	/*
    // Fill histograms
    // Get analysis manager
    G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
@@ -86,7 +86,7 @@ void B1EventAction::EndOfEventAction(const G4Event* event)
    }
 
 	// Print diagnostics
-   /*
+
 	G4int printModulo = G4RunManager::GetRunManager()->GetPrintProgress();
 	if ( printModulo==0 || event->GetEventID() % printModulo != 0) return;
 

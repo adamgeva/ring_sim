@@ -11,7 +11,8 @@
 #include "G4ParticleDefinition.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
-
+#include <iostream>
+#include <cmath>
 
 
 B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
@@ -28,7 +29,6 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
   G4String particleName;
   G4ParticleDefinition* particle = particleTable->FindParticle(particleName="gamma");
   fParticleGun->SetParticleDefinition(particle);
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,1.));
   fParticleGun->SetParticleEnergy(parameters.MyparamsGun.particleEnergy);
 }
 
@@ -42,45 +42,29 @@ B1PrimaryGeneratorAction::~B1PrimaryGeneratorAction()
 void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
 	params parameters;
-	//this function is called at the begining of each event
-	// In order to avoid dependence of PrimaryGeneratorAction
-	// on DetectorConstruction class we get Envelope volume
-	// from G4LogicalVolumeStore.
 
-	//G4double envSizeXY = 0;
-	//G4double envSizeZ = 0;
+	G4double x0 = -parameters.MyparamsGeometry.radius;
+	G4double y0 = 0;
+	G4double z0 = 0;
 
-	G4double envSizeXY = parameters.MyparamsGeometry.detectorXY;
-	G4double envSizeZ = parameters.MyparamsGeometry.phantomZ;
+	G4double MinTheta = -M_PI/8;
+	G4double MaxTheta = M_PI/8;
+	G4double MinPhi = -M_PI;
+	G4double MaxPhi = M_PI;
 
-	//unmark to define source location wrt water phantom
-	/*
-	if (!fEnvelopeBox)
-	{
-	G4LogicalVolume* waterLV
-	  = G4LogicalVolumeStore::GetInstance()->GetVolume("water_phantom");
-	if ( waterLV ) fEnvelopeBox = dynamic_cast<G4Box*>(waterLV->GetSolid());
-	}
-
-	if ( fEnvelopeBox ) {
-	envSizeXY = fEnvelopeBox->GetXHalfLength()*2.;
-	envSizeZ = fEnvelopeBox->GetZHalfLength()*2.;
-	}
-	else  {
-	G4ExceptionDescription msg;
-	msg << "Envelope volume of box shape not found.\n";
-	msg << "Perhaps you have changed geometry.\n";
-	msg << "The gun will be place at the center.";
-	G4Exception("B1PrimaryGeneratorAction::GeneratePrimaries()",
-	 "MyCode0002",JustWarning,msg);
-	}
-	*/
-
-	G4double size = parameters.MyparamsGun.detectorCoverage;
-	G4double x0 = 2* size * envSizeXY * (G4UniformRand()-0.5);
-	G4double y0 = 2* size * envSizeXY * (G4UniformRand()-0.5);
-	G4double z0 = -envSizeZ;
-
+	G4double rndm = G4UniformRand();
+	G4double theta = MinTheta + rndm * (MaxTheta - MinTheta);
+	G4double costheta = std::cos(theta);
+	G4double sintheta = std::sqrt(1. - costheta*costheta);
+	rndm = G4UniformRand();
+	G4double Phi = MinPhi + (MaxPhi - MinPhi) * rndm;
+	G4double sinphi = std::sin(Phi);
+	G4double cosphi = std::cos(Phi);
+	G4double px = costheta;
+	G4double py = sintheta * sinphi;
+	G4double pz = sintheta * cosphi;
+	fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
+	//fParticleGun->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
 	fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 }

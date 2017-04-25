@@ -3,7 +3,7 @@
 #include "globalFunctions.hh"
 #include "B1RunAction.hh"
 #include "Analysis.hh"
-
+#include "B1Run.hh"
 
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
@@ -30,8 +30,8 @@ B1RunAction::B1RunAction()
 		G4double buff=3*keV; //adding buffer to max value of hist energy
 		if (parameters.Myparams.fastSim==0){
 			analysisManager->CreateH3("hist" + histNum,"XY and Energy histogram of detector hits",parameters.MyparamsHist.nx,
-					-parameters.MyparamsGeometry.detectorXY/cm,parameters.MyparamsGeometry.detectorXY/cm,parameters.MyparamsHist.ny,
-					-parameters.MyparamsGeometry.detectorXY/cm,parameters.MyparamsGeometry.detectorXY/cm,parameters.MyparamsHist.nz,
+					-parameters.MyparamsGeometry.detectorX/cm,parameters.MyparamsGeometry.detectorX/cm,parameters.MyparamsHist.ny,
+					-parameters.MyparamsGeometry.detectorX/cm,parameters.MyparamsGeometry.detectorX/cm,parameters.MyparamsHist.nz,
 					0,(parameters.MyparamsGun.particleEnergy+buff)/keV);
 
 		}
@@ -49,6 +49,8 @@ B1RunAction::~B1RunAction()
 	delete G4AnalysisManager::Instance();
 }
 
+G4Run* B1RunAction::GenerateRun()
+{ return new B1Run; }
 
 void B1RunAction::BeginOfRunAction(const G4Run* /*run*/)
 {
@@ -64,7 +66,7 @@ void B1RunAction::BeginOfRunAction(const G4Run* /*run*/)
 	analysisManager->OpenFile();
 }
 
-void B1RunAction::EndOfRunAction(const G4Run* /*run*/)
+void B1RunAction::EndOfRunAction(const G4Run* aRun)
 {
   // Write and close output file
   // save histograms
@@ -72,4 +74,20 @@ void B1RunAction::EndOfRunAction(const G4Run* /*run*/)
   analysisManager->Write();
   analysisManager->CloseFile();
 
+  const B1Run* theRun = (const B1Run*)aRun;
+
+  if(IsMaster()) {
+	  int i;
+	  for (i=0;i<200;i++)
+	  {
+		  G4double* eDep = (theRun->fMapSum)[i];
+		  if (eDep==0){
+			  G4cout<<"i= "<< i <<" Edep= 0"<< G4endl;
+		  }
+		  else {
+		  G4cout<<"i= "<< i <<" Edep= " << *eDep << G4endl;
+		  }
+	  }
+
+  }
 }
