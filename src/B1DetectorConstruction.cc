@@ -16,6 +16,7 @@
 #include "G4PVReplica.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4VisAttributes.hh"
+#include "G4ios.hh"
 
 #include "B1EnergyDeposit.hh"
 #include <math.h>
@@ -87,17 +88,15 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	//correct for numeric errors - gap is spread
 	alpha = (2*M_PI)/numOfItr;
 	//initial location
-	G4int X = parameters.MyparamsGeometry.detectorY + parameters.MyparamsGeometry.shift;
-	for (G4int j=0;j<2;j++){
-		for (G4int i=0;i<2*numOfItr;i++)
-		//for (G4int i=0;i<2;i++)
-		{
-			G4double theta = i*alpha;
-			G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), -X +j*2*X, sin(theta)*(radius));
-			G4RotationMatrix* rotD = new G4RotationMatrix();
-			rotD->rotateY(-M_PI/2+theta);
-			new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
-		}
+	//G4int X = parameters.MyparamsGeometry.detectorY + parameters.MyparamsGeometry.shift;
+	for (G4int i=0;i<numOfItr;i++)
+	{
+		G4double theta = i*alpha;
+		//G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), -X +j*2*X, sin(theta)*(radius));
+		G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), 0, sin(theta)*(radius));
+		G4RotationMatrix* rotD = new G4RotationMatrix();
+		rotD->rotateY(-M_PI/2+theta);
+		new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
 	}
 
 	//Pixel

@@ -20,15 +20,16 @@ B1EnergyDeposit::~B1EnergyDeposit()
 
 G4int B1EnergyDeposit::GetIndex(G4Step* step){
 	params parameters;
+
 	G4StepPoint* preStepPoint = step->GetPreStepPoint();
 	//entering the detector
 
 	G4TouchableHistory* touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
 	G4int ReplicaNum0 = touchable->GetReplicaNumber(0);
 	G4int ReplicaNum1 = touchable->GetReplicaNumber(1);
-	G4int ReplicaNum2 = touchable->GetReplicaNumber(2);
+	//G4int ReplicaNum2 = touchable->GetReplicaNumber(2);
 //10 is the number of bins
-	return (ReplicaNum0*10 + ReplicaNum1 + ReplicaNum2*10*10);
+	return (ReplicaNum0 + ReplicaNum1*parameters.MyparamsGeometry.numberOfRows);
 
 }
 
