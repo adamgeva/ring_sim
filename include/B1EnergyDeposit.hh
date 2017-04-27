@@ -12,7 +12,7 @@
 class B1EnergyDeposit : public G4PSEnergyDeposit
 {
   public:
-	B1EnergyDeposit(G4String name);
+	B1EnergyDeposit(G4String name, G4int type);
     virtual ~B1EnergyDeposit();
 
     virtual G4int GetIndex(G4Step* step);
@@ -21,8 +21,11 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     virtual G4bool ProcessHits(G4Step*,G4TouchableHistory*);
 
   private:
+    G4bool recordInteraction (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i);
       //G4int HCID;
       //G4THitsMap<G4double>* EvtMap;
+    //scorer type: 1=no_scatter, 2=include_single_scatter, 3=include_multi_scatter, 4=include_single_scatter_compt, 5=include_single_scatter_Rayl
+    G4int fscorerType;
  };
 
 

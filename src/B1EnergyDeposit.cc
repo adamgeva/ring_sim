@@ -11,9 +11,9 @@
 
 
 
-B1EnergyDeposit::B1EnergyDeposit(G4String name)
+B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 : G4PSEnergyDeposit(name)
-{ }
+{fscorerType =  type;}
 
 B1EnergyDeposit::~B1EnergyDeposit()
 { }
@@ -41,10 +41,35 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	B1TrackInformation* theInfo = (B1TrackInformation*)info;
 	G4int totalNumOfInteractions = theInfo->GetNumberOfCompton() + theInfo->GetNumberOfRayl();
 	G4cout << "TrackId = " << track->GetTrackID() << " number of total interactions = " << totalNumOfInteractions << G4endl;
-	if (totalNumOfInteractions>0){
+	switch (fscorerType){
+	case 1||2:
+		return recordInteraction(aStep,touchable,totalNumOfInteractions,fscorerType-1);
+		break;
+	case 3:
+		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+		break;
+	case 4:
+		if ((theInfo->GetNumberOfCompton()<2) && (theInfo->GetNumberOfRayl()==0)){
+				return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+			} else {
+				return FALSE;
+			}
+		break;
+	case 5:
+		if ((theInfo->GetNumberOfRayl()<2) && (theInfo->GetNumberOfCompton()==0)){
+				return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+			} else {
+				return FALSE;
+			}
+		break;
+	}
+	return FALSE;
+}
+
+G4bool B1EnergyDeposit::recordInteraction (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i) {
+	if (totalNumOfInteractions>i){//recording all photons that did not interact in the phantom - transmission
 		return FALSE;
 	} else {
 		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 	}
-
 }

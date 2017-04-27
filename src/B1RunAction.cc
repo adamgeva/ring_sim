@@ -9,6 +9,8 @@
 #include "G4SystemOfUnits.hh"
 #include <string>
 #include <sstream>
+#include <iostream>
+#include <fstream>
 
 
 B1RunAction::B1RunAction()
@@ -68,26 +70,40 @@ void B1RunAction::BeginOfRunAction(const G4Run* /*run*/)
 
 void B1RunAction::EndOfRunAction(const G4Run* aRun)
 {
-  // Write and close output file
-  // save histograms
-  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-  analysisManager->Write();
-  analysisManager->CloseFile();
+	params parameters;
+	// Write and close output file
+	// save histograms
+	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+	analysisManager->Write();
+	analysisManager->CloseFile();
 
-  const B1Run* theRun = (const B1Run*)aRun;
+	const B1Run* theRun = (const B1Run*)aRun;
+	//writing to CSV file the cylinder response
+	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
+	G4int numOfItr = (2*M_PI)/alpha; //numOfItr holds the number of columns
 
-  if(IsMaster()) {
-	  int i;
-	  for (i=0;i<200;i++)
-	  {
-		  G4double* eDep = (theRun->fMapSum)[i];
-		  if (eDep==0){
-			  G4cout<<"i= "<< i <<" Edep= 0"<< G4endl;
+	if(IsMaster()) {
+
+		std::ofstream output;
+		output.open ("outputEnergyDep.csv");
+		output << "OutPut Energy Deposit - source location, parameters" << "\n";
+		//write response
+		for (int i=0;i<numOfItr;i++)
+		  {
+			  for (int j=0; j<parameters.MyparamsGeometry.numberOfRows;j++)
+			  {
+				  G4double* eDep = (theRun->fMapSum)[i*parameters.MyparamsGeometry.numberOfRows +j];
+				  if (eDep==0){
+					  output<<"0,";
+				  }
+				  else {
+					  output<< *eDep << ",";
+					  //G4cout <<"response: "<< i*parameters.MyparamsGeometry.numberOfRows +j<< " : "<< *eDep <<G4endl;
+				  }
+			  }
+			  output<<"\n";
 		  }
-		  else {
-		  G4cout<<"i= "<< i <<" Edep= " << *eDep << G4endl;
-		  }
-	  }
+		output.close();
 
-  }
+	}
 }

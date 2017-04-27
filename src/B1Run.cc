@@ -17,7 +17,7 @@ B1Run::B1Run()
   G4SDManager* SDMan = G4SDManager::GetSDMpointer();
   G4String fullName;
 
-  fColIDSum = SDMan->GetCollectionID("detector2/eDep");
+  fColIDSum = SDMan->GetCollectionID("detector2/eDep1");
 }
 
 B1Run::~B1Run()

@@ -146,8 +146,26 @@ void B1DetectorConstruction::ConstructSDandField()
 	//creating scorer
 	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
 	SDman->AddNewDetector(detector2);
-    G4VPrimitiveScorer* primitive;
-    primitive = new B1EnergyDeposit("eDep");
-    detector2->RegisterPrimitive(primitive);
+	//TODO: loop
+    G4VPrimitiveScorer* primitive1;
+    G4VPrimitiveScorer* primitive2;
+    G4VPrimitiveScorer* primitive3;
+    G4VPrimitiveScorer* primitive4;
+    G4VPrimitiveScorer* primitive5;
+    //1=no_scatter
+    primitive1 = new B1EnergyDeposit("eDep1",1);
+    //2=include_single_scatter
+    primitive2 = new B1EnergyDeposit("eDep2",2);
+    //3=include_multi_scatter
+    primitive3 = new B1EnergyDeposit("eDep3",3);
+    //4=include_single_scatter_compt
+    primitive4 = new B1EnergyDeposit("eDep4",4);
+    //5=include_single_scatter_Rayl
+    primitive5 = new B1EnergyDeposit("eDep5",5);
+    detector2->RegisterPrimitive(primitive1);
+    detector2->RegisterPrimitive(primitive2);
+    detector2->RegisterPrimitive(primitive3);
+    detector2->RegisterPrimitive(primitive4);
+    detector2->RegisterPrimitive(primitive5);
     SetSensitiveDetector(detectorPixelLV,detector2);
 }

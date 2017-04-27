@@ -33,7 +33,7 @@ void B1EventAction::BeginOfEventAction(const G4Event*)
 	if (fdetectorHCID==-1) {
 	  G4SDManager* sdManager = G4SDManager::GetSDMpointer();
 	  //get the hits collection of our detector in this event
-	  fdetectorHCID = sdManager->GetCollectionID("detector/detectorColl");
+	  fdetectorHCID = sdManager->GetCollectionID("detector1/detectorColl");
 	}
 
 }
