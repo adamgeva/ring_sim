@@ -85,25 +85,28 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 	if(IsMaster()) {
 
 		std::ofstream output;
-		output.open ("outputEnergyDep.csv");
-		output << "OutPut Energy Deposit - source location, parameters" << "\n";
-		//write response
-		for (int i=0;i<numOfItr;i++)
-		  {
-			  for (int j=0; j<parameters.MyparamsGeometry.numberOfRows;j++)
+		//todo: change 5
+		for (G4int k=0; k<5; k++){
+			std::string fileName = "outputEnergyDep" + IntToString(k) + ".csv";
+			output.open(fileName.c_str());
+			output << "OutPut Energy Deposit - source location, parameters" << "\n";
+			//write response
+			for (int i=0;i<numOfItr;i++)
 			  {
-				  G4double* eDep = (theRun->fMapSum)[i*parameters.MyparamsGeometry.numberOfRows +j];
-				  if (eDep==0){
-					  output<<"0,";
+				  for (int j=0; j<parameters.MyparamsGeometry.numberOfRows;j++)
+				  {
+					  G4double* eDep = (theRun->fMapSum[k])[i*parameters.MyparamsGeometry.numberOfRows +j];
+					  if (eDep==0){
+						  output<<"0,";
+					  }
+					  else {
+						  output<< *eDep << ",";
+						  //G4cout <<"response: "<< i*parameters.MyparamsGeometry.numberOfRows +j<< " : "<< *eDep <<G4endl;
+					  }
 				  }
-				  else {
-					  output<< *eDep << ",";
-					  //G4cout <<"response: "<< i*parameters.MyparamsGeometry.numberOfRows +j<< " : "<< *eDep <<G4endl;
-				  }
+				  output<<"\n";
 			  }
-			  output<<"\n";
-		  }
-		output.close();
-
+			output.close();
+		}
 	}
 }

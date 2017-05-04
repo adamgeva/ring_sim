@@ -12,13 +12,14 @@
 
 
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 
 class params
 {
 public:
 	struct Myparams{
 		G4int numberOfThreads = 30;
+		G4int numberOfScorers = 5;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;

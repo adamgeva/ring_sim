@@ -23,13 +23,15 @@ public:
   virtual void RecordEvent(const G4Event*);
   virtual void Merge(const G4Run*);
 
-  G4double GetTotalE() const    { return GetTotal(fMapSum); }
+  G4double GetTotalE(G4int scorerNum) const    { return GetTotal(fMapSum[scorerNum]); }
 
   G4double GetTotal(const G4THitsMap<G4double> &map) const;
 
   // Maps for accumulation
-  G4THitsMap<G4double> fMapSum;
-  G4int fColIDSum;
+  //todo: change hard code
+  G4THitsMap<G4double> fMapSum[5];
+  G4int fColIDSum[5];
+
 
 };
 

@@ -40,28 +40,27 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	G4VUserTrackInformation* info = track->GetUserInformation();
 	B1TrackInformation* theInfo = (B1TrackInformation*)info;
 	G4int totalNumOfInteractions = theInfo->GetNumberOfCompton() + theInfo->GetNumberOfRayl();
-	G4cout << "TrackId = " << track->GetTrackID() << " number of total interactions = " << totalNumOfInteractions << G4endl;
-	switch (fscorerType){
-	case 1||2:
-		return recordInteraction(aStep,touchable,totalNumOfInteractions,fscorerType-1);
-		break;
-	case 3:
+	//G4cout << "TrackId = " << track->GetTrackID() << " number of total interactions = " << totalNumOfInteractions << G4endl;
+	//todo: is it possible to avoid all returns??
+	if (fscorerType==1 || fscorerType==0){
+		return recordInteraction(aStep,touchable,totalNumOfInteractions,fscorerType);
+	}
+	else if(fscorerType==2){
 		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
-		break;
-	case 4:
+	}
+	else if(fscorerType==3){
 		if ((theInfo->GetNumberOfCompton()<2) && (theInfo->GetNumberOfRayl()==0)){
 				return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 			} else {
 				return FALSE;
 			}
-		break;
-	case 5:
+	}
+	else if(fscorerType==4){
 		if ((theInfo->GetNumberOfRayl()<2) && (theInfo->GetNumberOfCompton()==0)){
 				return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 			} else {
 				return FALSE;
 			}
-		break;
 	}
 	return FALSE;
 }
@@ -70,6 +69,7 @@ G4bool B1EnergyDeposit::recordInteraction (G4Step* aStep,G4TouchableHistory* tou
 	if (totalNumOfInteractions>i){//recording all photons that did not interact in the phantom - transmission
 		return FALSE;
 	} else {
+		//G4cout << "recording" << i << G4endl;
 		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 	}
 }

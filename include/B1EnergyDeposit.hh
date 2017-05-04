@@ -24,7 +24,7 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     G4bool recordInteraction (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i);
       //G4int HCID;
       //G4THitsMap<G4double>* EvtMap;
-    //scorer type: 1=no_scatter, 2=include_single_scatter, 3=include_multi_scatter, 4=include_single_scatter_compt, 5=include_single_scatter_Rayl
+    //scorer type: 0=no_scatter, 1=include_single_scatter, 2=include_multi_scatter, 3=include_single_scatter_compt, 4=include_single_scatter_Rayl
     G4int fscorerType;
  };
 

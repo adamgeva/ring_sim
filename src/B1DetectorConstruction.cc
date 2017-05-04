@@ -11,13 +11,14 @@
 
 #include "G4SDManager.hh"
 #include "G4Box.hh"
+#include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
 #include "G4PVReplica.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4VisAttributes.hh"
 #include "G4ios.hh"
-
+#include "globalFunctions.hh"
 #include "B1EnergyDeposit.hh"
 #include <math.h>
 
@@ -55,19 +56,22 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4VPhysicalVolume* worldPHS = new G4PVPlacement(0, G4ThreeVector(),worldLV,"World",0,false,0,checkOverlaps);
 
 
-//	// Water phantom
-//
-//	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
-//	G4Box* waterPhantomS = new G4Box("water_phantom",parameters.MyparamsGeometry.phantomXY,parameters.MyparamsGeometry.phantomXY,parameters.MyparamsGeometry.phantomZ);
-//	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
-//	new G4PVPlacement(0,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
-//
-//	//bone
-//	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-//	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
-//	G4Box* boneS = new G4Box("bone",parameters.MyparamsGeometry.boneX, parameters.MyparamsGeometry.boneY, parameters.MyparamsGeometry.boneZ);
-//	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
-//	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
+	// Water phantom
+	//todo: make generic and not hard coded
+	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
+	G4Tubs* waterPhantomS = new G4Tubs("water_phantom",0,10*cm,50*cm,0,2*M_PI);
+	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
+	G4RotationMatrix* rot = new G4RotationMatrix();
+	rot->rotateX(-M_PI/2);
+	new G4PVPlacement(rot,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
+
+	//bone
+	//todo: make generic and not hard coded
+	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
+	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
+	G4Tubs* boneS = new G4Tubs("bone",0, 2*cm, 50*cm,0,2*M_PI);
+	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
+	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
 
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
@@ -76,7 +80,6 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4double detector_sizeZ = parameters.MyparamsGeometry.detectorZ;
 	G4double radius = parameters.MyparamsGeometry.radius + parameters.MyparamsGeometry.detectorZ;
 
-	//Todo: create detectors in a loop - generic way!
 	// detector1
 	G4Box* detectorS = new G4Box("detector",detector_sizeX, detector_sizeY, detector_sizeZ);
 	G4LogicalVolume* detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
@@ -116,15 +119,15 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	detectorLV->SetVisAttributes(visAttributes);
 	fVisAttributes.push_back(visAttributes);
 
-//	//bone
-//	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
-//	boneLV->SetVisAttributes(visAttributes);
-//	fVisAttributes.push_back(visAttributes);
-//
-//	//water phantom
-//	visAttributes = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
-//	waterPhantomLV->SetVisAttributes(visAttributes);
-//	fVisAttributes.push_back(visAttributes);
+	//bone
+	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
+	boneLV->SetVisAttributes(visAttributes);
+	fVisAttributes.push_back(visAttributes);
+
+	//water phantom
+	visAttributes = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
+	waterPhantomLV->SetVisAttributes(visAttributes);
+	fVisAttributes.push_back(visAttributes);
 
 	//always return the physical World
 	return worldPHS;
@@ -132,6 +135,8 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
 void B1DetectorConstruction::ConstructSDandField()
 {
+	params parameters;
+
 	// sensitive detectors
 	G4SDManager* SDman = G4SDManager::GetSDMpointer();
 	G4String SDname;
@@ -146,26 +151,12 @@ void B1DetectorConstruction::ConstructSDandField()
 	//creating scorer
 	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
 	SDman->AddNewDetector(detector2);
-	//TODO: loop
-    G4VPrimitiveScorer* primitive1;
-    G4VPrimitiveScorer* primitive2;
-    G4VPrimitiveScorer* primitive3;
-    G4VPrimitiveScorer* primitive4;
-    G4VPrimitiveScorer* primitive5;
-    //1=no_scatter
-    primitive1 = new B1EnergyDeposit("eDep1",1);
-    //2=include_single_scatter
-    primitive2 = new B1EnergyDeposit("eDep2",2);
-    //3=include_multi_scatter
-    primitive3 = new B1EnergyDeposit("eDep3",3);
-    //4=include_single_scatter_compt
-    primitive4 = new B1EnergyDeposit("eDep4",4);
-    //5=include_single_scatter_Rayl
-    primitive5 = new B1EnergyDeposit("eDep5",5);
-    detector2->RegisterPrimitive(primitive1);
-    detector2->RegisterPrimitive(primitive2);
-    detector2->RegisterPrimitive(primitive3);
-    detector2->RegisterPrimitive(primitive4);
-    detector2->RegisterPrimitive(primitive5);
+	// setting primitive scorers
+	G4int numOfPrim = parameters.Myparams.numberOfScorers;
+	for (G4int i=0; i<numOfPrim; i++){
+		G4VPrimitiveScorer* primitive;
+		primitive = new B1EnergyDeposit("eDep_" + IntToString(i),i);
+	    detector2->RegisterPrimitive(primitive);
+	}
     SetSensitiveDetector(detectorPixelLV,detector2);
 }
