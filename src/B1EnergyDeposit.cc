@@ -36,33 +36,32 @@ G4int B1EnergyDeposit::GetIndex(G4Step* step){
 G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable){
 	//test: getting information from tracks
 	G4Track* track = aStep->GetTrack();
-
+	G4bool result = FALSE;
 	G4VUserTrackInformation* info = track->GetUserInformation();
 	B1TrackInformation* theInfo = (B1TrackInformation*)info;
 	G4int totalNumOfInteractions = theInfo->GetNumberOfCompton() + theInfo->GetNumberOfRayl();
 	//G4cout << "TrackId = " << track->GetTrackID() << " number of total interactions = " << totalNumOfInteractions << G4endl;
-	//todo: is it possible to avoid all returns??
 	if (fscorerType==1 || fscorerType==0){
-		return recordInteraction(aStep,touchable,totalNumOfInteractions,fscorerType);
+		result = recordInteraction(aStep,touchable,totalNumOfInteractions,fscorerType);
 	}
 	else if(fscorerType==2){
-		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+		result = G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 	}
 	else if(fscorerType==3){
 		if ((theInfo->GetNumberOfCompton()<2) && (theInfo->GetNumberOfRayl()==0)){
-				return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+			result = G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 			} else {
-				return FALSE;
+				result = FALSE;
 			}
 	}
 	else if(fscorerType==4){
 		if ((theInfo->GetNumberOfRayl()<2) && (theInfo->GetNumberOfCompton()==0)){
-				return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+			result = G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 			} else {
-				return FALSE;
+				result = FALSE;
 			}
 	}
-	return FALSE;
+	return result;
 }
 
 G4bool B1EnergyDeposit::recordInteraction (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i) {

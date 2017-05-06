@@ -59,9 +59,9 @@ G4bool myDetectorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 
     	G4TouchableHistory* touchable = (G4TouchableHistory*)(preStepPoint->GetTouchable());
 		G4int copyNo = touchable->GetVolume()->GetCopyNo();
-		G4int ReplicaNum0 = touchable->GetReplicaNumber(0);
-		G4int ReplicaNum1 = touchable->GetReplicaNumber(1);
-		G4int depth = touchable->GetHistoryDepth();
+		//G4int ReplicaNum0 = touchable->GetReplicaNumber(0);
+		//G4int ReplicaNum1 = touchable->GetReplicaNumber(1);
+		//G4int depth = touchable->GetHistoryDepth();
 
 		//G4cout <<"Depth: "<<depth << " ReplicaNum0: "<<ReplicaNum0<<" ReplicaNum1: "<<ReplicaNum1<< " copyNo: "<<copyNo<<G4endl;
 
@@ -70,10 +70,10 @@ G4bool myDetectorSD::ProcessHits(G4Step* step, G4TouchableHistory*)
 		G4ThreeVector localPos = touchable->GetHistory()->GetTopTransform().TransformPoint(worldPos);
 
 		//test: getting information from tracks
-		G4Track* track = step->GetTrack();
+		//G4Track* track = step->GetTrack();
 
-		G4VUserTrackInformation* info = track->GetUserInformation();
-		B1TrackInformation* theInfo = (B1TrackInformation*)info;
+		//G4VUserTrackInformation* info = track->GetUserInformation();
+		//B1TrackInformation* theInfo = (B1TrackInformation*)info;
 		//G4cout << "number of compt: "<< theInfo->GetNumberOfCompton() << " number of Rayl: " << theInfo->GetNumberOfRayl() << G4endl;
 
 		//const G4ParticleDefinition* particle = track->GetParticleDefinition();

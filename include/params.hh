@@ -13,6 +13,8 @@
 
 //comment for a single threaded mode
 #define MULTI 1
+#define NUM_OF_SCORERS 5
+
 
 class params
 {

@@ -9,6 +9,7 @@
 #define B1RUN_HH_
 
 #include "globals.hh"
+#include "params.hh"
 #include "G4Run.hh"
 
 #include "G4THitsMap.hh"
@@ -28,9 +29,8 @@ public:
   G4double GetTotal(const G4THitsMap<G4double> &map) const;
 
   // Maps for accumulation
-  //todo: change hard code
-  G4THitsMap<G4double> fMapSum[5];
-  G4int fColIDSum[5];
+  G4THitsMap<G4double> fMapSum[NUM_OF_SCORERS];
+  G4int fColIDSum[NUM_OF_SCORERS];
 
 
 };

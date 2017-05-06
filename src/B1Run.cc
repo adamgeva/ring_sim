@@ -17,8 +17,7 @@ B1Run::B1Run()
 {
 	G4SDManager* SDMan = G4SDManager::GetSDMpointer();
 	G4String fullName;
-	//todo: change 5 to generic
-	for(G4int i=0; i<5; i++){
+	for(G4int i=0; i<NUM_OF_SCORERS; i++){
 		fColIDSum[i] = SDMan->GetCollectionID("detector2/eDep_" + IntToString(i));
 	}
 }
@@ -34,8 +33,7 @@ void B1Run::RecordEvent(const G4Event* evt)
   G4HCofThisEvent* HCE = evt->GetHCofThisEvent();
   if(!HCE) return;
   numberOfEvent++;
-//todo:change 5 to be generic
-  for (G4int i=0;i<5;i++){
+  for (G4int i=0;i<NUM_OF_SCORERS;i++){
 	  G4THitsMap<G4double>* evtMap
 		= (G4THitsMap<G4double>*)(HCE->GetHC(fColIDSum[i]));
 	  fMapSum[i] += *evtMap;
@@ -45,8 +43,7 @@ void B1Run::RecordEvent(const G4Event* evt)
 
 void B1Run::Merge(const G4Run * aRun) {
   const B1Run * localRun = static_cast<const B1Run *>(aRun);
-  //todo: change 5
-  for(G4int i=0;i<5;i++){
+  for(G4int i=0;i<NUM_OF_SCORERS ;i++){
 	  fMapSum[i] += localRun->fMapSum[i];
   }
   G4Run::Merge(aRun);

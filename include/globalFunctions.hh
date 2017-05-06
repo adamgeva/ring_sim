@@ -8,6 +8,7 @@
 #ifndef GLOBALFUNCTIONS_HH_
 #define GLOBALFUNCTIONS_HH_
 
+
 #include <string>
 #include <sstream>
 

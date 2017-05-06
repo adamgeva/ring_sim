@@ -24,9 +24,6 @@
 #include <iostream>
 
 
-//todo: make a macro
-
-
 int main(int argc,char** argv)
 {
 	params parameters;
@@ -37,7 +34,9 @@ int main(int argc,char** argv)
 	}
 
 	// Choose the Random engine
-	G4Random::setTheEngine(new CLHEP::RanecuEngine);
+	CLHEP::RanecuEngine* eng = new CLHEP::RanecuEngine;
+	//eng->setIndex(8);
+	G4Random::setTheEngine(eng);
 
 	// Construct the default run manager
 	#ifdef MULTI

@@ -85,8 +85,7 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 	if(IsMaster()) {
 
 		std::ofstream output;
-		//todo: change 5
-		for (G4int k=0; k<5; k++){
+		for (G4int k=0; k<NUM_OF_SCORERS; k++){
 			std::string fileName = "outputEnergyDep" + IntToString(k) + ".csv";
 			output.open(fileName.c_str());
 			output << "OutPut Energy Deposit - source location, parameters" << "\n";
