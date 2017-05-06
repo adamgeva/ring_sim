@@ -50,20 +50,25 @@ class B1TrackInformation : public G4VUserTrackInformation
     inline G4double GetOriginalTime() const {return originalTime;}
     inline G4int GetNumberOfCompton() const {return numberOfCompton;}
     inline G4int GetNumberOfRayl() const {return numberOfRayl;}
-    void AddCompton()  {numberOfCompton++;}
+    void AddCompton()  { numberOfCompton++;}
     void AddRayl()  {numberOfRayl++;}
 };
 
-extern G4Allocator<B1TrackInformation> aTrackInformationAllocator;
+
+extern G4ThreadLocal G4Allocator<B1TrackInformation>* aTrackInformationAllocator;
+
 
 inline void* B1TrackInformation::operator new(size_t)
-{ void* aTrackInfo;
-  aTrackInfo = (void*)aTrackInformationAllocator.MallocSingle();
-  return aTrackInfo;
+{
+    if (!aTrackInformationAllocator)
+    	aTrackInformationAllocator = new G4Allocator<B1TrackInformation>;
+    return (void*)aTrackInformationAllocator->MallocSingle();
 }
 
 inline void B1TrackInformation::operator delete(void *aTrackInfo)
-{ aTrackInformationAllocator.FreeSingle((B1TrackInformation*)aTrackInfo);}
+{
+	aTrackInformationAllocator->FreeSingle((B1TrackInformation*)aTrackInfo);
+}
 
 
 

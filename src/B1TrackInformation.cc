@@ -9,7 +9,7 @@
 #include "B1TrackInformation.hh"
 #include "G4ios.hh"
 
-G4Allocator<B1TrackInformation> aTrackInformationAllocator;
+G4ThreadLocal G4Allocator<B1TrackInformation>* aTrackInformationAllocator=0;
 
 B1TrackInformation::B1TrackInformation()
 {

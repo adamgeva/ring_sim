@@ -152,8 +152,7 @@ void B1DetectorConstruction::ConstructSDandField()
 	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
 	SDman->AddNewDetector(detector2);
 	// setting primitive scorers
-	G4int numOfPrim = parameters.Myparams.numberOfScorers;
-	for (G4int i=0; i<numOfPrim; i++){
+	for (G4int i=0; i<NUM_OF_SCORERS; i++){
 		G4VPrimitiveScorer* primitive;
 		primitive = new B1EnergyDeposit("eDep_" + IntToString(i),i);
 	    detector2->RegisterPrimitive(primitive);

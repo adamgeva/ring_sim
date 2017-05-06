@@ -5,7 +5,6 @@
 #include "B1SteppingAction.hh"
 #include "B1TrackingAction.hh"
 
-
 B1ActionInitialization::B1ActionInitialization()
  : G4VUserActionInitialization()
 {}
@@ -28,6 +27,5 @@ void B1ActionInitialization::Build() const
   SetUserAction(new B1EventAction);
   SetUserAction(new B1SteppingAction);
   SetUserAction(new B1TrackingAction);
-  
 }  
 
