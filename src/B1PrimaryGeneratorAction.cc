@@ -44,25 +44,39 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	params parameters;
 
 	G4double x0 = -parameters.MyparamsGeometry.radius;
+	//G4double x0 = 0;
 	G4double y0 = 0;
 	G4double z0 = 0;
 
-	G4double MinTheta = -M_PI/6;
-	G4double MaxTheta = M_PI/6;
-	G4double MinPhi = -M_PI;
-	G4double MaxPhi = M_PI;
 
+	G4double MinTheta = 0 ;
+	G4double MaxTheta = M_PI/8;
+//	G4double MinTheta = M_PI/2  ;
+//	G4double MaxTheta = M_PI/2 ;
+//	G4double MinPhi = -M_PI/8;
+//	G4double MaxPhi = M_PI/8;
+	G4double MinPhi = 0;
+	G4double MaxPhi = 2*M_PI;
+
+
+	//phi
+	G4double rndm1 = G4UniformRand();
+	G4double phi = MinPhi + rndm1 * (MaxPhi - MinPhi);
+	//cos,sin theta
 	G4double rndm = G4UniformRand();
-	G4double theta = MinTheta + rndm * (MaxTheta - MinTheta);
-	G4double costheta = std::cos(theta);
+	G4double costheta = std::cos(MinTheta) - rndm * (std::cos(MinTheta) - std::cos(MaxTheta));
 	G4double sintheta = std::sqrt(1. - costheta*costheta);
-	rndm = G4UniformRand();
-	G4double Phi = MinPhi + (MaxPhi - MinPhi) * rndm;
-	G4double sinphi = std::sin(Phi);
-	G4double cosphi = std::cos(Phi);
+	//cos,sin phi
+	G4double cosphi = std::cos(phi);
+	G4double sinphi = std::sin(phi);
+	//coordinates
 	G4double px = costheta;
 	G4double py = sintheta * sinphi;
 	G4double pz = sintheta * cosphi;
+
+
+
+
 	fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
 	//fParticleGun->SetParticleMomentumDirection(G4ThreeVector(1,0,0));
 	fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));

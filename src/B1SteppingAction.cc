@@ -38,12 +38,12 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 
 	//we are not counting interaction that occur inside the detector
 	if(procName == "compt" && startPhysicalName!="detectorPixelP") {
-	G4cout<<"We have Compton with prePhysical : " << startPhysicalName <<  G4endl;
+		//G4cout<<"We have Compton with prePhysical : " << startPhysicalName <<  G4endl;
 		theInfo->AddCompton();
 
 	}
 	if(procName == "Rayl" && startPhysicalName!="detectorPixelP") {
-		G4cout<<"We have Rayl with prePhysical : " << startPhysicalName << G4endl;
+		//G4cout<<"We have Rayl with prePhysical : " << startPhysicalName << G4endl;
 		theInfo->AddRayl();
 
 	}
