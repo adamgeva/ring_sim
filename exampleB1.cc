@@ -62,7 +62,7 @@ int main(int argc,char** argv)
 	G4PhysListFactory factory;
 	G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_PEN");
 	//FTFP_BERT_PEN
-	//G4VModularPhysicsList* physicsList = new FTFP_BERT;
+	//G4VModularPhysicsList* physicsList = new QBBC;
 	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
 	runManager->SetUserInitialization(physicsList);
 
