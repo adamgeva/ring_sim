@@ -17,38 +17,37 @@ B1RunAction::B1RunAction()
  : G4UserRunAction()
 {
 	params parameters;
-	// Create analysis manager
-	// The choice of analysis technology is done via selectin of a namespace
-	// in Analysis.hh
-	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-	G4cout << "Using " << analysisManager->GetType() << G4endl;
+	//create analysis manager and histograms only if recordHist=1
+	if (parameters.Myparams.recordHist==1){
+		// Create analysis manager
+		// The choice of analysis technology is done via selectin of a namespace
+		// in Analysis.hh
+		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+		G4cout << "Using " << analysisManager->GetType() << G4endl;
 
-	// Default settings
-	analysisManager->SetVerboseLevel(parameters.Myparams.analysisManagerVerbose);
-	analysisManager->SetFileName("OutputH3");
-	for (int i=0;i<parameters.MyparamsGeometry.numberOfDetectors;i++){
-		// Creating 3D histograms
-		std::string histNum = IntToString(i);
-		G4double buff=3*keV; //adding buffer to max value of hist energy
-		if (parameters.Myparams.fastSim==0){
+		// Default settings
+		analysisManager->SetVerboseLevel(parameters.Myparams.analysisManagerVerbose);
+		analysisManager->SetFileName("OutputH3");
+		for (int i=0;i<parameters.MyparamsGeometry.numberOfDetectors;i++){
+			// Creating 3D histograms
+			std::string histNum = IntToString(i);
+			G4double buff=3*keV; //adding buffer to max value of hist energy
 			analysisManager->CreateH3("hist" + histNum,"XY and Energy histogram of detector hits",parameters.MyparamsHist.nx,
 					-parameters.MyparamsGeometry.detectorX/cm,parameters.MyparamsGeometry.detectorX/cm,parameters.MyparamsHist.ny,
 					-parameters.MyparamsGeometry.detectorX/cm,parameters.MyparamsGeometry.detectorX/cm,parameters.MyparamsHist.nz,
 					0,(parameters.MyparamsGun.particleEnergy+buff)/keV);
-
 		}
-		else{
-			analysisManager->CreateH3("hist" + histNum,"XY and Energy histogram of detector hits",1,-7.5,7.5,1,-7.5,7.5,1,0,100);
-
-		}
+		//G4cout << "H3 Created " <<  G4endl;
 	}
-	//G4cout << "H3 Created " <<  G4endl;
-
 }
 
 B1RunAction::~B1RunAction()
 {
-	delete G4AnalysisManager::Instance();
+	params parameters;
+	//Analysis manager is created and deleted only if recordHist=1
+	if (parameters.Myparams.recordHist==1){
+		delete G4AnalysisManager::Instance();
+	}
 }
 
 G4Run* B1RunAction::GenerateRun()
@@ -56,26 +55,32 @@ G4Run* B1RunAction::GenerateRun()
 
 void B1RunAction::BeginOfRunAction(const G4Run* /*run*/)
 {
+	params parameters;
 	//inform the runManager to save random number seed
 	//G4RunManager::GetRunManager()->SetRandomNumberStore(true);
 
-	// Get analysis manager
-	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-
-	// Open output file at each new run
-	// The default file name is set in RunAction::RunAction(),
-	// it can be overwritten in a macro
-	analysisManager->OpenFile();
+	//Analysis manager is created and deleted only if recordHist=1
+	if (parameters.Myparams.recordHist==1){
+		// Get analysis manager
+		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+		// Open output file at each new run
+		// The default file name is set in RunAction::RunAction(),
+		// it can be overwritten in a macro
+		analysisManager->OpenFile();
+	}
 }
 
 void B1RunAction::EndOfRunAction(const G4Run* aRun)
 {
 	params parameters;
-	// Write and close output file
-	// save histograms
-	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-	analysisManager->Write();
-	analysisManager->CloseFile();
+	//Analysis manager is created and Histograms are written only if recordHist=1
+	if (parameters.Myparams.recordHist==1){
+		// Write and close output file
+		// save histograms
+		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+		analysisManager->Write();
+		analysisManager->CloseFile();
+	}
 	const B1Run* theRun = (const B1Run*)aRun;
 	//writing to CSV file the cylinder response
 	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);

@@ -50,7 +50,7 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
 
 	G4double MinTheta = 0 ;
-	G4double MaxTheta = M_PI/8;
+	G4double MaxTheta = M_PI/6;
 //	G4double MinTheta = M_PI/2  ;
 //	G4double MaxTheta = M_PI/2 ;
 //	G4double MinPhi = -M_PI/8;

@@ -65,13 +65,13 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	rot->rotateX(-M_PI/2);
 	new G4PVPlacement(rot,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
 
-//	//bone
-//	//todo: make generic and not hard coded
-//	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-//	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
-//	G4Tubs* boneS = new G4Tubs("bone",0, 2*cm, 50*cm,0,2*M_PI);
-//	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
-//	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
+	//bone
+	//todo: make generic and not hard coded
+	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
+	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
+	G4Tubs* boneS = new G4Tubs("bone",0, 2*cm, 50*cm,0,2*M_PI);
+	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
+	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
 
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
@@ -120,10 +120,10 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	detectorLV->SetVisAttributes(visAttributes);
 	fVisAttributes.push_back(visAttributes);
 
-//	//bone
-//	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
-//	boneLV->SetVisAttributes(visAttributes);
-//	fVisAttributes.push_back(visAttributes);
+	//bone
+	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
+	boneLV->SetVisAttributes(visAttributes);
+	fVisAttributes.push_back(visAttributes);
 
 	//water phantom
 	visAttributes = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
@@ -140,15 +140,16 @@ void B1DetectorConstruction::ConstructSDandField()
 
 	// sensitive detectors
 	G4SDManager* SDman = G4SDManager::GetSDMpointer();
-	G4String SDname;
-
 	//detector1 - SD
 	//detector2 - Scorer
-	//creating my sensitive detector and adding it to the SD manager
-	G4VSensitiveDetector* detector1 = new myDetectorSD(SDname="/detector1");
-	SDman->AddNewDetector(detector1);
-	//attaching my sensitive detector to the detector logical element
-	SetSensitiveDetector(detectorPixelLV,detector1);
+	//creating my sensitive detector and adding it to the SD manager - the data will be saved in histograms only if record hist is on
+	if (parameters.Myparams.recordHist==1){
+		G4String SDname;
+		G4VSensitiveDetector* detector1 = new myDetectorSD(SDname="/detector1");
+		SDman->AddNewDetector(detector1);
+		//attaching my sensitive detector to the detector logical element
+		SetSensitiveDetector(detectorPixelLV,detector1);
+	}
 	//creating scorer
 	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
 	SDman->AddNewDetector(detector2);

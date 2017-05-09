@@ -12,7 +12,7 @@
 
 
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 #define NUM_OF_SCORERS 5
 
 
@@ -20,7 +20,7 @@ class params
 {
 public:
 	struct Myparams{
-		G4int numberOfThreads = 5;
+		G4int numberOfThreads = 30;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;
@@ -28,8 +28,7 @@ public:
 		int runVerbose = 1;
 		int eventVerbose = 0;
 		int trackVerbose = 0;
-		G4int fastSim = 1; //1 for fast = no hits will be collected and the histograms are empty
-		//Todo: add with and without mesh instead of fastSim
+		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 	}Myparams;
 
 	struct MyparamsGun{
