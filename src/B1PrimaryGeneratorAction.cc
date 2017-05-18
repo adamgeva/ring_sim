@@ -71,8 +71,8 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4double sinphi = std::sin(phi);
 	//coordinates
 	G4double px = costheta;
-	G4double py = sintheta * sinphi;
-	G4double pz = sintheta * cosphi;
+	G4double py = sintheta * cosphi;
+	G4double pz = sintheta * sinphi;
 
 
 

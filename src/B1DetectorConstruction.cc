@@ -61,9 +61,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
 	G4Tubs* waterPhantomS = new G4Tubs("water_phantom",0,10*cm,50*cm,0,2*M_PI);
 	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
-	G4RotationMatrix* rot = new G4RotationMatrix();
-	rot->rotateX(-M_PI/2);
-	new G4PVPlacement(rot,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
+	//G4RotationMatrix* rot = new G4RotationMatrix();
+	//rot->rotateX(-M_PI/2);
+	new G4PVPlacement(0,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
 
 	//bone
 	//todo: make generic and not hard coded
@@ -84,6 +84,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4Box* detectorS = new G4Box("detector",detector_sizeX, detector_sizeY, detector_sizeZ);
 	G4LogicalVolume* detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
 
+
 	//calculating angle between every detector
 	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
 
@@ -97,9 +98,11 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	{
 		G4double theta = i*alpha;
 		//G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), -X +j*2*X, sin(theta)*(radius));
-		G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), 0, sin(theta)*(radius));
+		G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius),sin(theta)*(radius),0);
 		G4RotationMatrix* rotD = new G4RotationMatrix();
-		rotD->rotateY(-M_PI/2+theta);
+		rotD->rotateX(-M_PI/2);
+		//rotD->rotateY(-M_PI/2+theta);
+		rotD->rotateY(M_PI/2-theta);
 		new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
 	}
 

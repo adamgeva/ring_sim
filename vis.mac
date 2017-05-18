@@ -83,7 +83,8 @@
 #/vis/viewer/set/style surface
 #/vis/viewer/set/hiddenMarker true
 #/vis/viewer/set/viewpointThetaPhi 120 150
-
+/vis/scene/add/scale   # Simple scale line
+/vis/scene/add/axes    # Simple axes: x=red, y=green, z=blue.
 #
 # Re-establish auto refreshing and verbosity:
 /vis/viewer/set/autoRefresh true
