@@ -86,10 +86,12 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
 	G4int numOfItr = (2*M_PI)/alpha; //numOfItr holds the number of columns
 
+	G4int runID = theRun->GetRunID();
+
 	if(IsMaster()) {
 		std::ofstream output;
 		for (G4int k=0; k<NUM_OF_SCORERS; k++){
-			std::string fileName = "outputEnergyDep" + IntToString(k) + ".csv";
+			std::string fileName = "run_" + IntToString(runID) + "outputEnergyDep_" + IntToString(k) + ".csv";
 			output.open(fileName.c_str());
 			output << "OutPut Energy Deposit - source location, parameters" << "\n";
 			//write response

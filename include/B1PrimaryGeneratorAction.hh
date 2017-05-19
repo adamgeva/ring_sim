@@ -4,6 +4,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "G4ParticleGun.hh"
 #include "globals.hh"
+#include "params.hh"
 
 class G4ParticleGun;
 class G4Event;
@@ -23,10 +24,10 @@ class B1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     virtual void GeneratePrimaries(G4Event*);         
   
     // method to access particle gun
-    const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
+    const G4ParticleGun* GetParticleGun(G4int gunNumber) const { return fParticleGun[gunNumber]; }
   
   private:
-    G4ParticleGun*  fParticleGun; // pointer a to G4 gun class
+    G4ParticleGun*  fParticleGun[NUM_OF_SOURCES]; // pointer a to G4 gun class
     G4Box* fEnvelopeBox;
 };
 

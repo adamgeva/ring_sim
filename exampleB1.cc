@@ -18,6 +18,8 @@
 #include "G4PhysListFactory.hh"
 #include "G4EmPenelopePhysics.hh"
 
+#include "G4Run.hh"
+
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 #include "Randomize.hh"
@@ -66,10 +68,11 @@ int main(int argc,char** argv)
 	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
 	runManager->SetUserInitialization(physicsList);
 
+
 	// User action initialization
 	runManager->SetUserInitialization(new B1ActionInitialization());
 
-	// Initialize visualization
+		// Initialize visualization
 	G4VisManager* visManager = new G4VisExecutive;
 	// G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
 	// G4VisManager* visManager = new G4VisExecutive("Quiet");
@@ -81,6 +84,7 @@ int main(int argc,char** argv)
 	 UImanager->ApplyCommand("/run/verbose " + IntToString(parameters.Myparams.runVerbose));
 	 UImanager->ApplyCommand("/event/verbose " + IntToString(parameters.Myparams.eventVerbose));
 	 UImanager->ApplyCommand("/tracking/verbose " + IntToString(parameters.Myparams.trackVerbose));
+
 
 	// Process macro or start UI session
 	if ( ! ui ) {
@@ -95,6 +99,7 @@ int main(int argc,char** argv)
 		ui->SessionStart();
 		delete ui;
 	}
+
 
 	// Job termination
 	// Free the store: user actions, physics_list and detector_description are

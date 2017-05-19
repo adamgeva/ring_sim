@@ -14,13 +14,15 @@
 //comment for a single threaded mode
 #define MULTI 1
 #define NUM_OF_SCORERS 5
+#define NUM_OF_SOURCES 2 //this defines the number of runs
+
 
 
 class params
 {
 public:
 	struct Myparams{
-		G4int numberOfThreads = 30;
+		G4int numberOfThreads = 2;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;
