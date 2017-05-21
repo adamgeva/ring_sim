@@ -80,6 +80,13 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4double detector_sizeZ = parameters.MyparamsGeometry.detectorZ;
 	G4double radius = parameters.MyparamsGeometry.radius + parameters.MyparamsGeometry.detectorZ;
 
+	//vars used for pos calculations
+	G4double r = parameters.MyparamsGeometry.radius;
+	G4double beta = atan(detector_sizeX/r);
+	G4double beta_tag = atan(detector_sizeX/(2*r));
+	G4double R = sqrt(pow(r,2)+pow(detector_sizeX,2));
+	G4double R_tag = sqrt(pow(r,2)+pow(detector_sizeX/2,2));
+
 	// detector1
 	G4Box* detectorS = new G4Box("detector",detector_sizeX, detector_sizeY, detector_sizeZ);
 	G4LogicalVolume* detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
@@ -94,6 +101,13 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	//initial location
 	//G4int X = parameters.MyparamsGeometry.detectorY + parameters.MyparamsGeometry.shift;
 	G4cout << "numOfItr" << numOfItr <<G4endl;
+
+	//writing detector locations to file
+	std::ofstream outputDet;
+	std::string fileName = "detectorsPos.csv";
+	outputDet.open(fileName.c_str());
+	outputDet << "Detectors Location" << "\n";
+
 	for (G4int i=0;i<numOfItr;i++)
 	{
 		G4double theta = i*alpha;
@@ -104,7 +118,22 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 		//rotD->rotateY(-M_PI/2+theta);
 		rotD->rotateY(M_PI/2-theta);
 		new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
+
+		//writing 5 pos for every detector
+		G4double x1 = R*cos(theta-beta);
+		G4double y1 = R*sin(theta-beta);
+		G4double x2 = R_tag*cos(theta-beta_tag);
+		G4double y2 = R_tag*sin(theta-beta_tag);
+		G4double x3 = r*cos(theta);
+		G4double y3 = r*sin(theta);
+		G4double x4 = R_tag*cos(theta+beta_tag);
+		G4double y4 = R_tag*sin(theta+beta_tag);
+		G4double x5 = R*cos(theta+beta);
+		G4double y5 = R*sin(theta+beta);
+		outputDet<<x1/m<<","<<y1/m<<","<<x2/m<<","<<y2/m<<","<<x3/m<<","<<y3/m<<","<<x4/m<<","<<y4/m<<","<<x5/m<<","<<y5/m<<"\n";
 	}
+
+	outputDet.close();
 
 	//Pixel
 	G4Box* detectorPixelS = new G4Box("detectorCell",detector_sizeX, detector_sizeY/parameters.MyparamsGeometry.numberOfRows, detector_sizeZ);

@@ -13,8 +13,11 @@
 
 //comment for a single threaded mode
 #define MULTI 1
+
 #define NUM_OF_SCORERS 5
-#define NUM_OF_SOURCES 2 //this defines the number of runs
+//ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
+#define ALT_SOURCES 1
+#define NUM_OF_SOURCES 10 //this defines the number of runs
 
 
 
