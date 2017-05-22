@@ -17,7 +17,7 @@
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
-#define NUM_OF_SOURCES 10 //this defines the number of runs
+#define NUM_OF_SOURCES 8 //this defines the number of runs
 
 
 
@@ -39,6 +39,10 @@ public:
 	struct MyparamsGun{
 		G4double particleEnergy = 57*keV; //keV
 		G4int detectorCoverage = 1;
+		G4double MinTheta = 0 ;
+		G4double MaxTheta = M_PI/6;
+		G4double MinPhi = 0;
+		G4double MaxPhi = 2*M_PI;
 	}MyparamsGun;
 
 	struct MyparamsGeometry{

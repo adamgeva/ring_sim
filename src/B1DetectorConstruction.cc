@@ -119,7 +119,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 		rotD->rotateY(M_PI/2-theta);
 		new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
 
-		//writing 5 pos for every detector
+		//writing 5 pos for every detector - one detector in every line of the file
 		G4double x1 = R*cos(theta-beta);
 		G4double y1 = R*sin(theta-beta);
 		G4double x2 = R_tag*cos(theta-beta_tag);
