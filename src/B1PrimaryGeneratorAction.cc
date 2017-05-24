@@ -93,7 +93,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 		  sourceToDet << "\n";
 	  }
 	  else { //the active detectors spread below and above the positive xAxis
-		  for (G4int j=activeDetector1; j<numOfItr+1; j++){
+		  for (G4int j=activeDetector1; j<numOfItr; j++){
 			  sourceToDet << j << ",";
 		  }
 		  for (G4int j=0; j<activeDetector2+1; j++){
