@@ -17,7 +17,7 @@
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
-#define NUM_OF_SOURCES 8 //this defines the number of runs
+#define NUM_OF_SOURCES 300 //this defines the number of runs
 
 
 
@@ -25,7 +25,7 @@ class params
 {
 public:
 	struct Myparams{
-		G4int numberOfThreads = 2;
+		G4int numberOfThreads = 40;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;
@@ -42,7 +42,8 @@ public:
 		G4double MinTheta = 0 ;
 		G4double MaxTheta = M_PI/6;
 		G4double MinPhi = 0;
-		G4double MaxPhi = 2*M_PI;
+//		G4double MaxPhi = 2*M_PI;
+		G4double MaxPhi = 0;
 	}MyparamsGun;
 
 	struct MyparamsGeometry{

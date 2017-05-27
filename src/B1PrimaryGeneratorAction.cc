@@ -139,10 +139,15 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	//phi
 	G4double rndm1 = G4UniformRand();
 	G4double phi = MinPhi + rndm1 * (MaxPhi - MinPhi);
-	//cos,sin theta
+	//cos,sin theta - used for cone beam
+//	G4double rndm = G4UniformRand();
+//	G4double costheta = std::cos(MinTheta) - rndm * (std::cos(MinTheta) - std::cos(MaxTheta));
+//	G4double sintheta = std::sqrt(1. - costheta*costheta);
+	//cos,sin theta - used for fan beam
 	G4double rndm = G4UniformRand();
-	G4double costheta = std::cos(MinTheta) - rndm * (std::cos(MinTheta) - std::cos(MaxTheta));
-	G4double sintheta = std::sqrt(1. - costheta*costheta);
+	G4double theta = -MaxTheta + rndm*(2*MaxTheta);
+	G4double costheta = std::cos(theta);
+	G4double sintheta = std::sin(theta);
 	//cos,sin phi
 	G4double cosphi = std::cos(phi);
 	G4double sinphi = std::sin(phi);
