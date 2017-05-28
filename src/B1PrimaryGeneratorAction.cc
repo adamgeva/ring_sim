@@ -79,8 +79,8 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 	  G4double angle2 = alpha_tag + (M_PI-beta) + 2*beta;
 	  while (angle1>2*M_PI) angle1 = angle1 - 2*M_PI;
 	  while (angle2>2*M_PI) angle2 = angle2 - 2*M_PI;
-	  G4int activeDetector1 = ceil(angle1/detectorAngleDiff);
-	  G4int activeDetector2 = ceil(angle2/detectorAngleDiff);
+	  G4int activeDetector1 = floor(angle1/detectorAngleDiff);
+	  G4int activeDetector2 = floor(angle2/detectorAngleDiff);
 	  if (angle2>angle1){
 		  for (G4int j=activeDetector1; j<activeDetector2+1; j++){
 			  if (j==activeDetector2){ //last in line
