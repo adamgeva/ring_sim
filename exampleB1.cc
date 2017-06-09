@@ -20,10 +20,20 @@
 
 #include "G4Run.hh"
 
+#include "G4NistManager.hh"
+
+
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 #include "Randomize.hh"
 #include <iostream>
+
+//calculate MFP
+#include "G4EmCalculator.hh"
+#include "G4ParticleTable.hh"
+#include "G4ParticleDefinition.hh"
+#include "G4Material.hh"
+
 
 
 
@@ -100,6 +110,31 @@ int main(int argc,char** argv)
 		delete ui;
 	}
 
+
+	//******************************************************************
+	// particle
+	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+	G4String particleName;
+	G4ParticleDefinition* particle = particleTable->FindParticle(particleName="gamma");
+	// material
+	G4NistManager* nist = G4NistManager::Instance();
+	G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
+	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
+	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
+
+	G4EmCalculator emCalculator;
+	G4double MFP_Rayl = emCalculator.GetMeanFreePath(parameters.MyparamsGun.particleEnergy,particle,"Rayl",boneMat);
+	G4double MFP_Compt = emCalculator.GetMeanFreePath(parameters.MyparamsGun.particleEnergy,particle,"compt",boneMat);
+	G4double MFP_phot= emCalculator.GetMeanFreePath(parameters.MyparamsGun.particleEnergy,particle,"phot",boneMat);
+
+	std::cout <<"MFP_Rayl:"<< MFP_Rayl/cm <<std::endl;
+	std::cout <<"MFP_Compt:"<< MFP_Compt/cm <<std::endl;
+	std::cout <<"MFP_phot:"<< MFP_phot/cm <<std::endl;
+//G4double GetMeanFreePath(G4double kinEnergy, const G4ParticleDefinition*,
+//			   const G4String& processName,  const G4Material*,
+//			   const G4Region* r = nullptr);
+
+	//**********************************************************************
 
 	// Job termination
 	// Free the store: user actions, physics_list and detector_description are

@@ -12,6 +12,7 @@
 #include "G4SDManager.hh"
 #include "globalFunctions.hh"
 
+
 B1Run::B1Run()
  : G4Run()
 {
@@ -58,5 +59,6 @@ G4double B1Run::GetTotal(const G4THitsMap<G4double> &map) const
   { tot += *(itr->second); }
   return tot;
 }
+
 
 
