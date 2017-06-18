@@ -112,10 +112,7 @@ int main(int argc,char** argv)
 
 
 	//******************************************************************
-	// particle
-	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-	G4String particleName;
-	G4ParticleDefinition* particle = particleTable->FindParticle(particleName="gamma");
+
 	// material
 	G4NistManager* nist = G4NistManager::Instance();
 	G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
@@ -123,13 +120,15 @@ int main(int argc,char** argv)
 	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
 
 	G4EmCalculator emCalculator;
-	G4double MFP_Rayl = emCalculator.GetMeanFreePath(parameters.MyparamsGun.particleEnergy,particle,"Rayl",boneMat);
-	G4double MFP_Compt = emCalculator.GetMeanFreePath(parameters.MyparamsGun.particleEnergy,particle,"compt",boneMat);
-	G4double MFP_phot= emCalculator.GetMeanFreePath(parameters.MyparamsGun.particleEnergy,particle,"phot",boneMat);
+	//calculates MFP of all processes - gammaConversion,phot,compt,Rayl
+	G4double MFP_Air = emCalculator.ComputeGammaAttenuationLength(parameters.MyparamsGun.particleEnergy,world_mat);
+	G4double MFP_Water = emCalculator.ComputeGammaAttenuationLength(parameters.MyparamsGun.particleEnergy,waterMat);
+	G4double MFP_Bone= emCalculator.ComputeGammaAttenuationLength(parameters.MyparamsGun.particleEnergy,boneMat);
 
-	std::cout <<"MFP_Rayl:"<< MFP_Rayl/cm <<std::endl;
-	std::cout <<"MFP_Compt:"<< MFP_Compt/cm <<std::endl;
-	std::cout <<"MFP_phot:"<< MFP_phot/cm <<std::endl;
+
+	std::cout <<"MFP_Air:"<< MFP_Air/m <<" Mu Air:" <<1.0/(MFP_Air/m)<<std::endl;
+	std::cout <<"MFP_Water:"<< MFP_Water/m <<" Mu Water:" <<1.0/(MFP_Water/m)<<std::endl;
+	std::cout <<"MFP_Bone:"<< MFP_Bone/m <<" Mu Bone:" <<1.0/(MFP_Bone/m)<<std::endl;
 //G4double GetMeanFreePath(G4double kinEnergy, const G4ParticleDefinition*,
 //			   const G4String& processName,  const G4Material*,
 //			   const G4Region* r = nullptr);

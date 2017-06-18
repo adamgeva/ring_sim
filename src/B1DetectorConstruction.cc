@@ -60,7 +60,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	//todo: make generic and not hard coded
 	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
 
-	G4Tubs* waterPhantomS = new G4Tubs("water_phantom",0,10*cm,50*cm,0,2*M_PI);
+	G4Tubs* waterPhantomS = new G4Tubs("water_phantom",0,7*cm,50*cm,0,2*M_PI);
 	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
 	//G4RotationMatrix* rot = new G4RotationMatrix();
 	//rot->rotateX(-M_PI/2);
@@ -71,7 +71,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
 
 	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
-	G4Tubs* boneS = new G4Tubs("bone",0, 2*cm, 50*cm,0,2*M_PI);
+	G4Tubs* boneS = new G4Tubs("bone",0, 1.5*cm, 50*cm,0,2*M_PI);
 	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
 	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
 
