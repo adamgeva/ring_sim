@@ -27,7 +27,20 @@
 
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
-  detectorPixelLV(0),fVisAttributes()
+  worldLV(),
+  detectorPixelLV(0),
+  fVisAttributes(),
+  fNVoxelX(0),
+  fNVoxelY(0),
+  fNVoxelZ(0),
+  fVoxelHalfDimX(0),
+  fVoxelHalfDimY(0),
+  fVoxelHalfDimZ(0),
+  fContainer_solid(0),
+  fContainer_logic(0),
+  fContainer_phys(0),
+  fNoFiles(0),
+  fMateIDs(0)
 { }
 
 B1DetectorConstruction::~B1DetectorConstruction()
@@ -57,27 +70,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
 	G4Box* worldS = new G4Box("World",world_sizeXY, world_sizeXY, world_sizeZ);
-	G4LogicalVolume* worldLV = new G4LogicalVolume(worldS, world_mat, "World");
+	worldLV = new G4LogicalVolume(worldS, world_mat, "World");
 	G4VPhysicalVolume* worldPHS = new G4PVPlacement(0, G4ThreeVector(),worldLV,"World",0,false,0,checkOverlaps);
 
-//	// Water phantom
-//	//todo: make generic and not hard coded
-//	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
-//
-//	G4Tubs* waterPhantomS = new G4Tubs("water_phantom",0,7*cm,50*cm,0,2*M_PI);
-//	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
-//	//G4RotationMatrix* rot = new G4RotationMatrix();
-//	//rot->rotateX(-M_PI/2);
-//	new G4PVPlacement(0,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
-//
-//	//bone
-//	//todo: make generic and not hard coded
-//	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-//
-//	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
-//	G4Tubs* boneS = new G4Tubs("bone",0, 1.5*cm, 50*cm,0,2*M_PI);
-//	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
-//	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
 
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
@@ -96,7 +91,6 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	// detector1
 	G4Box* detectorS = new G4Box("detector",detector_sizeX, detector_sizeY, detector_sizeZ);
 	G4LogicalVolume* detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
-
 
 	//calculating angle between every detector
 	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
@@ -158,19 +152,102 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	detectorLV->SetVisAttributes(visAttributes);
 	fVisAttributes.push_back(visAttributes);
 
-//	//bone
-//	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
-//	boneLV->SetVisAttributes(visAttributes);
-//	fVisAttributes.push_back(visAttributes);
-//
-//	//water phantom
-//	visAttributes = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
-//	waterPhantomLV->SetVisAttributes(visAttributes);
-//	fVisAttributes.push_back(visAttributes);
+	ReadPhantomData();
+    ConstructPhantomContainer();
+    ConstructPhantom();
 
 	//always return the physical World
 	return worldPHS;
 }
+
+void B1DetectorConstruction::ReadPhantomData()
+{
+	params parameters;
+
+    fNoFiles = parameters.MyparamsGeometry.numberOfZSlices;
+    G4int x=1000; //starting value for file names
+    for(G4int i = 0; i < fNoFiles; i++ ) {
+        //--- Read one data file
+        G4String fileName = parameters.MyparamsGeometry.phantomFileName + IntToString(x+i) + ".txt";
+        ReadPhantomDataFile(fileName,i);
+    }
+}
+
+void B1DetectorConstruction::ReadPhantomDataFile(const G4String& fname, G4int sliceNumber)
+{
+	params parameters;
+
+  G4cout << " B1DetectorConstruction::ReadPhantomDataFile opening file "
+		 << fname << G4endl;
+  //TODO: handle reading from phantom files
+  std::ifstream fin(fname.c_str(), std::ios_base::in);
+  if( !fin.is_open() ) {
+    G4Exception("B1DetectorConstruction::ReadPhantomDataFile",
+                "",
+                FatalErrorInArgument,
+                G4String("File not found " + fname ).c_str());
+  }
+
+  G4int nVoxels = parameters.MyparamsGeometry.numberOfPixelsPerSlice; //256*256
+
+  //--- If first slice, initiliaze fMateIDs
+  if( sliceNumber==0 ) {
+    fMateIDs = new size_t[fNoFiles*nVoxels];
+  }
+
+  unsigned int mateID;
+  // number of voxels from previously read slices
+  G4int voxelCopyNo = (sliceNumber)*nVoxels;
+  for( G4int ii = 0; ii < nVoxels; ii++, voxelCopyNo++ ){
+    fin >> mateID;
+    fMateIDs[voxelCopyNo] = mateID;
+  }
+
+
+//    //-- Get material from list of original materials
+//    mateID = fMateIDs[voxelCopyNo];
+//    G4Material* mateOrig  = fMaterials[mateID];
+
+}
+
+void B1DetectorConstruction::ConstructPhantomContainer()
+{
+	params parameters;
+
+  //---- Extract number of voxels and voxel dimensions
+  fNVoxelX = parameters.MyparamsGeometry.numberOfVoxelsX;
+  fNVoxelY = parameters.MyparamsGeometry.numberOfVoxelsY;
+  fNVoxelZ = parameters.MyparamsGeometry.numberOfPixelsPerSlice;
+
+  fVoxelHalfDimX = parameters.MyparamsGeometry.voxelHalfX;
+  fVoxelHalfDimY = parameters.MyparamsGeometry.voxelHalfY;
+  fVoxelHalfDimZ = parameters.MyparamsGeometry.voxelHalfZ;
+
+
+  //----- Define the volume that contains all the voxels
+  fContainer_solid = new G4Box("phantomContainer",fNVoxelX*fVoxelHalfDimX,
+                               fNVoxelY*fVoxelHalfDimY,
+                               fNVoxelZ*fVoxelHalfDimZ);
+  fContainer_logic =
+    new G4LogicalVolume( fContainer_solid,
+   //the material is not important, it will be fully filled by the voxels
+                         fMaterials[0],
+                         "phantomContainer",
+                         0, 0, 0 );
+  //--- Place it on the world
+
+  fContainer_phys =
+    new G4PVPlacement(0,  // rotation
+    				  G4ThreeVector(),
+                      fContainer_logic,     // The logic volume
+                      "phantomContainer",  // Name
+                      worldLV,  // Mother
+                      false,           // No op. bool.
+                      1);              // Copy number
+
+  //fContainer_logic->SetVisAttributes(new G4VisAttributes(G4Colour(1.,0.,0.)));
+}
+
 
 void B1DetectorConstruction::InitialisationOfMaterials()
 {
@@ -590,34 +667,34 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 
 
     //----- Put the materials in a vector
-    fOriginalMaterials.push_back(water); // rho = 0.00129
-    fOriginalMaterials.push_back(muscle); // rho = 0.217
-    fOriginalMaterials.push_back(lung); // rho = 0.508
-    fOriginalMaterials.push_back(dry_spine); // rho = 0.967
-    fOriginalMaterials.push_back(dry_rib); // rho = 0.990
-    fOriginalMaterials.push_back(adiposeTissue); // rho = 1.018
-    fOriginalMaterials.push_back(blood); // rho = 1.061
-    fOriginalMaterials.push_back(heart); // rho = 1.071
-    fOriginalMaterials.push_back(kidney); // rho = 1.159
-    fOriginalMaterials.push_back(liver); // rho = 1.575
-    fOriginalMaterials.push_back(lymph); // rho = 1.159
-    fOriginalMaterials.push_back(pancreas); // rho = 1.575
-    fOriginalMaterials.push_back(intestine); // rho = 1.159
-    fOriginalMaterials.push_back(skull); // rho = 1.575
-    fOriginalMaterials.push_back(cartilage); // rho = 1.159
-    fOriginalMaterials.push_back(brain); // rho = 1.575
-    fOriginalMaterials.push_back(spleen); // rho = 1.159
-    fOriginalMaterials.push_back(iodine_blood); // rho = 1.575
-    fOriginalMaterials.push_back(iron); // rho = 1.159
-    fOriginalMaterials.push_back(pmma); // rho = 1.575
-    fOriginalMaterials.push_back(aluminum); // rho = 1.159
-    fOriginalMaterials.push_back(titanium); // rho = 1.575
-    fOriginalMaterials.push_back(air); // rho = 1.159
-    fOriginalMaterials.push_back(graphite); // rho = 1.159
-    fOriginalMaterials.push_back(lead); // rho = 1.575
-    fOriginalMaterials.push_back(breast_mammary); // rho = 1.575
-    fOriginalMaterials.push_back(skin); // rho = 1.159
-    fOriginalMaterials.push_back(iodine); // rho = 1.159
+    fMaterials.push_back(water);             //0
+    fMaterials.push_back(muscle);            //1
+    fMaterials.push_back(lung);              //2
+    fMaterials.push_back(dry_spine);         //3
+    fMaterials.push_back(dry_rib);			 //4
+    fMaterials.push_back(adiposeTissue);	 //5
+    fMaterials.push_back(blood);			 //6
+    fMaterials.push_back(heart);			 //7
+    fMaterials.push_back(kidney);			 //8
+    fMaterials.push_back(liver);			 //9
+    fMaterials.push_back(lymph);			 //10
+    fMaterials.push_back(pancreas);			 //11
+    fMaterials.push_back(intestine);		 //12
+    fMaterials.push_back(skull);			 //13
+    fMaterials.push_back(cartilage);		 //14
+    fMaterials.push_back(brain);			 //15
+    fMaterials.push_back(spleen);			 //16
+    fMaterials.push_back(iodine_blood);		 //17
+    fMaterials.push_back(iron);				 //18
+    fMaterials.push_back(pmma);				 //19
+    fMaterials.push_back(aluminum);			 //20
+    fMaterials.push_back(titanium);			 //21
+    fMaterials.push_back(air);				 //22
+    fMaterials.push_back(graphite);			 //23
+    fMaterials.push_back(lead);				 //24
+    fMaterials.push_back(breast_mammary);	 //25
+    fMaterials.push_back(skin);				 //26
+    fMaterials.push_back(iodine);			 //27
 
 }
 

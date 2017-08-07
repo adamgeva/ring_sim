@@ -51,9 +51,7 @@ public:
 		G4double worldZ = 70*cm;
 		G4double phantomXY = 0.1*worldXY;
 		G4double phantomZ = 0.1*worldZ;
-		G4double boneX = 0.02*worldXY;
-		G4double boneY = 0.1*worldZ;
-		G4double boneZ = 0.02*worldXY;
+
 		G4double detectorX = 2*mm; //half size
 		G4double detectorY = 128*mm; //2mm * numberOfRows
 		G4double detectorZ = 0.8*mm; //detector depth
@@ -61,6 +59,16 @@ public:
 		G4double shift = 1*cm; //shift of each ring
 		G4int numberOfRows = 64;
 		G4int numberOfDetectors = 5;
+		//XCAT
+		//TODO: add in an external meta file
+		G4int numberOfZSlices = 500;
+		G4int numberOfPixelsPerSlice = 256*256;
+		G4int numberOfVoxelsX = 256;
+		G4int numberOfVoxelsY = 256;
+		G4int voxelHalfX = 1*mm;
+		G4int voxelHalfY = 1*mm;
+		G4int voxelHalfZ = 1*mm;
+		G4String phantomFileName = "output_test_act_";
 
 	}MyparamsGeometry;
 
