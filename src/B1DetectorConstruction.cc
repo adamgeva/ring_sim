@@ -57,6 +57,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	params parameters;
 	//initialize materials
     InitialisationOfMaterials();
+    InitialisationOfMaterialsMap();
 
 	// Get nist material manager
 	G4NistManager* nist = G4NistManager::Instance();
@@ -165,7 +166,7 @@ void B1DetectorConstruction::ReadPhantomData()
 	params parameters;
 
     fNoFiles = parameters.MyparamsGeometry.numberOfZSlices;
-    G4int x=1000; //starting value for file names
+    G4int x=10000; //starting value for file names
     for(G4int i = 0; i < fNoFiles; i++ ) {
         //--- Read one data file
         G4String fileName = parameters.MyparamsGeometry.phantomFileName + IntToString(x+i) + ".txt";
@@ -177,8 +178,8 @@ void B1DetectorConstruction::ReadPhantomDataFile(const G4String& fname, G4int sl
 {
 	params parameters;
 
-  G4cout << " B1DetectorConstruction::ReadPhantomDataFile opening file "
-		 << fname << G4endl;
+  std::cout << " B1DetectorConstruction::ReadPhantomDataFile opening file "
+		 << fname << std::endl;
   //TODO: handle reading from phantom files
   std::ifstream fin(fname.c_str(), std::ios_base::in);
   if( !fin.is_open() ) {
@@ -195,13 +196,22 @@ void B1DetectorConstruction::ReadPhantomDataFile(const G4String& fname, G4int sl
     fMateIDs = new size_t[fNoFiles*nVoxels];
   }
 
-  unsigned int mateID;
+  G4double mateID;
   // number of voxels from previously read slices
   G4int voxelCopyNo = (sliceNumber)*nVoxels;
+  materialIDs mateStruct;
+  G4double ID;
   for( G4int ii = 0; ii < nVoxels; ii++, voxelCopyNo++ ){
-    fin >> mateID;
+    fin >> ID;
+    mateStruct = intensityToMateID[ID];
+    mateID = mateStruct.mat1ID;
+    if (mateID!=0) {
+    	std::cout << "structureMateID = " << mateID << std::endl;
+    	std::cout << "ii = " << ii << " voxelCopyNo = " << voxelCopyNo << std::endl;
+    }
     fMateIDs[voxelCopyNo] = mateID;
   }
+
 
 
 //    //-- Get material from list of original materials
@@ -248,6 +258,60 @@ void B1DetectorConstruction::ConstructPhantomContainer()
   //fContainer_logic->SetVisAttributes(new G4VisAttributes(G4Colour(1.,0.,0.)));
 }
 
+void B1DetectorConstruction::InitialisationOfMaterialsMap()
+{
+	params parameters;
+	G4String fname = parameters.MyparamsGeometry.IdToCompMapName;
+	std::ifstream fin(fname.c_str(), std::ios_base::in);
+	if( !fin.is_open() ) {
+	   G4Exception("B1DetectorConstruction::ReadPhantomDataFile",
+	                "",
+	                FatalErrorInArgument,
+	                G4String("File not found " + fname ).c_str());
+	  }
+	//read header - dummy line
+	std::string line;
+	std::getline(fin,line);
+	//std::cout << line << std::endl;
+	//read file and create a map
+	while (true) {
+	    if( fin.eof() ) break;
+
+	    G4int NumOfMaterials;
+	    G4int ID;
+	    G4int MateA;
+	    G4int MateB;
+
+	    fin >> NumOfMaterials;
+	    fin >> ID;
+	    //std::cout<<"NumOfMaterials: " << NumOfMaterials << " ID: " << ID << std::endl;
+	    //create material struct
+	    materialIDs MaterialStruct;
+	    if (NumOfMaterials==1){
+	    	fin >> MateA;
+	    	//std::cout<<"MateA: " << MateA << std::endl;
+	    	MaterialStruct.mat1ID=MateA;
+	    	MaterialStruct.mat2ID=-1;
+	    } else { //NumOfMaterials==2
+	    	fin >> MateA;
+	    	fin >> MateB;
+	    	//std::cout<<"MateA: " << MateA << "MateB: " << MateB << std::endl;
+	    	MaterialStruct.mat1ID=MateA;
+	    	MaterialStruct.mat2ID=MateB;
+	    }
+
+	    //insert to map
+	    std::pair<std::map<G4int,materialIDs>::iterator,bool> ret;
+	    //std::cout << "inserting ID: " << ID << std::endl;
+	    ret = intensityToMateID.insert ( std::pair<G4int,materialIDs>(ID,MaterialStruct) );
+	    if (ret.second==false) {
+	      std::cout << "element " << ID << " already existed" << std::endl;
+	      //std::cout << " with a value of " << intensityToMateID[ret.first] << '\n';
+	    }
+	}
+	//std::cout << "intensityToMateID.size() is " << intensityToMateID.size() << std::endl;
+
+}
 
 void B1DetectorConstruction::InitialisationOfMaterials()
 {
@@ -665,6 +729,134 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 									   numberofElements = 1);
 	iodine->AddElement(elI,1.0);
 
+	 // eye_lens
+	G4Material* eye_lens = new G4Material( "EyeLens",
+									   density = 1.07*g/cm3,
+									   numberofElements = 8);
+	eye_lens->AddElement(elH,0.096);
+	eye_lens->AddElement(elC,0.195);
+	eye_lens->AddElement(elN,0.057);
+	eye_lens->AddElement(elO,0.646);
+	eye_lens->AddElement(elNa,0.001);
+	eye_lens->AddElement(elP,0.001);
+	eye_lens->AddElement(elS,0.003);
+	eye_lens->AddElement(elCl,0.001);
+
+	 // ovary
+	G4Material* ovary = new G4Material( "Ovary",
+									   density = 1.05*g/cm3,
+									   numberofElements = 9);
+	ovary->AddElement(elH,0.105);
+	ovary->AddElement(elC,0.093);
+	ovary->AddElement(elN,0.024);
+	ovary->AddElement(elO,0.768);
+	ovary->AddElement(elNa,0.002);
+	ovary->AddElement(elP,0.002);
+	ovary->AddElement(elS,0.002);
+	ovary->AddElement(elCl,0.002);
+	ovary->AddElement(elK,0.002);
+
+	 // red_marrow
+	G4Material* red_marrow = new G4Material( "RedMarrow",
+									   density = 1.03*g/cm3,
+									   numberofElements = 9);
+	red_marrow->AddElement(elH,0.105);
+	red_marrow->AddElement(elC,0.414);
+	red_marrow->AddElement(elN,0.034);
+	red_marrow->AddElement(elO,0.439);
+	red_marrow->AddElement(elP,0.001);
+	red_marrow->AddElement(elS,0.002);
+	red_marrow->AddElement(elCl,0.002);
+	red_marrow->AddElement(elK,0.002);
+	red_marrow->AddElement(elFe,0.001);
+
+	 // yellow_marrow
+	G4Material* yellow_marrow = new G4Material( "YellowMarrow",
+									   density = 0.98*g/cm3,
+									   numberofElements = 7);
+	yellow_marrow->AddElement(elH,0.115);
+	yellow_marrow->AddElement(elC,0.644);
+	yellow_marrow->AddElement(elN,0.007);
+	yellow_marrow->AddElement(elO,0.231);
+	yellow_marrow->AddElement(elNa,0.001);
+	yellow_marrow->AddElement(elS,0.001);
+	yellow_marrow->AddElement(elCl,0.001);
+
+	 // testis
+	G4Material* testis = new G4Material( "Testis",
+									   density = 1.04*g/cm3,
+									   numberofElements = 9);
+	testis->AddElement(elH,0.106);
+	testis->AddElement(elC,0.099);
+	testis->AddElement(elN,0.02);
+	testis->AddElement(elO,0.766);
+	testis->AddElement(elNa,0.002);
+	testis->AddElement(elP,0.001);
+	testis->AddElement(elS,0.002);
+	testis->AddElement(elCl,0.002);
+	testis->AddElement(elK,0.002);
+
+	 // thyroid
+	G4Material* thyroid = new G4Material( "Thyroid",
+									   density = 1.05*g/cm3,
+									   numberofElements = 10);
+	thyroid->AddElement(elH,0.104);
+	thyroid->AddElement(elC,0.119);
+	thyroid->AddElement(elN,0.024);
+	thyroid->AddElement(elO,0.745);
+	thyroid->AddElement(elNa,0.002);
+	thyroid->AddElement(elP,0.001);
+	thyroid->AddElement(elS,0.001);
+	thyroid->AddElement(elCl,0.002);
+	thyroid->AddElement(elK,0.001);
+	thyroid->AddElement(elI,0.001);
+
+	 // trabecular
+	G4Material* trabecular = new G4Material( "trabecular",
+									   density = 1.14*g/cm3,
+									   numberofElements = 5);
+	trabecular->AddElement(elH,0.079);
+	trabecular->AddElement(elC,0.6379);
+	trabecular->AddElement(elN,0.0423);
+	trabecular->AddElement(elO,0.0988);
+	trabecular->AddElement(elCa,0.142);
+
+	 // bladder
+	G4Material* bladder = new G4Material( "Bladder",
+									   density = 1.04*g/cm3,
+									   numberofElements = 9);
+	bladder->AddElement(elH,0.105);
+	bladder->AddElement(elC,0.096);
+	bladder->AddElement(elN,0.026);
+	bladder->AddElement(elO,0.761);
+	bladder->AddElement(elNa,0.002);
+	bladder->AddElement(elP,0.002);
+	bladder->AddElement(elS,0.002);
+	bladder->AddElement(elCl,0.003);
+	bladder->AddElement(elK,0.003);
+
+	//TODO: am I calculating the density correctly?
+	 // dry_spine with water 0,3
+	G4Material* dry_spine_water = new G4Material( "dry_spine_water",
+									   density = (0.5*water->GetDensity() + 0.5*dry_spine->GetDensity())*g/cm3,
+									   numberofElements = 2);
+	dry_spine_water->AddMaterial(dry_spine,50.*perCent);
+	dry_spine_water->AddMaterial(water,50.*perCent);
+
+	 // dry_rib with water 0,4
+	G4Material* dry_rib_water = new G4Material( "dry_rib_water",
+									   density = (0.5*water->GetDensity() + 0.5*dry_rib->GetDensity())*g/cm3,
+									   numberofElements = 2);
+	dry_rib_water->AddMaterial(dry_rib,50.*perCent);
+	dry_rib_water->AddMaterial(water,50.*perCent);
+
+	 // skull with water 0,13
+	G4Material* skull_water = new G4Material( "skull_water",
+									   density = (0.5*water->GetDensity() + 0.5*skull->GetDensity())*g/cm3,
+									   numberofElements = 2);
+	skull_water->AddMaterial(skull,50.*perCent);
+	skull_water->AddMaterial(water,50.*perCent);
+
 
     //----- Put the materials in a vector
     fMaterials.push_back(water);             //0
@@ -695,6 +887,18 @@ void B1DetectorConstruction::InitialisationOfMaterials()
     fMaterials.push_back(breast_mammary);	 //25
     fMaterials.push_back(skin);				 //26
     fMaterials.push_back(iodine);			 //27
+    fMaterials.push_back(eye_lens);			 //28
+    fMaterials.push_back(ovary);			 //29
+    fMaterials.push_back(red_marrow);		 //30
+    fMaterials.push_back(yellow_marrow);	 //31
+    fMaterials.push_back(testis);			 //32
+    fMaterials.push_back(thyroid);			 //33
+    fMaterials.push_back(trabecular);		 //34
+    fMaterials.push_back(bladder);			 //35
+    fMaterials.push_back(dry_spine_water);	 //36
+    fMaterials.push_back(dry_rib_water);	 //37
+    fMaterials.push_back(skull_water);		 //38
+
 
 }
 

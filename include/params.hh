@@ -8,6 +8,7 @@
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
 #include "G4SystemOfUnits.hh"
+#include "G4String.hh"
 #include "G4Types.hh"
 
 
@@ -68,7 +69,8 @@ public:
 		G4int voxelHalfX = 1*mm;
 		G4int voxelHalfY = 1*mm;
 		G4int voxelHalfZ = 1*mm;
-		G4String phantomFileName = "output_test_act_";
+		G4String phantomFileName = "/home/adamgeva/XCAT/phantom/output_test_act_";
+		G4String IdToCompMapName = "id_to_comp.txt";
 
 	}MyparamsGeometry;
 
