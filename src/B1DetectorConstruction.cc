@@ -206,8 +206,8 @@ void B1DetectorConstruction::ReadPhantomDataFile(const G4String& fname, G4int sl
     mateStruct = intensityToMateID[ID];
     mateID = mateStruct.mat1ID;
     if (mateID!=0) {
-    	std::cout << "structureMateID = " << mateID << std::endl;
-    	std::cout << "ii = " << ii << " voxelCopyNo = " << voxelCopyNo << std::endl;
+    	//std::cout << "structureMateID = " << mateID << std::endl;
+    	//std::cout << "ii = " << ii << " voxelCopyNo = " << voxelCopyNo << std::endl;
     }
     fMateIDs[voxelCopyNo] = mateID;
   }
@@ -227,7 +227,7 @@ void B1DetectorConstruction::ConstructPhantomContainer()
   //---- Extract number of voxels and voxel dimensions
   fNVoxelX = parameters.MyparamsGeometry.numberOfVoxelsX;
   fNVoxelY = parameters.MyparamsGeometry.numberOfVoxelsY;
-  fNVoxelZ = parameters.MyparamsGeometry.numberOfPixelsPerSlice;
+  fNVoxelZ = parameters.MyparamsGeometry.numberOfZSlices;
 
   fVoxelHalfDimX = parameters.MyparamsGeometry.voxelHalfX;
   fVoxelHalfDimY = parameters.MyparamsGeometry.voxelHalfY;
