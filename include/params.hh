@@ -13,7 +13,7 @@
 
 
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -53,6 +53,7 @@ public:
 		G4double phantomXY = 0.1*worldXY;
 		G4double phantomZ = 0.1*worldZ;
 
+		G4int buildDetectors = 0;
 		G4double detectorX = 2*mm; //half size
 		G4double detectorY = 128*mm; //2mm * numberOfRows
 		G4double detectorZ = 0.8*mm; //detector depth
@@ -62,7 +63,7 @@ public:
 		G4int numberOfDetectors = 5;
 		//XCAT
 		//TODO: add in an external meta file
-		G4int numberOfZSlices = 2;
+		G4int numberOfZSlices = 500;
 		G4int numberOfPixelsPerSlice = 256*256;
 		G4int numberOfVoxelsX = 256;
 		G4int numberOfVoxelsY = 256;

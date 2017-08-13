@@ -74,7 +74,6 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	worldLV = new G4LogicalVolume(worldS, world_mat, "World");
 	G4VPhysicalVolume* worldPHS = new G4PVPlacement(0, G4ThreeVector(),worldLV,"World",0,false,0,checkOverlaps);
 
-
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
 	G4double detector_sizeX = parameters.MyparamsGeometry.detectorX;
@@ -118,8 +117,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 		rotD->rotateX(-M_PI/2);
 		//rotD->rotateY(-M_PI/2+theta);
 		rotD->rotateY(M_PI/2-theta);
-		new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
-
+		if (parameters.MyparamsGeometry.buildDetectors == 1){
+			new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
+		}
 		//writing 5 pos for every detector - one detector in every line of the file
 		G4double x1 = R*cos(theta-beta);
 		G4double y1 = R*sin(theta-beta);
@@ -141,8 +141,10 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	detectorPixelLV = new G4LogicalVolume(detectorPixelS, detectorMat,"detectorPixel");
 	new G4PVReplica("detectorPixelP",detectorPixelLV,detectorLV,kYAxis,parameters.MyparamsGeometry.numberOfRows,2*detector_sizeY/parameters.MyparamsGeometry.numberOfRows);
 
-	//setting visualization attributes to logical elements
+
+
 	//world
+	//setting visualization attributes to logical elements
 	G4VisAttributes* visAttributes = new G4VisAttributes(G4Colour(1.0,1.0,1.0));
 	visAttributes->SetVisibility(false);
 	worldLV->SetVisAttributes(visAttributes);
@@ -152,6 +154,10 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	visAttributes = new G4VisAttributes(G4Colour(0.9,0.9,0.9));
 	detectorLV->SetVisAttributes(visAttributes);
 	fVisAttributes.push_back(visAttributes);
+
+
+
+
 
 	ReadPhantomData();
     ConstructPhantomContainer();
@@ -205,10 +211,10 @@ void B1DetectorConstruction::ReadPhantomDataFile(const G4String& fname, G4int sl
     fin >> ID;
     mateStruct = intensityToMateID[ID];
     mateID = mateStruct.mat1ID;
-    if (mateID!=0) {
-    	//std::cout << "structureMateID = " << mateID << std::endl;
-    	//std::cout << "ii = " << ii << " voxelCopyNo = " << voxelCopyNo << std::endl;
-    }
+//    if (mateID!=0) {
+//    	std::cout << "structureMateID = " << mateID << std::endl;
+//    	std::cout << "ii = " << ii << " voxelCopyNo = " << voxelCopyNo << std::endl;
+//    }
     fMateIDs[voxelCopyNo] = mateID;
   }
 
