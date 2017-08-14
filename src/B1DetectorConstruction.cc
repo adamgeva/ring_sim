@@ -155,13 +155,12 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	detectorLV->SetVisAttributes(visAttributes);
 	fVisAttributes.push_back(visAttributes);
 
-
-
-
-
-	ReadPhantomData();
-    ConstructPhantomContainer();
-    ConstructPhantom();
+	//building phantom
+	if (parameters.MyparamsGeometry.buildPhantom==1){
+		ReadPhantomData();
+		ConstructPhantomContainer();
+		ConstructPhantom();
+	}
 
 	//always return the physical World
 	return worldPHS;

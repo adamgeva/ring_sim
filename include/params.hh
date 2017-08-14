@@ -13,7 +13,7 @@
 
 
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -52,8 +52,10 @@ public:
 		G4double worldZ = 70*cm;
 		G4double phantomXY = 0.1*worldXY;
 		G4double phantomZ = 0.1*worldZ;
+		//flags to build phantom and detectors
+		G4int buildDetectors = 1;
+		G4int buildPhantom = 1;
 
-		G4int buildDetectors = 0;
 		G4double detectorX = 2*mm; //half size
 		G4double detectorY = 128*mm; //2mm * numberOfRows
 		G4double detectorZ = 0.8*mm; //detector depth

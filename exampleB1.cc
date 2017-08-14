@@ -74,7 +74,7 @@ int main(int argc,char** argv)
 
 	// Physics list
 	G4PhysListFactory factory;
-	G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_PEN");
+	G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
 	//FTFP_BERT_PEN
 	//G4VModularPhysicsList* physicsList = new QBBC;
 	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
