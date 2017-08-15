@@ -17,6 +17,7 @@
 #include "FTFP_BERT.hh"
 #include "G4PhysListFactory.hh"
 #include "G4EmPenelopePhysics.hh"
+#include "G4GenericBiasingPhysics.hh"
 
 #include "G4Run.hh"
 
@@ -75,6 +76,24 @@ int main(int argc,char** argv)
 	G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_PEN");
 	//FTFP_BERT_PEN
 	//G4VModularPhysicsList* physicsList = new QBBC;
+
+	//biasing
+	G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
+	  if ( parameters.Myparams.onOffBiasing == 1 )
+	    {
+	      biasingPhysics->Bias("gamma");
+	      physicsList->RegisterPhysics(biasingPhysics);
+	      G4cout << "      ********************************************************* " << G4endl;
+	      G4cout << "      ********** processes are wrapped for biasing ************ " << G4endl;
+	      G4cout << "      ********************************************************* " << G4endl;
+	    }
+	  else
+	    {
+	      G4cout << "      ************************************************* " << G4endl;
+	      G4cout << "      ********** processes are not wrapped ************ " << G4endl;
+	      G4cout << "      ************************************************* " << G4endl;
+	    }
+
 	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
 	runManager->SetUserInitialization(physicsList);
 
