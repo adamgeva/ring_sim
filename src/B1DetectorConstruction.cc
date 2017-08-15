@@ -20,6 +20,10 @@
 #include "G4ios.hh"
 #include "globalFunctions.hh"
 #include "B1EnergyDeposit.hh"
+
+#include "G4GeometryTolerance.hh"
+#include "G4GeometryManager.hh"
+
 #include <math.h>
 #include <iostream>
 
@@ -55,6 +59,14 @@ B1DetectorConstruction::~B1DetectorConstruction()
 G4VPhysicalVolume* B1DetectorConstruction::Construct()
 {  
 	params parameters;
+
+	//set tolerance
+	G4GeometryManager::GetInstance()->SetWorldMaximumExtent(2.*parameters.MyparamsGeometry.worldXY);
+	std::cout << "GetSurfaceTolerance() = " << G4GeometryTolerance::GetInstance()->GetSurfaceTolerance()/mm << std::endl;
+	std::cout << "GetAngularTolerance() = " << G4GeometryTolerance::GetInstance()->GetAngularTolerance()/mm << std::endl;
+	std::cout << "GetRadialTolerance() = " << G4GeometryTolerance::GetInstance()->GetRadialTolerance()/mm << std::endl;
+
+
 	//initialize materials
     InitialisationOfMaterials();
     InitialisationOfMaterialsMap();
@@ -681,13 +693,16 @@ void B1DetectorConstruction::InitialisationOfMaterials()
     titanium->AddElement(elTi,1.0);
 
     // Air
-    G4Material* air = new G4Material( "Air",
-    								0.001205*mg/cm3,
-    								numberofElements = 4 );
-    air->AddElement(elC, 0.000124);
-    air->AddElement(elN, 0.755268);
-    air->AddElement(elO, 0.231781);
-    air->AddElement(elCl, 0.012827);
+    // Get nist Air instead of phantoms air
+    G4NistManager* nist = G4NistManager::Instance();
+    G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
+//    G4Material* air = new G4Material( "Air",
+//    								0.001205*mg/cm3,
+//    								numberofElements = 4 );
+//    air->AddElement(elC, 0.000124);
+//    air->AddElement(elN, 0.755268);
+//    air->AddElement(elO, 0.231781);
+//    air->AddElement(elCl, 0.012827);
 
     // Graphite
     G4Material* graphite = new G4Material( "Graphite",

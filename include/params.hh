@@ -10,10 +10,10 @@
 #include "G4SystemOfUnits.hh"
 #include "G4String.hh"
 #include "G4Types.hh"
-
+#include <math.h>
 
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -59,16 +59,17 @@ public:
 		G4double detectorX = 2*mm; //half size
 		G4double detectorY = 128*mm; //2mm * numberOfRows
 		G4double detectorZ = 0.8*mm; //detector depth
-		G4double radius = 25*cm;
+		G4double radius = 2*25*cm;
 		G4double shift = 1*cm; //shift of each ring
 		G4int numberOfRows = 64;
 		G4int numberOfDetectors = 5;
 		//XCAT
 		//TODO: add in an external meta file
 		G4int numberOfZSlices = 500;
-		G4int numberOfPixelsPerSlice = 256*256;
 		G4int numberOfVoxelsX = 256;
 		G4int numberOfVoxelsY = 256;
+		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;
+		//TODO: check that these sizes are correct
 		G4int voxelHalfX = 1*mm;
 		G4int voxelHalfY = 1*mm;
 		G4int voxelHalfZ = 1*mm;
