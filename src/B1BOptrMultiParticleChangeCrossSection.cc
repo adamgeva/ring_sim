@@ -71,6 +71,7 @@ B1BOptrMultiParticleChangeCrossSection::
 ProposeOccurenceBiasingOperation(const G4Track* track,
                                  const G4BiasingProcessInterface* callingProcess)
 {
+	//G4cout << "weight = " << track->GetWeight() << G4endl;
   // -- examples of limitations imposed to apply the biasing:
   // -- limit application of biasing to primary particles only:
   //TODO: change!!!!!
@@ -78,7 +79,7 @@ ProposeOccurenceBiasingOperation(const G4Track* track,
   // -- limit to at most 5 biased interactions:
   if ( fnInteractions > 4 )        return 0;
   // -- and limit to a weight of at least 0.05:
-  if ( track->GetWeight() < 0.05 ) return 0;
+  if ( track->GetWeight() < 0.05 )  return 0;
   
   if ( fCurrentOperator ) return fCurrentOperator->
                             GetProposedOccurenceBiasingOperation(track, callingProcess);

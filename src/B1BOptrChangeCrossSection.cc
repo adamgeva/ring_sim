@@ -91,8 +91,8 @@ void B1BOptrChangeCrossSection::StartRun()
                 (sharedData->GetPhysicsBiasingProcessInterfaces())[i];
               G4String operationName = "XSchange-" + 
                 wrapperProcess->GetWrappedProcess()->GetProcessName();
-              fChangeCrossSectionOperations[wrapperProcess] = 
-                new G4BOptnChangeCrossSection(operationName);
+			  fChangeCrossSectionOperations[wrapperProcess] =
+				new G4BOptnChangeCrossSection(operationName);
             }
         }
       fSetup = false;
@@ -129,8 +129,14 @@ B1BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*      
   // -- Choose a constant cross-section bias. But at this level, this factor can be made
   // -- direction dependent, like in the exponential transform MCNP case, or it
   // -- can be chosen differently, depending on the process, etc.
-  //G4double XStransformation = 2.0 ;
-  G4double XStransformation = 0.1 ;
+  G4double XStransformation;
+  //G4cout << "process name" << callingProcess->GetWrappedProcess()->GetProcessName() << G4endl;
+  if (callingProcess->GetWrappedProcess()->GetProcessName()=="phot"){
+	  //G4cout << "changing cross section for phot" << G4endl;
+		XStransformation = 0.01 ;
+  } else {
+	  	XStransformation = 1 ;
+  }
   
   // -- fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection*   operation = fChangeCrossSectionOperations[callingProcess];
