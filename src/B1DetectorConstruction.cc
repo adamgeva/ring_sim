@@ -23,6 +23,9 @@
 
 #include "G4LogicalVolumeStore.hh"
 #include "B1BOptrMultiParticleChangeCrossSection.hh"
+#include "B1BOptrComptLE.hh"
+
+#include "G4BOptrForceCollision.hh"
 
 
 #include <math.h>
@@ -71,14 +74,14 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	//rot->rotateX(-M_PI/2);
 	new G4PVPlacement(0,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
 
-	//bone
-	//todo: make generic and not hard coded
-	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-
-	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
-	G4Tubs* boneS = new G4Tubs("bone",0, 1.5*cm, 50*cm,0,2*M_PI);
-	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
-	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
+//	//bone
+//	//todo: make generic and not hard coded
+//	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
+//
+//	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
+//	G4Tubs* boneS = new G4Tubs("bone",0, 1.5*cm, 50*cm,0,2*M_PI);
+//	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
+//	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
 
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
@@ -159,10 +162,10 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	detectorLV->SetVisAttributes(visAttributes);
 	fVisAttributes.push_back(visAttributes);
 
-	//bone
-	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
-	boneLV->SetVisAttributes(visAttributes);
-	fVisAttributes.push_back(visAttributes);
+//	//bone
+//	visAttributes = new G4VisAttributes(G4Colour(0.8888,0.0,0.0));
+//	boneLV->SetVisAttributes(visAttributes);
+//	fVisAttributes.push_back(visAttributes);
 
 	//water phantom
 	visAttributes = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
@@ -180,16 +183,33 @@ void B1DetectorConstruction::ConstructSDandField()
   // -- Fetch volume for biasing:
   G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("water_phantom");
   G4LogicalVolume* logicTestBone = G4LogicalVolumeStore::GetInstance()->GetVolume("bone");
-  // ----------------------------------------------
-  // -- operator creation and attachment to volume:
-  // ----------------------------------------------
-  B1BOptrMultiParticleChangeCrossSection* testMany = new B1BOptrMultiParticleChangeCrossSection();
-  testMany->AddParticle("gamma");
-  testMany->AttachTo(logicTest);
-  testMany->AttachTo(logicTestBone);
-  G4cout << " Attaching biasing operator " << testMany->GetName()
-		 << " to logical volume " << logicTest->GetName()
-		 << G4endl;
+
+//  // ----------------------------------------------
+//  // -- operator creation and attachment to volume:
+//  // ----------------------------------------------
+//  B1BOptrMultiParticleChangeCrossSection* testMany = new B1BOptrMultiParticleChangeCrossSection();
+//  testMany->AddParticle("gamma");
+//  testMany->AttachTo(logicTest);
+//  testMany->AttachTo(logicTestBone);
+//  G4cout << " Attaching biasing operator " << testMany->GetName()
+//		 << " to logical volume " << logicTest->GetName()
+//		 << G4endl;
+
+//   ----------------------------------------------
+//   -- operator creation and attachment to volume:
+//   ----------------------------------------------
+  B1BOptrComptLE* comptLEOptr =  new B1BOptrComptLE("gamma","LEOperator");
+  comptLEOptr->AttachTo(logicTest);
+  //comptLEOptr->AttachTo(logicTestBone);
+  G4cout << " Attaching biasing operator " << comptLEOptr->GetName()
+         << " to logical volume " << logicTest->GetName()
+         << G4endl;
+
+
+//  G4BOptrForceCollision* OptrForceCollision =  new G4BOptrForceCollision("gamma","forceCollision");
+//  OptrForceCollision->AttachTo(logicTest);
+//  //OptrForceCollision->AttachTo(logicTestBone);
+
 
 	// sensitive detectors
 	G4SDManager* SDman = G4SDManager::GetSDMpointer();

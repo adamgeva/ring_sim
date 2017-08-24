@@ -33,7 +33,7 @@ public:
 		int runVerbose = 1;
 		int eventVerbose = 0;
 		int trackVerbose = 0;
-		G4int onOffBiasing = 0; //set to 1 for on biasing
+		G4int onOffBiasing = 1; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 	}Myparams;
 
@@ -46,6 +46,12 @@ public:
 //		G4double MaxPhi = 2*M_PI;
 		G4double MaxPhi = 0;
 	}MyparamsGun;
+
+	struct Bias{
+		G4int ComptSplittingFactor = 2;
+		G4bool BiasPrimaryOnly = true;
+		G4bool BiasOnlyOnce = true;
+	}Bias;
 
 	struct MyparamsGeometry{
 		G4double worldXY = 70*cm; //half sizes

@@ -81,7 +81,16 @@ int main(int argc,char** argv)
 	G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
 	  if ( parameters.Myparams.onOffBiasing == 1 )
 	    {
-	      biasingPhysics->Bias("gamma");
+	      //TODO:fix
+		  biasingPhysics->Bias("gamma");
+	      // -- Create list of physics processes to be biased: only brem. in this case:
+	      //TODO: is this necessary??
+	      //std::vector< G4String > processToBias;
+	      //processToBias.push_back("compt");
+	      // -- Pass the list to the G4GenericBiasingPhysics, which will wrap the eBrem
+	      // -- process of e- and e+ to activate the biasing of it:
+	      //biasingPhysics->PhysicsBias("gamma", processToBias);
+
 	      physicsList->RegisterPhysics(biasingPhysics);
 	      G4cout << "      ********************************************************* " << G4endl;
 	      G4cout << "      ********** processes are wrapped for biasing ************ " << G4endl;
