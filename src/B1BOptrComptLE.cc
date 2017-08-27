@@ -161,21 +161,21 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeOccurenceBiasingOperation(const G4Tr
   // -- this last one being per process. The initial weight is common, and is
   // -- arbitrary asked to the first operation to take care of it.
   if ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeFreeFlight)
-    {
+  {
 	  G4cout << "ProposeOccurenceBiasingOperation : forceFlight" <<G4endl;
       G4BOptnForceFreeFlight* operation =  fFreeFlightOperations[callingProcess];
       if ( callingProcess->GetWrappedProcess()->GetCurrentInteractionLength() < DBL_MAX/10. )
 	  {
-	  // -- the initial track weight will be restored only by the first DoIt free flight:
-	  operation->ResetInitialTrackWeight(fInitialTrackWeight);
-	  G4cout << "ProposeOccurenceBiasingOperation : returning operation free flight" <<G4endl;;
-	  return operation;
+		  // -- the initial track weight will be restored only by the first DoIt free flight:
+		  operation->ResetInitialTrackWeight(fInitialTrackWeight);
+		  G4cout << "ProposeOccurenceBiasingOperation : returning operation free flight" <<G4endl;;
+		  return operation;
 	  }
       else
 	  {
-	  return nullptr;
+    	  return nullptr;
 	  }
-    }
+  }
 
 
 //  // -- Send force interaction operation to the callingProcess:
@@ -255,7 +255,7 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeOccurenceBiasingOperation(const G4Tr
 
   // -- other cases here: particle appearing in the volume by some
   // -- previous interaction : we decide to not bias these.
-  return 0;
+  return nullptr;
 
 }
 
@@ -299,7 +299,7 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeOccurenceBiasingOperation(const G4Tr
 ////    }
 ////
 ////  // --
-//  return 0;
+//  return nullptr;
 //}
 
 
@@ -308,14 +308,8 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeFinalStateBiasingOperation(const G4T
   // -- Propose at final state generation the same operation which was proposed at GPIL level,
   // -- (which is either the force free flight or the force interaction operation).
   // -- count on the process interface to collect this operation:
-  if (callingProcess->GetProcessName() != "biasWrapper(compt)") return 0;
   G4cout << "ProposeFinalStateBiasingOperation : Process name = " << callingProcess->GetProcessName()<<G4endl;
-// -- Check if biasing of primary particle only is requested. If so, and
-  // -- if particle is not a primary one, don't ask for biasing:
-  if ( fBiasPrimaryOnly && ( track->GetParentID() !=0 ) ) return 0;
-  // -- Check if brem. splitting should be applied only once to the track,
-  // -- and if so, and if brem. splitting already occured, don't ask for biasing:
-  if ( fBiasOnlyOnce    && ( fNInteractions > 0 )        ) return 0;
+
 
   fCurrentTrackData = (B1BOptrComptLETrackData*)(track->GetAuxiliaryTrackInformation(flocalEstimationModelID));
        if ( fCurrentTrackData != nullptr )
@@ -327,6 +321,10 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeFinalStateBiasingOperation(const G4T
     	   }
     	   else
     	   {
+    		   if (fCurrentTrackData->flocalEstimationState == localEstimationState::toBeFreeFlight){
+    			   return callingProcess->GetCurrentOccurenceBiasingOperation();
+
+    		   }
     		   // §§§ Would something be really wrong in this case ? Could this be that a process made a zero step ?
     	   }
        }
@@ -336,10 +334,19 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeFinalStateBiasingOperation(const G4T
 		  track->SetAuxiliaryTrackInformation(flocalEstimationModelID, fCurrentTrackData);
        }
 
+  if (callingProcess->GetProcessName() != "biasWrapper(compt)") return 0;
+  // -- Check if biasing of primary particle only is requested. If so, and
+    // -- if particle is not a primary one, don't ask for biasing:
+  if ( fBiasPrimaryOnly && ( track->GetParentID() !=0 ) ) return 0;
+	// -- Check if brem. splitting should be applied only once to the track,
+	// -- and if so, and if brem. splitting already occured, don't ask for biasing:
+  if ( fBiasOnlyOnce    && ( fNInteractions > 0 )        ) return 0;
+
   // -- Count the number of times the brem. splitting is applied:
   fNInteractions++;
   // -- Return the brem. splitting operation:
   G4cout << "ProposeFinalStateBiasingOperation : returning split operation " <<G4endl;
+  fInitialTrackWeight = track->GetWeight();
   fCurrentTrackData->flocalEstimationState = localEstimationState::toBeSplit;
   return fComptSplittingOperation;
   //return callingProcess->GetCurrentOccurenceBiasingOperation();
@@ -393,6 +400,12 @@ void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   callin
 					      const G4VParticleChange*                          )
 {
 
+	//**************printing info***********
+	G4cout << "B1BOptrComptLE::OperationApplied 1" <<G4endl;
+	G4cout << "calling process: " <<	callingProcess->GetProcessName()  << G4endl;
+	//G4cout << "Operation applied : " << operationApplied->GetName() << G4endl;
+
+	//**************************************
   if ( fCurrentTrackData == nullptr )
     {
       if ( BAC != BAC_None )
@@ -419,7 +432,8 @@ void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   callin
     }
   else if ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeFreeFlight )
     {
-      if ( fFreeFlightOperations[callingProcess]->OperationComplete() ) fCurrentTrackData->Reset(); // -- off biasing for this track
+	  //TODO:how can it work with this line?
+      //if ( fFreeFlightOperations[callingProcess]->OperationComplete() ) fCurrentTrackData->Reset(); // -- off biasing for this track
     }
   else
     {
@@ -436,11 +450,17 @@ void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   callin
 }
 
 
-void  B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*        /*callingProcess*/, G4BiasingAppliedCase                  /*biasingCase*/,
+void  B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*        callingProcess, G4BiasingAppliedCase                  BAC,
 					       G4VBiasingOperation*         /*occurenceOperationApplied*/, G4double             /*weightForOccurenceInteraction*/,
 					       G4VBiasingOperation*            finalStateOperationApplied, const G4VParticleChange*    /*particleChangeProduced*/ )
 {
-	G4cout<< " B1BOptrComptLE::OperationApplied 2" <<G4endl;
+	//**************printing info***********
+	G4cout << "B1BOptrComptLE::OperationApplied 2 " << G4endl;
+	G4cout << "calling process: " << callingProcess->GetProcessName()  << G4endl;
+	//G4cout << " Operation applied : " << finalStateOperationApplied->GetName() << G4endl;
+
+	//**************************************
+
 //  if ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeForced )
 //    {
 //      if ( finalStateOperationApplied != fSharedForceInteractionOperation )

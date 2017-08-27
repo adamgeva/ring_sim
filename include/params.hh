@@ -48,9 +48,9 @@ public:
 	}MyparamsGun;
 
 	struct Bias{
-		G4int ComptSplittingFactor = 2;
+		G4int ComptSplittingFactor = 4;
 		G4bool BiasPrimaryOnly = true;
-		G4bool BiasOnlyOnce = true;
+		G4bool BiasOnlyOnce = false;
 	}Bias;
 
 	struct MyparamsGeometry{
