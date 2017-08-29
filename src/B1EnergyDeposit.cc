@@ -36,6 +36,9 @@ G4int B1EnergyDeposit::GetIndex(G4Step* step){
 G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable){
 	//test: getting information from tracks
 	G4Track* track = aStep->GetTrack();
+
+	//G4cout << "We have a hit, Weight: " << track->GetWeight() << G4endl;
+
 	G4bool result = FALSE;
 	G4VUserTrackInformation* info = track->GetUserInformation();
 	B1TrackInformation* theInfo = (B1TrackInformation*)info;

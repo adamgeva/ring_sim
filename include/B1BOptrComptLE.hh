@@ -42,9 +42,9 @@ public:
   // -- operation applied:
   void OperationApplied( const G4BiasingProcessInterface*            callingProcess, G4BiasingAppliedCase                      biasingCase,
 			 G4VBiasingOperation*                      operationApplied, const G4VParticleChange*        particleChangeProduced ) final;
-  void OperationApplied( const G4BiasingProcessInterface*            callingProcess, G4BiasingAppliedCase                      biasingCase,
-  			 G4VBiasingOperation*             occurenceOperationApplied, G4double                 weightForOccurenceInteraction,
-  			 G4VBiasingOperation*            finalStateOperationApplied, const G4VParticleChange*        particleChangeProduced ) final;
+  void OperationApplied( const G4BiasingProcessInterface* callingProcess, G4BiasingAppliedCase biasingCase,
+  			 G4VBiasingOperation* occurenceOperationApplied, G4double weightForOccurenceInteraction,
+  			 G4VBiasingOperation* finalStateOperationApplied, const G4VParticleChange* particleChangeProduced ) final;
 
 
 private:

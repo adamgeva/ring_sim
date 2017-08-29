@@ -12,7 +12,8 @@ B1BOptrComptLETrackData::B1BOptrComptLETrackData( const B1BOptrComptLE* optr )
 
 B1BOptrComptLETrackData::~B1BOptrComptLETrackData()
 {
-	if ( flocalEstimationState != localEstimationState::free )
+	//TODO: fix
+	if ( (flocalEstimationState != localEstimationState::free) & (flocalEstimationState != localEstimationState::toBeFreeFlight) )
 	    {
 	      G4ExceptionDescription ed;
 	      ed << "Track deleted while under G4BOptrForceCollision biasing scheme of operator `";
