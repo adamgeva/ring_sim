@@ -5,7 +5,7 @@
 class B1BOptrComptLE;
 #include "G4VAuxiliaryTrackInformation.hh"
 
-enum class localEstimationState { free, toBeFreeFlight, toBeSplit };
+enum class localEstimationState { free, toBeFreeFlight, toBeSplitCompt, toBeSplitRayl };
 
 class B1BOptrComptLETrackData : public G4VAuxiliaryTrackInformation {
 

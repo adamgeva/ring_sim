@@ -9,6 +9,8 @@
 #include "G4ILawCommonTruncatedExp.hh"
 #include "G4BOptnForceFreeFlight.hh"
 #include "B1BOptnComptSplitting.hh"
+#include "B1BOptnRaylSplitting.hh"
+
 
 #include "G4Step.hh"
 #include "G4StepPoint.hh"
@@ -33,12 +35,12 @@ B1BOptrComptLE::B1BOptrComptLE(G4String particleName, G4String name)
 	fBiasOnlyOnce(true)
 {
   params parameters;
-  fComptSplittingOperation = new B1BOptnComptSplitting("ComptSplittingOperation");
   fSplittingFactor = parameters.Bias.ComptSplittingFactor;
   fBiasPrimaryOnly = parameters.Bias.BiasPrimaryOnly;
   fBiasOnlyOnce = parameters.Bias.BiasOnlyOnce;
 	//fSharedForceInteractionOperation = new G4BOptnForceCommonTruncatedExp("SharedForceInteraction");
   fComptSplittingOperation                = new B1BOptnComptSplitting("ComptSplitting");
+  fRaylSplittingOperation                = new B1BOptnRaylSplitting("RaylSplitting");
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
 
   if ( fParticleToBias == 0 )
@@ -65,13 +67,13 @@ B1BOptrComptLE::B1BOptrComptLE(const G4ParticleDefinition* particle, G4String na
 	fBiasOnlyOnce(true)
 {
   params parameters;
-  fComptSplittingOperation = new B1BOptnComptSplitting("ComptSplittingOperation");
   fSplittingFactor = parameters.Bias.ComptSplittingFactor;
   fBiasPrimaryOnly = parameters.Bias.BiasPrimaryOnly;
   fBiasOnlyOnce = parameters.Bias.BiasOnlyOnce;
   //fSharedForceInteractionOperation = new G4BOptnForceCommonTruncatedExp("SharedForceInteraction");
   //fCloningOperation                = new G4BOptnCloning("Cloning");
   fComptSplittingOperation         = new B1BOptnComptSplitting("ComptSplitting");
+  fRaylSplittingOperation         = new B1BOptnRaylSplitting("RaylSplitting");
   fParticleToBias                  = particle;
 }
 
@@ -83,6 +85,7 @@ B1BOptrComptLE::~B1BOptrComptLE()
 	it++ ) delete (*it).second;
   //delete fSharedForceInteractionOperation;
   delete fComptSplittingOperation;
+  delete fRaylSplittingOperation;
 }
 
 
@@ -124,6 +127,7 @@ void B1BOptrComptLE::ConfigureForWorker()
 void B1BOptrComptLE::StartRun()
 {
   fComptSplittingOperation->SetSplittingFactor ( fSplittingFactor );
+  fRaylSplittingOperation->SetSplittingFactor ( fSplittingFactor );
 }
 
 
@@ -201,9 +205,7 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeFinalStateBiasingOperation(const G4T
     track->SetAuxiliaryTrackInformation(flocalEstimationModelID, fCurrentTrackData);
   }
 
-  //check if its time for compton splitting:
 
-  if (callingProcess->GetProcessName() != "biasWrapper(compt)") return 0;
   // -- Check if biasing of primary particle only is requested. If so, and
     // -- if particle is not a primary one, don't ask for biasing:
   if ( fBiasPrimaryOnly && ( track->GetParentID() !=0 ) ) return 0;
@@ -211,13 +213,29 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeFinalStateBiasingOperation(const G4T
 	// -- and if so, and if brem. splitting already occured, don't ask for biasing:
   if ( fBiasOnlyOnce    && ( fNInteractions > 0 )        ) return 0;
 
-  //send compton splitting operation:
-  // -- Count the number of times the brem. splitting is applied:
-  fNInteractions++;
-  // -- Return the compt. splitting operation:
-  fInitialTrackWeight = track->GetWeight();
-  fCurrentTrackData->flocalEstimationState = localEstimationState::toBeSplit;
-  return fComptSplittingOperation;
+  //check if its time for compton splitting:
+  if (callingProcess->GetProcessName() == "biasWrapper(compt)")
+  {
+	  //send compton splitting operation:
+	  // -- Count the number of times the brem. splitting is applied:
+	  fNInteractions++;
+	  // -- Return the compt. splitting operation:
+	  fInitialTrackWeight = track->GetWeight();
+	  fCurrentTrackData->flocalEstimationState = localEstimationState::toBeSplitCompt;
+	  return fComptSplittingOperation;
+  }
+  //check if its time for rayl splitting:
+  else if (callingProcess->GetProcessName() == "biasWrapper(Rayl)")
+  {
+	  //send Rayl splitting operation:
+	  // -- Count the number of times the brem. splitting is applied:
+	  fNInteractions++;
+	  // -- Return the compt. splitting operation:
+	  fInitialTrackWeight = track->GetWeight();
+	  fCurrentTrackData->flocalEstimationState = localEstimationState::toBeSplitRayl;
+	  return fRaylSplittingOperation;
+  }
+  return 0;
 }
 
 
@@ -276,7 +294,7 @@ void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   /*call
     return;
   }
   //tobisplit
-  if  ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeSplit )
+  if  ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeSplitCompt )
   {
     fCurrentTrackData->flocalEstimationState = localEstimationState::free;
     G4int numOfCopies = fComptSplittingOperation->GetNumOfTracksCopied();
@@ -289,6 +307,19 @@ void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   /*call
    	  fComptSplittingOperation->GetSplitTrack()->SetAuxiliaryTrackInformation(flocalEstimationModelID, cloneData);
     }
   }
+  else if  ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeSplitRayl )
+    {
+      fCurrentTrackData->flocalEstimationState = localEstimationState::free;
+      G4int numOfCopies = fRaylSplittingOperation->GetNumOfTracksCopied();
+      for(G4int i=0;i<numOfCopies;i++)
+      {
+
+        auto cloneData = new B1BOptrComptLETrackData( this );
+        cloneData->flocalEstimationState = localEstimationState::toBeFreeFlight;
+        //TODO: maybe I should pop the track from the vector to allow another splitting in the future
+     	  fRaylSplittingOperation->GetSplitTrack()->SetAuxiliaryTrackInformation(flocalEstimationModelID, cloneData);
+      }
+    }
   else if ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeFreeFlight )
   {
 	  //TODO:how can it work with this line?

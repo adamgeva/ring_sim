@@ -36,7 +36,10 @@ void B1BOptrComptLETrackData::Print() const
     case localEstimationState::free :
       G4cout << "free from biasing ";
       break;
-    case localEstimationState::toBeSplit :
+    case localEstimationState::toBeSplitCompt :
+      G4cout << "to be cloned ";
+      break;
+    case localEstimationState::toBeSplitRayl :
       G4cout << "to be cloned ";
       break;
     case localEstimationState::toBeFreeFlight :

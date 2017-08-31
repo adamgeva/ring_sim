@@ -24,7 +24,7 @@
 #include "G4LogicalVolumeStore.hh"
 #include "B1BOptrMultiParticleChangeCrossSection.hh"
 #include "B1BOptrComptLE.hh"
-#include "forcedFlightOperator.hh"
+
 
 #include "G4BOptrForceCollision.hh"
 

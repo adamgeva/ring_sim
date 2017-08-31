@@ -6,6 +6,7 @@
 
 #include "G4VBiasingOperator.hh"
 #include "B1BOptnComptSplitting.hh"
+#include "B1BOptnRaylSplitting.hh"
 class G4BOptnForceFreeFlight;
 class G4BOptnForceCommonTruncatedExp;
 class G4BOptnCloning;
@@ -54,6 +55,7 @@ private:
   std::map< const G4BiasingProcessInterface*, G4BOptnForceFreeFlight* > fFreeFlightOperations;
   //G4BOptnForceCommonTruncatedExp*                                       fSharedForceInteractionOperation;
   B1BOptnComptSplitting*                                                fComptSplittingOperation;
+  B1BOptnRaylSplitting*                                                 fRaylSplittingOperation;
   G4double                                                              fInitialTrackWeight;
   G4bool                                                                fSetup;
   const G4ParticleDefinition*                                           fParticleToBias;
