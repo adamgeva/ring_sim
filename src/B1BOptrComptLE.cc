@@ -157,7 +157,7 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeOccurenceBiasingOperation(const G4Tr
     if ( callingProcess->GetWrappedProcess()->GetCurrentInteractionLength() < DBL_MAX/10. )
 	{
 	  // -- the initial track weight will be restored only by the first DoIt free flight:
-	  operation->ResetInitialTrackWeight(fInitialTrackWeight);
+	  operation->ResetInitialTrackWeight(fInitialTrackWeight/fSplittingFactor);
       return operation;
     }
     else
@@ -255,9 +255,9 @@ void B1BOptrComptLE::EndTracking()
 }
 
 
-void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   callingProcess,
+void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   /*callingProcess*/,
 					      G4BiasingAppliedCase                          BAC,
-					      G4VBiasingOperation*             operationApplied,
+					      G4VBiasingOperation*            /* operationApplied*/,
 					      const G4VParticleChange*                          )
 {
   //nothing
@@ -279,12 +279,14 @@ void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   callin
   if  ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeSplit )
   {
     fCurrentTrackData->flocalEstimationState = localEstimationState::free;
-    for(G4int i=0;i<fComptSplittingOperation->GetNumOfTracksCopied();i++)
+    G4int numOfCopies = fComptSplittingOperation->GetNumOfTracksCopied();
+    for(G4int i=0;i<numOfCopies;i++)
     {
+
       auto cloneData = new B1BOptrComptLETrackData( this );
       cloneData->flocalEstimationState = localEstimationState::toBeFreeFlight;
       //TODO: maybe I should pop the track from the vector to allow another splitting in the future
-   	  fComptSplittingOperation->GetSplitTrack(i)->SetAuxiliaryTrackInformation(flocalEstimationModelID, cloneData);
+   	  fComptSplittingOperation->GetSplitTrack()->SetAuxiliaryTrackInformation(flocalEstimationModelID, cloneData);
     }
   }
   else if ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeFreeFlight )
@@ -307,7 +309,7 @@ void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   callin
 }
 
 
-void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface* callingProcess, G4BiasingAppliedCase BAC,
+void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface* /*callingProcess*/, G4BiasingAppliedCase /*BAC*/,
 			 G4VBiasingOperation* /*occurenceOperationApplied*/, G4double /*weightForOccurenceInteraction*/,
 			 G4VBiasingOperation* /*finalStateOperationApplied*/, const G4VParticleChange* /*particleChangeProduced*/ )
 {

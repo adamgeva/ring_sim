@@ -5,6 +5,9 @@
 #include "G4BiasingProcessInterface.hh"
 #include "G4ParticleChangeForGamma.hh"
 
+#include "G4VUserTrackInformation.hh"
+#include "B1TrackInformation.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 B1BOptnComptSplitting::B1BOptnComptSplitting(G4String name)
@@ -20,10 +23,12 @@ B1BOptnComptSplitting::~B1BOptnComptSplitting()
 {
 }
 
-G4Track* B1BOptnComptSplitting::GetSplitTrack(G4int ID)
+G4Track* B1BOptnComptSplitting::GetSplitTrack()
 {
 	if (!fsplitTracksVector.empty()) {
-		return fsplitTracksVector[ID];
+		G4Track* track = fsplitTracksVector.back();
+		fsplitTracksVector.pop_back();
+		return track;
 	}
 	return nullptr;
 }
@@ -36,7 +41,8 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
                         G4bool&                                         )
 {
 
-  // -- Collect compt. process (wrapped process) final state:
+
+	// -- Collect compt. process (wrapped process) final state:
   G4VParticleChange* processFinalState =
     callingProcess->GetWrappedProcess()->PostStepDoIt(*track, *step);
 
@@ -119,6 +125,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
     	  gammaTrack = new G4Track( *track );
 
     	  //TODO: note that the trackInformation did not change! all "original" information is kept, will this affect my scoring system???
+    	  //tracking information copy is dealt with in post tracking
     	  //TODO: is the track id being set automatically as a child?
     	  //maybe other values of the tracking information needs to be changed!
 //    	  G4VUserTrackInformation* info = track->GetUserInformation();
@@ -131,6 +138,8 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 		  gammaTrack->SetMomentumDirection(actualParticleChange->GetProposedMomentumDirection());
 		  gammaTrack->SetTrackStatus(actualParticleChange->GetTrackStatus());
 		  gammaTrack->SetPolarization(actualParticleChange->GetProposedPolarization());
+
+
 
 		  fsplitTracksVector.push_back(gammaTrack);
           fParticleChange.G4VParticleChange::AddSecondary( gammaTrack );

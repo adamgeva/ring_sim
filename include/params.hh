@@ -12,7 +12,7 @@
 
 
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -25,7 +25,7 @@ class params
 {
 public:
 	struct Myparams{
-		G4int numberOfThreads = 40;
+		G4int numberOfThreads = 35;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;
@@ -48,9 +48,9 @@ public:
 	}MyparamsGun;
 
 	struct Bias{
-		G4int ComptSplittingFactor = 2;
+		G4int ComptSplittingFactor = 10;
 		G4bool BiasPrimaryOnly = true;
-		G4bool BiasOnlyOnce = true;
+		G4bool BiasOnlyOnce = false;
 	}Bias;
 
 	struct MyparamsGeometry{
@@ -63,10 +63,12 @@ public:
 		G4double boneZ = 0.02*worldXY;
 		G4double detectorX = 2*mm; //half size
 		G4double detectorY = 128*mm; //2mm * numberOfRows
+		//G4double detectorY = 2*mm; //2mm * numberOfRows
 		G4double detectorZ = 0.8*mm; //detector depth
 		G4double radius = 25*cm;
 		G4double shift = 1*cm; //shift of each ring
 		G4int numberOfRows = 64;
+		//G4int numberOfRows = 1;
 		G4int numberOfDetectors = 5;
 
 	}MyparamsGeometry;

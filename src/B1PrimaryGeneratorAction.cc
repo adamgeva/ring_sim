@@ -126,7 +126,7 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	params parameters;
 	G4int runID = G4RunManager::GetRunManager()->GetNonConstCurrentRun()->GetRunID();
 
-	G4double MinTheta = parameters.MyparamsGun.MinTheta;
+	//G4double MinTheta = parameters.MyparamsGun.MinTheta;
 	G4double MaxTheta = parameters.MyparamsGun.MaxTheta;
 //	G4double MinTheta = M_PI/2  ;
 //	G4double MaxTheta = M_PI/2 ;

@@ -52,7 +52,7 @@ public:
   G4int GetSplittingFactor() const
   { return fSplittingFactor; }
 
-  G4Track* GetSplitTrack(G4int ID);
+  G4Track* GetSplitTrack();
   G4int GetNumOfTracksCopied()
   { return fsplitTracksVector.size(); }
 
