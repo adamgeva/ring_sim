@@ -133,6 +133,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
       //TODO:what is this???
       else if (  processFinalState->GetNumberOfSecondaries() > 0 )
         {
+    	  std::cout << "I happen" <<std::endl;
           for ( G4int i = 0 ; i < processFinalState->GetNumberOfSecondaries() ; i++)
             delete processFinalState->GetSecondary(i);
         }

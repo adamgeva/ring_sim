@@ -33,7 +33,7 @@ public:
 		int runVerbose = 1;
 		int eventVerbose = 0;
 		int trackVerbose = 0;
-		G4int onOffBiasing = 0; //set to 1 for on biasing
+		G4int onOffBiasing = 1; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 	}Myparams;
 
@@ -48,7 +48,7 @@ public:
 	}MyparamsGun;
 
 	struct Bias{
-		G4int ComptSplittingFactor = 10;
+		G4int ComptSplittingFactor = 100;
 		G4bool BiasPrimaryOnly = true;
 		G4bool BiasOnlyOnce = false;
 	}Bias;

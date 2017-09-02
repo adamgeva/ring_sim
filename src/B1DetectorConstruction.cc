@@ -183,7 +183,8 @@ void B1DetectorConstruction::ConstructSDandField()
 
   // -- Fetch volume for biasing:
   G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("water_phantom");
-  G4LogicalVolume* logicTestBone = G4LogicalVolumeStore::GetInstance()->GetVolume("bone");
+  G4LogicalVolume* logicWorld = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
+  //G4LogicalVolume* logicTestBone = G4LogicalVolumeStore::GetInstance()->GetVolume("bone");
 
 //  // ----------------------------------------------
 //  // -- operator creation and attachment to volume:
@@ -201,22 +202,12 @@ void B1DetectorConstruction::ConstructSDandField()
 //   ----------------------------------------------
   B1BOptrComptLE* comptLEOptr =  new B1BOptrComptLE("gamma","LEOperator");
   comptLEOptr->AttachTo(logicTest);
+  comptLEOptr->AttachTo(logicWorld);
 //  //comptLEOptr->AttachTo(logicTestBone);
 //  G4cout << " Attaching biasing operator " << comptLEOptr->GetName()
 //         << " to logical volume " << logicTest->GetName()
 //         << G4endl;
 
-  //   ----------------------------------------------
-  //   -- operator creation and attachment to volume:
-  //   ----------------------------------------------
-//    forcedFlightOperator* forcedFlight =  new forcedFlightOperator();
-//    forcedFlight->AttachTo(logicTest);
-    //comptLEOptr->AttachTo(logicTestBone);
-//    G4cout << " Attaching biasing operator " << comptLEOptr->GetName()
-//           << " to logical volume " << logicTest->GetName()
-//           << G4endl;
-
-//
 //  G4BOptrForceCollision* OptrForceCollision =  new G4BOptrForceCollision("gamma","forceCollision");
 //  OptrForceCollision->AttachTo(logicTest);
 //  //OptrForceCollision->AttachTo(logicTestBone);

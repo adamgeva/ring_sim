@@ -41,6 +41,7 @@ class B1TrackInformation : public G4VUserTrackInformation
     G4int 				  numberOfCompton;
     G4int 				  numberOfRayl;
 
+
   public:
     inline G4int GetOriginalTrackID() const {return originalTrackID;}
     inline G4ParticleDefinition* GetOriginalParticle() const {return particleDefinition;}

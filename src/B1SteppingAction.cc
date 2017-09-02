@@ -45,7 +45,6 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 	if((procName == "Rayl" || procName == "biasWrapper(Rayl)") && startPhysicalName!="detectorPixelP") {
 		//G4cout<<"We have Rayl with prePhysical : " << startPhysicalName << G4endl;
 		theInfo->AddRayl();
-
 	}
 
 	//is this necessary?

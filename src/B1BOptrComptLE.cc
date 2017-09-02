@@ -32,7 +32,8 @@ B1BOptrComptLE::B1BOptrComptLE(G4String particleName, G4String name)
     fSetup(true),
 	fSplittingFactor(1),
 	fBiasPrimaryOnly(true),
-	fBiasOnlyOnce(true)
+	fBiasOnlyOnce(true),
+	fNInteractions(0)
 {
   params parameters;
   fSplittingFactor = parameters.Bias.ComptSplittingFactor;
@@ -64,7 +65,8 @@ B1BOptrComptLE::B1BOptrComptLE(const G4ParticleDefinition* particle, G4String na
     fSetup(true),
 	fSplittingFactor(1),
 	fBiasPrimaryOnly(true),
-	fBiasOnlyOnce(true)
+	fBiasOnlyOnce(true),
+	fNInteractions(0)
 {
   params parameters;
   fSplittingFactor = parameters.Bias.ComptSplittingFactor;
