@@ -192,11 +192,6 @@ void B1DetectorConstruction::ConstructSDandField()
 //  B1BOptrMultiParticleChangeCrossSection* testMany = new B1BOptrMultiParticleChangeCrossSection();
 //  testMany->AddParticle("gamma");
 //  testMany->AttachTo(logicTest);
-//  testMany->AttachTo(logicTestBone);
-//  G4cout << " Attaching biasing operator " << testMany->GetName()
-//		 << " to logical volume " << logicTest->GetName()
-//		 << G4endl;
-
 //   ----------------------------------------------
 //   -- operator creation and attachment to volume:
 //   ----------------------------------------------

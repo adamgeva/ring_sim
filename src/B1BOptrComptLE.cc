@@ -33,12 +33,14 @@ B1BOptrComptLE::B1BOptrComptLE(G4String particleName, G4String name)
 	fSplittingFactor(1),
 	fBiasPrimaryOnly(true),
 	fBiasOnlyOnce(true),
+	fBiasNTimes(10),
 	fNInteractions(0)
 {
   params parameters;
   fSplittingFactor = parameters.Bias.ComptSplittingFactor;
   fBiasPrimaryOnly = parameters.Bias.BiasPrimaryOnly;
   fBiasOnlyOnce = parameters.Bias.BiasOnlyOnce;
+  fBiasNTimes = parameters.Bias.BiasTimes;
 	//fSharedForceInteractionOperation = new G4BOptnForceCommonTruncatedExp("SharedForceInteraction");
   fComptSplittingOperation                = new B1BOptnComptSplitting("ComptSplitting");
   fRaylSplittingOperation                = new B1BOptnRaylSplitting("RaylSplitting");
@@ -66,12 +68,14 @@ B1BOptrComptLE::B1BOptrComptLE(const G4ParticleDefinition* particle, G4String na
 	fSplittingFactor(1),
 	fBiasPrimaryOnly(true),
 	fBiasOnlyOnce(true),
+	fBiasNTimes(10),
 	fNInteractions(0)
 {
   params parameters;
   fSplittingFactor = parameters.Bias.ComptSplittingFactor;
   fBiasPrimaryOnly = parameters.Bias.BiasPrimaryOnly;
   fBiasOnlyOnce = parameters.Bias.BiasOnlyOnce;
+  fBiasNTimes = parameters.Bias.BiasTimes;
   //fSharedForceInteractionOperation = new G4BOptnForceCommonTruncatedExp("SharedForceInteraction");
   //fCloningOperation                = new G4BOptnCloning("Cloning");
   fComptSplittingOperation         = new B1BOptnComptSplitting("ComptSplitting");
@@ -214,6 +218,8 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeFinalStateBiasingOperation(const G4T
 	// -- Check if brem. splitting should be applied only once to the track,
 	// -- and if so, and if brem. splitting already occured, don't ask for biasing:
   if ( fBiasOnlyOnce    && ( fNInteractions > 0 )        ) return 0;
+
+  if ( fNInteractions > fBiasNTimes ) return 0;
 
   //check if its time for compton splitting:
   if (callingProcess->GetProcessName() == "biasWrapper(compt)")
