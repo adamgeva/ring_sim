@@ -10,7 +10,6 @@
 #include "G4BOptnForceFreeFlight.hh"
 #include "B1BOptnComptSplitting.hh"
 #include "B1BOptnRaylSplitting.hh"
-#include "G4BOptnChangeCrossSection.hh"
 
 
 #include "G4Step.hh"
@@ -90,11 +89,7 @@ B1BOptrComptLE::~B1BOptrComptLE()
   for ( std::map< const G4BiasingProcessInterface*, G4BOptnForceFreeFlight* >::iterator it = fFreeFlightOperations.begin() ;
 	it != fFreeFlightOperations.end() ;
 	it++ ) delete (*it).second;
-
-  for ( std::map< const G4BiasingProcessInterface*, G4BOptnChangeCrossSection* >::iterator it = fChangeCrossSectionOperations.begin() ;
-    it != fChangeCrossSectionOperations.end() ;
-    it++ ) delete (*it).second;
-
+  //delete fSharedForceInteractionOperation;
   delete fComptSplittingOperation;
   delete fRaylSplittingOperation;
 }
@@ -126,12 +121,8 @@ void B1BOptrComptLE::ConfigureForWorker()
 	  {
         const G4BiasingProcessInterface* wrapperProcess =
         (interfaceProcessSharedData->GetPhysicsBiasingProcessInterfaces())[i];
-        //free flight operations
         G4String operationName = "FreeFlight-"+wrapperProcess->GetWrappedProcess()->GetProcessName();
 	    fFreeFlightOperations[wrapperProcess] = new G4BOptnForceFreeFlight(operationName);
-	    //cross section operations
-	    operationName = "XSchange-" +wrapperProcess->GetWrappedProcess()->GetProcessName();
-	    fChangeCrossSectionOperations[wrapperProcess] = new G4BOptnChangeCrossSection(operationName);
 	  }
 	}
     fSetup = false;
@@ -155,10 +146,10 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeOccurenceBiasingOperation(const G4Tr
   {
     // ... and if the track has no aux. track data, it means its biasing is not started yet (note that splitting is to happen first):
     fCurrentTrackData = (B1BOptrComptLETrackData*)(track->GetAuxiliaryTrackInformation(flocalEstimationModelID));
-//    if ( fCurrentTrackData == nullptr )
-//    {
-//      return nullptr;
-//    }
+    if ( fCurrentTrackData == nullptr )
+    {
+      return nullptr;
+    }
   }
   // -- Send force free flight to the callingProcess:
   // ------------------------------------------------
@@ -170,104 +161,25 @@ G4VBiasingOperation* B1BOptrComptLE::ProposeOccurenceBiasingOperation(const G4Tr
   // -- being its initial weight * the weight for the free flight travel,
   // -- this last one being per process. The initial weight is common, and is
   // -- arbitrary asked to the first operation to take care of it.
-  //this is the case that splitting and free flight has begun:
-  if (fCurrentTrackData!=nullptr){
-	  if ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeFreeFlight)
-	  {
-		G4BOptnForceFreeFlight* operation =  fFreeFlightOperations[callingProcess];
-		if ( callingProcess->GetWrappedProcess()->GetCurrentInteractionLength() < DBL_MAX/10. )
-		{
-		  // -- the initial track weight will be restored only by the first DoIt free flight:
-		  operation->ResetInitialTrackWeight(fInitialTrackWeight/fSplittingFactor);
-		  return operation;
-		}
-		else
-		{
-		  return nullptr;
-		}
-	  }
+  if ( fCurrentTrackData->flocalEstimationState == localEstimationState::toBeFreeFlight)
+  {
+    G4BOptnForceFreeFlight* operation =  fFreeFlightOperations[callingProcess];
+    if ( callingProcess->GetWrappedProcess()->GetCurrentInteractionLength() < DBL_MAX/10. )
+	{
+	  // -- the initial track weight will be restored only by the first DoIt free flight:
+	  operation->ResetInitialTrackWeight(fInitialTrackWeight/fSplittingFactor);
+      return operation;
+    }
+    else
+    {
+   	  return nullptr;
+    }
   }
 
-  //now for the case that splitting and free flight hasn't begun yet or maybe it has begun but we are dealing with the main photon:
+  // -- other cases here: particle appearing in the volume by some
+  // -- previous interaction : we decide to not bias these.
+  return 0;
 
-  // ---------------------------------------------------------------------
-  // -- select and setup the biasing operation for current callingProcess:
-  // ---------------------------------------------------------------------
-  // -- Check if the analog cross-section well defined : for example, the conversion
-  // -- process for a gamma below e+e- creation threshold has an DBL_MAX interaction
-  // -- length. Nothing is done in this case (ie, let analog process to deal with the case)
-  G4double analogInteractionLength =
-	callingProcess->GetWrappedProcess()->GetCurrentInteractionLength();
-  if ( analogInteractionLength > DBL_MAX/10. ) return 0;
-
-  // -- Analog cross-section is well-defined:
-  G4double analogXS = 1./analogInteractionLength;
-
-  // -- Choose a constant cross-section bias. But at this level, this factor can be made
-  // -- direction dependent, like in the exponential transform MCNP case, or it
-  // -- can be chosen differently, depending on the process, etc.
-  G4double XStransformation;
-  //G4cout << "process name" << callingProcess->GetWrappedProcess()->GetProcessName() << G4endl;
-  //XStransformation = 0.01 ;
-  if (callingProcess->GetWrappedProcess()->GetProcessName()=="phot"){
-	  //G4cout << "changing cross section for phot" << G4endl;
-		XStransformation = 0.01 ;
-  } else {
-		XStransformation = 1 ;
-  }
-
-  // -- fetch the operation associated to this callingProcess:
-  G4BOptnChangeCrossSection*   operation = fChangeCrossSectionOperations[callingProcess];
-  // -- get the operation that was proposed to the process in the previous step:
-  G4VBiasingOperation* previousOperation = callingProcess->GetPreviousOccurenceBiasingOperation();
-
-  // -- now setup the operation to be returned to the process: this
-  // -- consists in setting the biased cross-section, and in asking
-  // -- the operation to sample its exponential interaction law.
-  // -- To do this, to first order, the two lines:
-  //        operation->SetBiasedCrossSection( XStransformation * analogXS );
-  //        operation->Sample();
-  // -- are correct and sufficient.
-  // -- But, to avoid having to shoot a random number each time, we sample
-  // -- only on the first time the operation is proposed, or if the interaction
-  // -- occured. If the interaction did not occur for the process in the previous,
-  // -- we update the number of interaction length instead of resampling.
-  if ( previousOperation == 0 )
-	{
-	  operation->SetBiasedCrossSection( XStransformation * analogXS );
-	  operation->Sample();
-	}
-  else
-	{
-	  if (  previousOperation != operation )
-		{
-		  // -- should not happen !
-		  G4ExceptionDescription ed;
-		  ed << " Logic problem in operation handling !" << G4endl;
-		  G4Exception("B1BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(...)",
-					  "exGB01.02",
-					  JustWarning,
-					  ed);
-		  return 0;
-		}
-	  if ( operation->GetInteractionOccured() )
-		{
-		  operation->SetBiasedCrossSection( XStransformation * analogXS );
-		  operation->Sample();
-		}
-	  else
-		{
-		  // -- update the 'interaction length' and underneath 'number of interaction lengths'
-		  // -- for past step  (this takes into accout the previous step cross-section value)
-		  operation->UpdateForStep( callingProcess->GetPreviousStepSize() );
-		  // -- update the cross-section value:
-		  operation->SetBiasedCrossSection( XStransformation * analogXS );
-		  // -- forces recomputation of the 'interaction length' taking into account above
-		  // -- new cross-section value [tricky : to be improved]
-		  operation->UpdateForStep( 0.0 );
-		}
-	}
-  return operation;
 }
 
 
@@ -369,20 +281,11 @@ void B1BOptrComptLE::EndTracking()
 }
 
 
-void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   callingProcess,
+void B1BOptrComptLE::OperationApplied( const G4BiasingProcessInterface*   /*callingProcess*/,
 					      G4BiasingAppliedCase                          BAC,
-					      G4VBiasingOperation*            operationApplied,
+					      G4VBiasingOperation*            /* operationApplied*/,
 					      const G4VParticleChange*                          )
 {
-
-	//todo: code better!
-  G4BOptnChangeCrossSection* operation = fChangeCrossSectionOperations[callingProcess];
-  if ( operation ==  operationApplied ){
-	  operation->SetInteractionOccured();
-	  return;
-  }
-
-
   //nothing
   if ( fCurrentTrackData == nullptr )
   {

@@ -5,7 +5,6 @@
 #define B1BOptrComptLE_hh 1
 
 #include "G4VBiasingOperator.hh"
-#include "G4BOptnChangeCrossSection.hh"
 #include "B1BOptnComptSplitting.hh"
 #include "B1BOptnRaylSplitting.hh"
 class G4BOptnForceFreeFlight;
@@ -54,11 +53,6 @@ private:
   const G4Track*                                                        fCurrentTrack;
   B1BOptrComptLETrackData*                                              fCurrentTrackData;
   std::map< const G4BiasingProcessInterface*, G4BOptnForceFreeFlight* > fFreeFlightOperations;
-
-  // -- List of associations between processes and biasing operations:
-  std::map< const G4BiasingProcessInterface*, G4BOptnChangeCrossSection* > fChangeCrossSectionOperations;
-
-
   //G4BOptnForceCommonTruncatedExp*                                       fSharedForceInteractionOperation;
   B1BOptnComptSplitting*                                                fComptSplittingOperation;
   B1BOptnRaylSplitting*                                                 fRaylSplittingOperation;
