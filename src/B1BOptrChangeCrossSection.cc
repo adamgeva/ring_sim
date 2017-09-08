@@ -131,13 +131,14 @@ B1BOptrChangeCrossSection::ProposeOccurenceBiasingOperation(const G4Track*      
   // -- can be chosen differently, depending on the process, etc.
   G4double XStransformation;
   //G4cout << "process name" << callingProcess->GetWrappedProcess()->GetProcessName() << G4endl;
-  if (callingProcess->GetWrappedProcess()->GetProcessName()=="phot"){
-	  //G4cout << "changing cross section for phot" << G4endl;
-		XStransformation = 0.01 ;
-  } else {
-	  	XStransformation = 1 ;
-  }
-  
+//  if (callingProcess->GetWrappedProcess()->GetProcessName()=="phot"){
+//	  //G4cout << "changing cross section for phot" << G4endl;
+//		XStransformation = 0.01 ;
+//  } else {
+//	  	XStransformation = 1 ;
+//  }
+//
+  XStransformation = 0.001 ;
   // -- fetch the operation associated to this callingProcess:
   G4BOptnChangeCrossSection*   operation = fChangeCrossSectionOperations[callingProcess];
   // -- get the operation that was proposed to the process in the previous step:

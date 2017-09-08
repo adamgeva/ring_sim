@@ -7,6 +7,8 @@
 
 #include "G4VUserTrackInformation.hh"
 #include "B1TrackInformation.hh"
+#include "globalFunctions.hh"
+#include "params.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -41,7 +43,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
                         G4bool&                                         )
 {
 
-
+  params parameters;
 	// -- Collect Rayl. process (wrapped process) final state:
   G4VParticleChange* processFinalState =
     callingProcess->GetWrappedProcess()->PostStepDoIt(*track, *step);
@@ -73,15 +75,34 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
   // -- Store first gamma final state:
 
 
+  //change main photons weight
+  G4double gammaWeight = actualParticleChange->GetWeight() / fSplittingFactor;
+
+  G4double thresh = 1./G4double(fSplittingFactor*fSplittingFactor);
+  //RR
+  if (gammaWeight <= thresh){
+	//play RR
+	G4bool survive = RR(parameters.Bias.RRP);
+	if (survive)
+	{		  //correct weigth
+		gammaWeight = gammaWeight*(1/parameters.Bias.RRP);
+	}
+	else
+	{
+		//kill photon
+		fParticleChange.ProposeTrackStatus( fStopAndKill );
+		return &fParticleChange;
+	}
+  }
+
+  fParticleChange.ProposeWeight(gammaWeight);
+  //G4cout << "gammaWeight " << gammaWeight << G4endl;
+
   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
   fParticleChange.SetProposedKineticEnergy( actualParticleChange->GetProposedKineticEnergy() );
   fParticleChange.ProposeMomentumDirection( actualParticleChange->GetProposedMomentumDirection() );
   fParticleChange.ProposePolarization( actualParticleChange->GetProposedPolarization() );
 
-  //change main photons weight
-  G4double gammaWeight = actualParticleChange->GetWeight() / fSplittingFactor;
-  fParticleChange.ProposeWeight(gammaWeight);
-  //G4cout << "gammaWeight " << gammaWeight << G4endl;
 
   // -- inform we will have (fSplittingFactor-1) gamma's:
   fParticleChange.SetNumberOfSecondaries( fSplittingFactor -1 );

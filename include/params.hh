@@ -33,7 +33,7 @@ public:
 		int runVerbose = 1;
 		int eventVerbose = 0;
 		int trackVerbose = 0;
-		G4int onOffBiasing = 1; //set to 1 for on biasing
+		G4int onOffBiasing = 0; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 	}Myparams;
 
@@ -52,6 +52,7 @@ public:
 		G4bool BiasPrimaryOnly = true;
 		G4bool BiasOnlyOnce = false;
 		G4int BiasTimes = 4;
+		G4double RRP = 0.1; //russian roullete probabilty to survive
 	}Bias;
 
 	struct MyparamsGeometry{

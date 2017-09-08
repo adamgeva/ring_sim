@@ -1,13 +1,16 @@
 #include "B1BOptnComptSplitting.hh"
 #include "B1BOptrComptLE.hh"
 #include <vector>
+#include "globalFunctions.hh"
 
 #include "G4BiasingProcessInterface.hh"
 #include "G4ParticleChangeForGamma.hh"
 
 #include "G4VUserTrackInformation.hh"
 #include "B1TrackInformation.hh"
-
+#include "G4TrackStatus.hh"
+#include "params.hh"
+#include <math.h>
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 B1BOptnComptSplitting::B1BOptnComptSplitting(G4String name)
@@ -41,7 +44,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
                         G4bool&                                         )
 {
 
-
+  params parameters;
 	// -- Collect compt. process (wrapped process) final state:
   G4VParticleChange* processFinalState =
     callingProcess->GetWrappedProcess()->PostStepDoIt(*track, *step);
@@ -78,16 +81,33 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 
   // -- Store first gamma final state:
 
+  //change main photons weight
+  G4double gammaWeight = actualParticleChange->GetWeight() / fSplittingFactor;
 
+//  G4double thresh = 1./G4double(fSplittingFactor*fSplittingFactor);
+//  //RR
+//  if (gammaWeight <= thresh){
+//	  //play RR
+//	  G4bool survive = RR(parameters.Bias.RRP);
+//	  if (survive)
+//	  {		  //correct weigth
+//		  gammaWeight = gammaWeight*(1/parameters.Bias.RRP);
+//	  }
+//	  else
+//	  {
+//		  //kill photon
+//		  fParticleChange.ProposeTrackStatus( fStopAndKill );
+//		  return &fParticleChange;
+//	  }
+//  }
+
+  fParticleChange.ProposeWeight(gammaWeight);
+  //G4cout << "gammaWeight " << gammaWeight << G4endl;
   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
   fParticleChange.SetProposedKineticEnergy( actualParticleChange->GetProposedKineticEnergy() );
   fParticleChange.ProposeMomentumDirection( actualParticleChange->GetProposedMomentumDirection() );
   fParticleChange.ProposePolarization( actualParticleChange->GetProposedPolarization() );
 
-  //change main photons weight
-  G4double gammaWeight = actualParticleChange->GetWeight() / fSplittingFactor;
-  fParticleChange.ProposeWeight(gammaWeight);
-  //G4cout << "gammaWeight " << gammaWeight << G4endl;
 
   // -- inform we will have (fSplittingFactor-1) gamma's + 1 electron:
   fParticleChange.SetNumberOfSecondaries( fSplittingFactor );
@@ -139,7 +159,11 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 		  gammaTrack->SetTrackStatus(actualParticleChange->GetTrackStatus());
 		  gammaTrack->SetPolarization(actualParticleChange->GetProposedPolarization());
 
-
+		  G4bool out = outOfRing (gammaTrack->GetPosition(), actualParticleChange->GetProposedMomentumDirection(), parameters.MyparamsGeometry.detectorY ,
+				  parameters.MyparamsGeometry.detectorY*(-1), parameters.MyparamsGeometry.radius);
+		  if (out) {
+			  G4cout << "out" << G4endl;
+		  }
 
 		  fsplitTracksVector.push_back(gammaTrack);
           fParticleChange.G4VParticleChange::AddSecondary( gammaTrack );

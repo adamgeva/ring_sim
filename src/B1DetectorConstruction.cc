@@ -192,16 +192,17 @@ void B1DetectorConstruction::ConstructSDandField()
 //  B1BOptrMultiParticleChangeCrossSection* testMany = new B1BOptrMultiParticleChangeCrossSection();
 //  testMany->AddParticle("gamma");
 //  testMany->AttachTo(logicTest);
+//  testMany->AttachTo(logicWorld);
 //   ----------------------------------------------
 //   -- operator creation and attachment to volume:
 //   ----------------------------------------------
   B1BOptrComptLE* comptLEOptr =  new B1BOptrComptLE("gamma","LEOperator");
   comptLEOptr->AttachTo(logicTest);
   comptLEOptr->AttachTo(logicWorld);
-//  //comptLEOptr->AttachTo(logicTestBone);
-//  G4cout << " Attaching biasing operator " << comptLEOptr->GetName()
-//         << " to logical volume " << logicTest->GetName()
-//         << G4endl;
+  //comptLEOptr->AttachTo(logicTestBone);
+  G4cout << " Attaching biasing operator " << comptLEOptr->GetName()
+         << " to logical volume " << logicTest->GetName()
+         << G4endl;
 
 //  G4BOptrForceCollision* OptrForceCollision =  new G4BOptrForceCollision("gamma","forceCollision");
 //  OptrForceCollision->AttachTo(logicTest);
