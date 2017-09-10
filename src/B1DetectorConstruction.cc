@@ -31,20 +31,21 @@
 
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
-  worldLV(),
-  detectorPixelLV(0),
-  fVisAttributes(),
+
+  fNoFiles(0),
+  fContainer_solid(0),
+  fContainer_logic(0),
+  fContainer_phys(0),
+  fMateIDs(0),
   fNVoxelX(0),
   fNVoxelY(0),
   fNVoxelZ(0),
   fVoxelHalfDimX(0),
   fVoxelHalfDimY(0),
   fVoxelHalfDimZ(0),
-  fContainer_solid(0),
-  fContainer_logic(0),
-  fContainer_phys(0),
-  fNoFiles(0),
-  fMateIDs(0)
+  worldLV(),
+  detectorPixelLV(0),
+  fVisAttributes()
 { }
 
 B1DetectorConstruction::~B1DetectorConstruction()
@@ -183,10 +184,9 @@ void B1DetectorConstruction::ReadPhantomData()
 	params parameters;
 
     fNoFiles = parameters.MyparamsGeometry.numberOfZSlices;
-    G4int x=10000; //starting value for file names
     for(G4int i = 0; i < fNoFiles; i++ ) {
         //--- Read one data file
-        G4String fileName = parameters.MyparamsGeometry.phantomFileName + IntToString(x+i) + ".txt";
+        G4String fileName = parameters.MyparamsGeometry.phantomFileName + IntToString(i) + ".txt";
         ReadPhantomDataFile(fileName,i);
     }
 }

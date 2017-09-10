@@ -11,7 +11,7 @@ B1PhantomParameterisationColour::B1PhantomParameterisationColour()
 {
     ReadColourData();
     //TODO: originally it was set to false
-    SetSkipEqualMaterials(false);
+    SetSkipEqualMaterials(1);
 }
 
 B1PhantomParameterisationColour::~B1PhantomParameterisationColour()
