@@ -29,13 +29,34 @@
 #include "G4BOptrForceCollision.hh"
 
 
+#include "G4UserLimits.hh"
+
 #include <math.h>
 #include <iostream>
 
 
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
+<<<<<<< HEAD
   detectorPixelLV(0),fVisAttributes()
+=======
+
+  fNoFiles(0),
+  fvoxel_logic(0),
+  fContainer_solid(0),
+  fContainer_logic(0),
+  fContainer_phys(0),
+  fMateIDs(0),
+  fNVoxelX(0),
+  fNVoxelY(0),
+  fNVoxelZ(0),
+  fVoxelHalfDimX(0),
+  fVoxelHalfDimY(0),
+  fVoxelHalfDimZ(0),
+  worldLV(),
+  detectorPixelLV(0),
+  fVisAttributes()
+>>>>>>> 151560d... added option for not tracking electrons
 { }
 
 B1DetectorConstruction::~B1DetectorConstruction()
@@ -172,6 +193,17 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	visAttributes = new G4VisAttributes(G4Colour(0.0,0.0,1.0));
 	waterPhantomLV->SetVisAttributes(visAttributes);
 	fVisAttributes.push_back(visAttributes);
+
+
+	// User Limits
+
+  // Set additional contraints on the track, with G4UserSpecialCuts
+  //
+   G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = 60*keV;
+   detectorPixelLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
+   if (parameters.MyparamsGeometry.buildPhantom==1){
+	   fvoxel_logic->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
+   }
 
 	//always return the physical World
 	return worldPHS;

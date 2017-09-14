@@ -47,6 +47,7 @@ public:
 		G4double MaxPhi = 0;
 	}MyparamsGun;
 
+<<<<<<< HEAD
 	struct Bias{
 		//G4int ComptSplittingFactor = 10;
 		G4int splittingFactorNp = 70;
@@ -56,6 +57,11 @@ public:
 		G4int BiasTimes = 4;
 
 	}Bias;
+=======
+	struct Biasing{
+			G4bool cutElectrons = true;
+		}Biasing;
+>>>>>>> 151560d... added option for not tracking electrons
 
 	struct MyparamsGeometry{
 		G4double worldXY = 70*cm; //half sizes
