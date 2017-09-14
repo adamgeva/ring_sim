@@ -24,6 +24,8 @@
 #include "G4GeometryTolerance.hh"
 #include "G4GeometryManager.hh"
 
+#include "G4UserLimits.hh"
+
 #include <math.h>
 #include <iostream>
 
@@ -33,6 +35,7 @@ B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
 
   fNoFiles(0),
+  fvoxel_logic(0),
   fContainer_solid(0),
   fContainer_logic(0),
   fContainer_phys(0),
@@ -174,6 +177,17 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 		ConstructPhantomContainer();
 		ConstructPhantom();
 	}
+
+
+	// User Limits
+
+  // Set additional contraints on the track, with G4UserSpecialCuts
+  //
+   G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = 60*keV;
+   detectorPixelLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
+   if (parameters.MyparamsGeometry.buildPhantom==1){
+	   fvoxel_logic->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
+   }
 
 	//always return the physical World
 	return worldPHS;

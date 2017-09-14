@@ -49,6 +49,10 @@ public:
 		G4double MaxPhi = 0;
 	}MyparamsGun;
 
+	struct Biasing{
+			G4bool cutElectrons = true;
+		}Biasing;
+
 	struct MyparamsGeometry{
 		G4double worldXY = 70*cm; //half sizes
 		G4double worldZ = 70*cm;

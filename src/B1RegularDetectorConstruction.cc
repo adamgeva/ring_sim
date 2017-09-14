@@ -88,13 +88,14 @@ void B1RegularDetectorConstruction::ConstructPhantom()
   //----- Define voxel logical volume
   G4Box* voxel_solid = 
     new G4Box( "Voxel", fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ);
-  G4LogicalVolume* voxel_logic = 
-    new G4LogicalVolume(voxel_solid,fMaterials[0],"VoxelLogical",
-                             0,0,0);
+//  G4LogicalVolume* voxel_logic =
+//    new G4LogicalVolume(voxel_solid,fMaterials[0],"VoxelLogical",
+//                             0,0,0);
+  fvoxel_logic = new G4LogicalVolume(voxel_solid,fMaterials[0],"VoxelLogical",0,0,0);
   // material is not relevant, it will be changed by the
   // ComputeMaterial method of the parameterisation
 
-  voxel_logic->SetVisAttributes(new G4VisAttributes(G4VisAttributes::GetInvisible()));
+  fvoxel_logic->SetVisAttributes(new G4VisAttributes(G4VisAttributes::GetInvisible()));
     
   //--- Assign the fContainer volume of the parameterisation
   param->BuildContainerSolid(fContainer_phys);
@@ -108,7 +109,7 @@ void B1RegularDetectorConstruction::ConstructPhantom()
   //----- The G4PVParameterised object that uses the created parameterisation
   // should be placed in the fContainer logical volume
   G4PVParameterised * phantom_phys = 
-    new G4PVParameterised("phantom",voxel_logic,fContainer_logic,
+    new G4PVParameterised("phantom",fvoxel_logic,fContainer_logic,
                           kXAxis, fNVoxelX*fNVoxelY*fNVoxelZ, param);
   // if axis is set as kUndefined instead of kXAxis, GEANT4 will 
   //  do an smart voxel optimisation 

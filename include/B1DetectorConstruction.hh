@@ -44,6 +44,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 
   protected:
     G4int fNoFiles; // number of Phantom files- each file is one Z slice
+    G4LogicalVolume* fvoxel_logic;
     G4Box* fContainer_solid;
    	G4LogicalVolume* fContainer_logic;
    	G4VPhysicalVolume* fContainer_phys;
@@ -70,6 +71,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 	//logical detectors
     G4LogicalVolume* detectorPixelLV;
     std::vector<G4VisAttributes*> fVisAttributes;
+
 
 
 };

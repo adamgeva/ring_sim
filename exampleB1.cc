@@ -17,6 +17,7 @@
 #include "FTFP_BERT.hh"
 #include "G4PhysListFactory.hh"
 #include "G4EmPenelopePhysics.hh"
+#include "B1ExtraPhysics.hh"
 
 #include "G4Run.hh"
 
@@ -34,6 +35,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4Material.hh"
 
+#include "G4StepLimiterPhysics.hh"
 
 
 
@@ -78,6 +80,10 @@ int main(int argc,char** argv)
 	//FTFP_BERT_PEN
 	//G4VModularPhysicsList* physicsList = new QBBC;
 	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
+
+	if (parameters.Biasing.cutElectrons==true) {
+	physicsList->RegisterPhysics(new B1ExtraPhysics());
+	}
 	runManager->SetUserInitialization(physicsList);
 
 
