@@ -47,10 +47,16 @@ public:
   // -- Additional methods, specific to this class:
   // ----------------------------------------------
   // -- Splitting factor:
-  void     SetSplittingFactor(G4int splittingFactor)
-  { fSplittingFactor = splittingFactor; }
-  G4int GetSplittingFactor() const
-  { return fSplittingFactor; }
+  void     SetSplittingFactors(G4int splittingFactorNp, G4int splittingFactorNs)
+  {
+	fSplittingFactorNp = splittingFactorNp;
+	fSplittingFactorNs = splittingFactorNs;
+  }
+
+  G4int GetSplittingFactorNp() const
+  { return fSplittingFactorNp; }
+  G4int GetSplittingFactorNs() const
+  { return fSplittingFactorNs; }
 
   G4Track* GetSplitTrack();
   G4int GetNumOfTracksCopied()
@@ -59,10 +65,12 @@ public:
 
 
 private:
-  G4int            fSplittingFactor;
+  G4int            fSplittingFactorNp;
+  G4int            fSplittingFactorNs;
   //G4ParticleChange fParticleChange;
   G4ParticleChangeForGamma fParticleChange;
   std::vector<G4Track*>  fsplitTracksVector;
+  G4int                  fFSModelID;
 
 };
 

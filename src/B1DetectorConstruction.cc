@@ -23,7 +23,7 @@
 
 #include "G4LogicalVolumeStore.hh"
 #include "B1BOptrMultiParticleChangeCrossSection.hh"
-#include "B1BOptrComptLE.hh"
+#include "B1BOptrFS.hh"
 
 
 #include "G4BOptrForceCollision.hh"
@@ -183,7 +183,7 @@ void B1DetectorConstruction::ConstructSDandField()
 
   // -- Fetch volume for biasing:
   G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("water_phantom");
-  G4LogicalVolume* logicWorld = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
+  //G4LogicalVolume* logicWorld = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
   //G4LogicalVolume* logicTestBone = G4LogicalVolumeStore::GetInstance()->GetVolume("bone");
 
 //  // ----------------------------------------------
@@ -196,11 +196,11 @@ void B1DetectorConstruction::ConstructSDandField()
 //   ----------------------------------------------
 //   -- operator creation and attachment to volume:
 //   ----------------------------------------------
-  B1BOptrComptLE* comptLEOptr =  new B1BOptrComptLE("gamma","LEOperator");
-  comptLEOptr->AttachTo(logicTest);
-  comptLEOptr->AttachTo(logicWorld);
+  B1BOptrFS* FSOptr =  new B1BOptrFS("gamma","FSOperator");
+  FSOptr->AttachTo(logicTest);
+  //FSOptr->AttachTo(logicWorld);
   //comptLEOptr->AttachTo(logicTestBone);
-  G4cout << " Attaching biasing operator " << comptLEOptr->GetName()
+  G4cout << " Attaching biasing operator " << FSOptr->GetName()
          << " to logical volume " << logicTest->GetName()
          << G4endl;
 

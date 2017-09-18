@@ -32,46 +32,48 @@ G4bool RR (G4double p)
 
 //Check in or out of ring - true if out
 G4bool outOfRing (G4ThreeVector position, G4ThreeVector momentumDirection, G4double Zup , G4double Zdown, G4double ringRadius) {
-	G4double dx = momentumDirection[0];
-	G4double dy = momentumDirection[1];
-	G4double dz = momentumDirection[2];
-	G4double x = position[0];
-	G4double y = position[1];
-	G4double z = position[2];
-	G4double alpha = 1/(sqrt(pow(dx,2)+pow(dy,2)));
 
-	//normalize to unit size vector in XY plane by multiplying by alpha
-	G4double dxNorm = dx*alpha;
-	G4double dyNorm = dy*alpha;
+	G4double P1x = momentumDirection[0];
+	G4double P1y = momentumDirection[1];
+	G4double P1z = momentumDirection[2];
+	G4double P0x = position[0];
+	G4double P0y = position[1];
+	G4double P0z = position[2];
+	//normalize P0 to unit vector in x,y - p0 (small letters)
+	G4double P0Norm = sqrt(pow(P0x,2)+pow(P0y,2));
+	G4double p0x = P0x/P0Norm;
+	G4double p0y = P0y/P0Norm;
+	//normalize P1 to unit vector in x,y - p1 (small letters)
+	G4double P1Norm = sqrt(pow(P1x,2)+pow(P1y,2));
+	G4double p1x = P1x/P1Norm;
+	G4double p1y = P1y/P1Norm;
 	//calc angles
-	G4double theta1 = atan (abs(y)/abs(x)) * 180 / PI;
-	//G4double theta2 = 90 - theta1;
-	G4double theta3 = atan (abs(dyNorm)/abs(dxNorm)) * 180 / PI;
-	G4double gamma = theta1 + theta3;
+	G4double alpha = acos(-(p0x*p1x + p0y*p1y));
+	G4double gamma = asin((P0Norm/ringRadius)*sin(alpha));
 	//calc ll
-	G4double ll = (ringRadius/sin(gamma)) * sin(90-theta1);
+	G4double ll = sin(alpha+gamma)*(P0Norm/sin(gamma));
+
 	//find intersection on the ring
-	G4double xRing = x + ll*dxNorm;
-	G4double yRing = y + ll*dyNorm;
+	G4double xRing = P0x + ll*p1x;
+	G4double yRing = P0y + ll*p1y;
 	//up ring vector - from current photon position to up ring
 	G4double zRing = Zup;
-	G4double vecx = xRing - x;
-	G4double vecy = yRing - y;
-	G4double vecz = zRing - z;
-	G4double upAngle = atan(vecz/(sqrt(pow(vecx,2)+pow(vecy,2)))) * 180 / PI;
+	G4double vecx = xRing - P0x;
+	G4double vecy = yRing - P0y;
+	G4double vecz = zRing - P0z;
+	G4double upAngle = atan(abs(vecz)/(sqrt(pow(vecx,2)+pow(vecy,2)))) * 180 / PI;
 	//down ring vector
 	zRing = Zdown;
-	vecx = xRing - x;
-	vecy = yRing - y;
-	vecz = zRing - z;
+	vecz = zRing - P0z;
 	G4double downAngle = atan(abs(vecz)/(sqrt(pow(vecx,2)+pow(vecy,2)))) * 180 / PI;
 	//calc current angle
-	G4double currentAngle = atan(abs(dz)/(sqrt(pow(dx,2)+pow(dy,2)))) * 180 / PI;
+	G4double currentAngle = atan(abs(P1z)/(sqrt(pow(P1x,2)+pow(P1y,2)))) * 180 / PI;
 	//check if out bound or not
 	if (currentAngle>upAngle || currentAngle<downAngle) {
 		return true; //out
 	}
 	return false;
+
 }
 //G4ThreeVector Mom = actualParticleChange->GetProposedMomentumDirection();
 //G4cout << "Mom = " << Mom << G4endl;

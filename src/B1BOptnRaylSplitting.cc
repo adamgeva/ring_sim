@@ -1,5 +1,5 @@
 #include "B1BOptnRaylSplitting.hh"
-#include "B1BOptrComptLE.hh"
+#include "B1BOptrFS.hh"
 #include <vector>
 
 #include "G4BiasingProcessInterface.hh"
