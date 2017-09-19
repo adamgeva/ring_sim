@@ -54,7 +54,7 @@ public:
 		G4bool BiasPrimaryOnly = true;
 		G4bool BiasOnlyOnce = false;
 		G4int BiasTimes = 4;
-		G4double RRP = 0.1; //russian roullete probabilty to survive
+
 	}Bias;
 
 	struct MyparamsGeometry{

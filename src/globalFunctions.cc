@@ -48,8 +48,8 @@ G4bool outOfRing (G4ThreeVector position, G4ThreeVector momentumDirection, G4dou
 	G4double p1x = P1x/P1Norm;
 	G4double p1y = P1y/P1Norm;
 	//calc angles
-	G4double alpha = acos(-(p0x*p1x + p0y*p1y));
-	G4double gamma = asin((P0Norm/ringRadius)*sin(alpha));
+	G4double alpha = acos(-(p0x*p1x + p0y*p1y)); //radians
+	G4double gamma = asin((P0Norm/ringRadius)*sin(alpha)); //radians
 	//calc ll
 	G4double ll = sin(alpha+gamma)*(P0Norm/sin(gamma));
 
@@ -61,13 +61,16 @@ G4bool outOfRing (G4ThreeVector position, G4ThreeVector momentumDirection, G4dou
 	G4double vecx = xRing - P0x;
 	G4double vecy = yRing - P0y;
 	G4double vecz = zRing - P0z;
-	G4double upAngle = atan(abs(vecz)/(sqrt(pow(vecx,2)+pow(vecy,2)))) * 180 / PI;
+	G4double upAngle = atan(fabs(vecz)/(sqrt(pow(vecx,2)+pow(vecy,2)))) * 180 / PI;
+	if (vecz<0) {upAngle=upAngle*-(-1);}
 	//down ring vector
 	zRing = Zdown;
 	vecz = zRing - P0z;
-	G4double downAngle = atan(abs(vecz)/(sqrt(pow(vecx,2)+pow(vecy,2)))) * 180 / PI;
+	G4double downAngle = atan(fabs(vecz)/(sqrt(pow(vecx,2)+pow(vecy,2)))) * 180 / PI;
+	if (vecz<0) {downAngle=downAngle*(-1);}
 	//calc current angle
-	G4double currentAngle = atan(abs(P1z)/(sqrt(pow(P1x,2)+pow(P1y,2)))) * 180 / PI;
+	G4double currentAngle = atan(fabs(P1z)/(sqrt(pow(P1x,2)+pow(P1y,2)))) * (180 / PI);
+	if (P1z<0) {currentAngle=currentAngle*(-1);}
 	//check if out bound or not
 	if (currentAngle>upAngle || currentAngle<downAngle) {
 		return true; //out

@@ -29,15 +29,15 @@ B1BOptnComptSplitting::~B1BOptnComptSplitting()
 {
 }
 
-G4Track* B1BOptnComptSplitting::GetSplitTrack()
-{
-	if (!fsplitTracksVector.empty()) {
-		G4Track* track = fsplitTracksVector.back();
-		fsplitTracksVector.pop_back();
-		return track;
-	}
-	return nullptr;
-}
+//G4Track* B1BOptnComptSplitting::GetSplitTrack()
+//{
+//	if (!fsplitTracksVector.empty()) {
+//		G4Track* track = fsplitTracksVector.back();
+//		fsplitTracksVector.pop_back();
+//		return track;
+//	}
+//	return nullptr;
+//}
 
 G4VParticleChange*
 B1BOptnComptSplitting::
@@ -109,15 +109,15 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
   else // main photon is heading out - we need to kill him but not his secondaries - after playin RR
   {
 	 //play Russian Roullete
-	 G4bool survive = RR(parameters.Bias.RRP);
+	 G4bool survive = RR(1/fSplittingFactorNs);
 	 if (survive)
 	 {
+		 G4cout<<"Survived"<<G4endl;
 	   //correct weigth
-	   G4double gammaWeightTemp = gammaWeight*(1/parameters.Bias.RRP);
-	   B1BOptrFSTrackData* SecondaryAuxTrackData = new B1BOptrFSTrackData(AuxTrackData->GetOptr());
-	   SecondaryAuxTrackData->fFSState = FSState::start;
-	   SecondaryAuxTrackData->SetSecondary();
-	   track->SetAuxiliaryTrackInformation(fFSModelID, SecondaryAuxTrackData);
+	   G4double gammaWeightTemp = gammaWeight*(fSplittingFactorNs);
+	   AuxTrackData->fFSState = FSState::start;
+	   AuxTrackData->SetSecondary();
+	   track->SetAuxiliaryTrackInformation(fFSModelID, AuxTrackData);
 	   fParticleChange.ProposeWeight(gammaWeightTemp);
 	   //G4cout << "gammaWeight " << gammaWeight << G4endl;
 	   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
@@ -127,9 +127,14 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 	 }
 	 else //kill by setting 0 kinetic energy
 	 {
+		 G4cout<<"Died"<<G4endl;
 	   fParticleChange.ProposeWeight(0.0);
 	   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
 	   fParticleChange.SetProposedKineticEnergy( 0.0 );
+	   //THIS IS DONE FOR CONSISTENCY
+	   AuxTrackData->fFSState = FSState::start;
+	   AuxTrackData->SetSecondary();
+	   track->SetAuxiliaryTrackInformation(fFSModelID, AuxTrackData);
      }
   }
 
@@ -190,28 +195,30 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 			  SecondaryAuxTrackData->fFSState = FSState::toBeFreeFlight;
 			  SecondaryAuxTrackData->SetSecondary();
 			  gammaTrack->SetAuxiliaryTrackInformation(fFSModelID, SecondaryAuxTrackData);
-			  fsplitTracksVector.push_back(gammaTrack);
+//			  fsplitTracksVector.push_back(gammaTrack);
 			  fParticleChange.G4VParticleChange::AddSecondary( gammaTrack );
           }
 		  else//not direct to the detector
 	      {
 			 //play Russian Roullete
-			 G4bool survive = RR(parameters.Bias.RRP);
+			 G4bool survive = RR(1/fSplittingFactorNs);
 			 if (survive)
 			 {
+				 G4cout<<"Survived"<<G4endl;
 			   //correct weigth
-			   G4double gammaWeightTemp = gammaWeight*(1/parameters.Bias.RRP);
+			   G4double gammaWeightTemp = gammaWeight*(fSplittingFactorNs);
 		       gammaTrack->SetWeight( gammaWeightTemp );
 			   B1BOptrFSTrackData* SecondaryAuxTrackData = new B1BOptrFSTrackData(AuxTrackData->GetOptr());
 			   SecondaryAuxTrackData->fFSState = FSState::start;
 			   SecondaryAuxTrackData->SetSecondary();
 			   gammaTrack->SetAuxiliaryTrackInformation(fFSModelID, SecondaryAuxTrackData);
-			   fsplitTracksVector.push_back(gammaTrack);
+//			   fsplitTracksVector.push_back(gammaTrack);
 			   fParticleChange.G4VParticleChange::AddSecondary( gammaTrack );
 
 			 }
 			 else //just don't add to secondaries list
 			 {
+				 G4cout<<"Died"<<G4endl;
 			   //kill photon
 			 }
 	      }

@@ -5,7 +5,8 @@
 
 B1BOptrFSTrackData::B1BOptrFSTrackData( const B1BOptrFS* optr )
 : G4VAuxiliaryTrackInformation(),
-  fFSOperator( optr )
+  fFSOperator( optr ),
+  primary(true)
 {
   fFSState = FSState::start;
 }

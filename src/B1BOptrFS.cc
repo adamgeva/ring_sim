@@ -39,7 +39,7 @@ B1BOptrFS::B1BOptrFS(G4String particleName, G4String name)
   //set splitting factors in these operations
   //todo: is that the best way to do it?
   fComptSplittingOperation->SetSplittingFactors ( fSplittingFactorNp,fSplittingFactorNs );
-  //fRaylSplittingOperation ->SetSplittingFactors ( fSplittingFactorNp,fSplittingFactorNs );
+  fRaylSplittingOperation ->SetSplittingFactors ( fSplittingFactorNp,fSplittingFactorNs );
 
   fParticleToBias = G4ParticleTable::GetParticleTable()->FindParticle(particleName);
 
@@ -203,14 +203,14 @@ G4VBiasingOperation* B1BOptrFS::ProposeFinalStateBiasingOperation(const G4Track*
 	  operationToReturn = fComptSplittingOperation;
 	}
 	//check if its time for rayl splitting:
-//	else if (callingProcess->GetProcessName() == "biasWrapper(Rayl)")
-//	{
-//	  //send Rayl splitting operation:
-//	  // -- Return the Rayl. splitting operation:
-//	  fInitialTrackWeight = track->GetWeight();
-//	  fCurrentTrackData->fFSState = FSState::toBeSplitRayl;
-//	  operationToReturn = fRaylSplittingOperation;
-//	}
+	else if (callingProcess->GetProcessName() == "biasWrapper(Rayl)")
+	{
+	  //send Rayl splitting operation:
+	  // -- Return the Rayl. splitting operation:
+	  fInitialTrackWeight = track->GetWeight();
+	  fCurrentTrackData->fFSState = FSState::toBeSplitRayl;
+	  operationToReturn = fRaylSplittingOperation;
+	}
   }
   //TODO: could the state be any different???
 

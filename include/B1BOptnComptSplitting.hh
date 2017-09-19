@@ -58,9 +58,9 @@ public:
   G4int GetSplittingFactorNs() const
   { return fSplittingFactorNs; }
 
-  G4Track* GetSplitTrack();
-  G4int GetNumOfTracksCopied()
-  { return fsplitTracksVector.size(); }
+//  G4Track* GetSplitTrack();
+//  G4int GetNumOfTracksCopied()
+//  { return fsplitTracksVector.size(); }
 
 
 
@@ -69,7 +69,7 @@ private:
   G4int            fSplittingFactorNs;
   //G4ParticleChange fParticleChange;
   G4ParticleChangeForGamma fParticleChange;
-  std::vector<G4Track*>  fsplitTracksVector;
+  //std::vector<G4Track*>  fsplitTracksVector;
   G4int                  fFSModelID;
 
 };
