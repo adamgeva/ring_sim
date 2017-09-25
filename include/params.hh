@@ -33,7 +33,7 @@ public:
 		int runVerbose = 1;
 		int eventVerbose = 0;
 		int trackVerbose = 0;
-		G4int onOffBiasing = 0; //set to 1 for on biasing
+		G4int onOffBiasing = 1; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 	}Myparams;
 
@@ -47,7 +47,6 @@ public:
 		G4double MaxPhi = 0;
 	}MyparamsGun;
 
-<<<<<<< HEAD
 	struct Bias{
 		//G4int ComptSplittingFactor = 10;
 		G4int splittingFactorNp = 70;
@@ -55,13 +54,10 @@ public:
 		G4bool BiasPrimaryOnly = true;
 		G4bool BiasOnlyOnce = false;
 		G4int BiasTimes = 4;
+		G4bool cutElectrons = true;
 
 	}Bias;
-=======
-	struct Biasing{
-			G4bool cutElectrons = true;
-		}Biasing;
->>>>>>> 151560d... added option for not tracking electrons
+
 
 	struct MyparamsGeometry{
 		G4double worldXY = 70*cm; //half sizes

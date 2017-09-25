@@ -11,17 +11,15 @@
 #include "G4RunManager.hh"
 #endif
 
+#include "G4GenericBiasingPhysics.hh"
 #include "G4UImanager.hh"
 #include "G4ScoringManager.hh"
 #include "QBBC.hh"
 #include "FTFP_BERT.hh"
 #include "G4PhysListFactory.hh"
 #include "G4EmPenelopePhysics.hh"
-<<<<<<< HEAD
-#include "G4GenericBiasingPhysics.hh"
-=======
+
 #include "B1ExtraPhysics.hh"
->>>>>>> 151560d... added option for not tracking electrons
 
 #include "G4Run.hh"
 
@@ -110,7 +108,7 @@ int main(int argc,char** argv)
 
 	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
 
-	if (parameters.Biasing.cutElectrons==true) {
+	if (parameters.Bias.cutElectrons==true) {
 	physicsList->RegisterPhysics(new B1ExtraPhysics());
 	}
 	runManager->SetUserInitialization(physicsList);

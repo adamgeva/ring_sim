@@ -37,26 +37,8 @@
 
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
-<<<<<<< HEAD
   detectorPixelLV(0),fVisAttributes()
-=======
 
-  fNoFiles(0),
-  fvoxel_logic(0),
-  fContainer_solid(0),
-  fContainer_logic(0),
-  fContainer_phys(0),
-  fMateIDs(0),
-  fNVoxelX(0),
-  fNVoxelY(0),
-  fNVoxelZ(0),
-  fVoxelHalfDimX(0),
-  fVoxelHalfDimY(0),
-  fVoxelHalfDimZ(0),
-  worldLV(),
-  detectorPixelLV(0),
-  fVisAttributes()
->>>>>>> 151560d... added option for not tracking electrons
 { }
 
 B1DetectorConstruction::~B1DetectorConstruction()
@@ -201,9 +183,8 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
   //
    G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = 60*keV;
    detectorPixelLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
-   if (parameters.MyparamsGeometry.buildPhantom==1){
-	   fvoxel_logic->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
-   }
+   waterPhantomLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
+
 
 	//always return the physical World
 	return worldPHS;
