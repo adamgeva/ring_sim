@@ -112,7 +112,6 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 	 G4bool survive = RR(1/fSplittingFactorNs);
 	 if (survive)
 	 {
-		 G4cout<<"Survived"<<G4endl;
 	   //correct weigth
 	   G4double gammaWeightTemp = gammaWeight*(fSplittingFactorNs);
 	   AuxTrackData->fFSState = FSState::start;
@@ -127,7 +126,6 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 	 }
 	 else //kill by setting 0 kinetic energy
 	 {
-		 G4cout<<"Died"<<G4endl;
 	   fParticleChange.ProposeWeight(0.0);
 	   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
 	   fParticleChange.SetProposedKineticEnergy( 0.0 );
@@ -204,7 +202,6 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 			 G4bool survive = RR(1/fSplittingFactorNs);
 			 if (survive)
 			 {
-				 G4cout<<"Survived"<<G4endl;
 			   //correct weigth
 			   G4double gammaWeightTemp = gammaWeight*(fSplittingFactorNs);
 		       gammaTrack->SetWeight( gammaWeightTemp );
@@ -218,7 +215,6 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 			 }
 			 else //just don't add to secondaries list
 			 {
-				 G4cout<<"Died"<<G4endl;
 			   //kill photon
 			 }
 	      }
