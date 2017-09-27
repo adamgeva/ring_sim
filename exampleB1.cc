@@ -38,6 +38,7 @@
 #include "G4Material.hh"
 
 #include "G4StepLimiterPhysics.hh"
+#include "B1ModularPhysicsList.hh"
 
 
 
@@ -75,10 +76,14 @@ int main(int argc,char** argv)
 	runManager->SetUserInitialization(new B1DetectorConstruction());
 
 	// Physics list
-	G4PhysListFactory factory;
-	G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_PEN");
+//	G4PhysListFactory factory;
+//	G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_PEN");
 	//FTFP_BERT_PEN
 	//G4VModularPhysicsList* physicsList = new QBBC;
+
+	B1ModularPhysicsList* physicsList = new B1ModularPhysicsList("myList");
+
+	//physicsList->SetCutsForRegion(10*km,"waterRegion");
 
 	//biasing
 	G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();

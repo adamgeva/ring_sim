@@ -183,8 +183,13 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
   //
    G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = 60*keV;
    detectorPixelLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
-   waterPhantomLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
+   //waterPhantomLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
 
+  //-------------------regions-------------------
+
+   G4Region* waterRegion = new G4Region("waterRegion");
+   waterPhantomLV->SetRegion(waterRegion);
+   waterRegion->AddRootLogicalVolume(waterPhantomLV);
 
 	//always return the physical World
 	return worldPHS;

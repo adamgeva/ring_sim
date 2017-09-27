@@ -104,7 +104,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
   else // main photon is heading out - we need to kill him but not his secondaries - after playin RR
   {
 	 //play Russian Roullete
-	 G4bool survive = RR(1/fSplittingFactorNs);
+	 G4bool survive = RR(1.0/G4double(fSplittingFactorNs));
 	 if (survive)
 	 {
 	   //correct weigth
@@ -187,7 +187,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 		  else//not direct to the detector
 	      {
 			 //play Russian Roullete
-			 G4bool survive = RR(1/fSplittingFactorNs);
+			 G4bool survive = RR(1.0/G4double(fSplittingFactorNs));
 			 if (survive)
 			 {
 			   //correct weigth

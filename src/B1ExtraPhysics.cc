@@ -59,6 +59,12 @@ void B1ExtraPhysics::ConstructProcess()
            pmanager->AddDiscreteProcess(new G4StepLimiter());
            pmanager->AddDiscreteProcess(new G4UserSpecialCuts());
         }
+        if (particleName == "gamma") {
+                   // All charged particles should have a step limiter
+                   // to make sure that the steps do not get too long.
+                   pmanager->AddDiscreteProcess(new G4StepLimiter());
+                   pmanager->AddDiscreteProcess(new G4UserSpecialCuts());
+        }
 //        } else if (particleName == "neutron") {
 //          // time cuts for ONLY neutrons:
 //          pmanager->AddDiscreteProcess(new G4UserSpecialCuts());

@@ -109,9 +109,10 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
   else // main photon is heading out - we need to kill him but not his secondaries - after playin RR
   {
 	 //play Russian Roullete
-	 G4bool survive = RR(1/fSplittingFactorNs);
+	 G4bool survive = RR(1.0/G4double(fSplittingFactorNs));
 	 if (survive)
 	 {
+	   //G4cout << "Survived: main photon" << G4endl;
 	   //correct weigth
 	   G4double gammaWeightTemp = gammaWeight*(fSplittingFactorNs);
 	   AuxTrackData->fFSState = FSState::start;
@@ -126,6 +127,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 	 }
 	 else //kill by setting 0 kinetic energy
 	 {
+		 //G4cout << "Killed: main photon" << G4endl;
 	   fParticleChange.ProposeWeight(0.0);
 	   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
 	   fParticleChange.SetProposedKineticEnergy( 0.0 );
@@ -199,9 +201,10 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 		  else//not direct to the detector
 	      {
 			 //play Russian Roullete
-			 G4bool survive = RR(1/fSplittingFactorNs);
+			 G4bool survive = RR(1.0/G4double(fSplittingFactorNs));
 			 if (survive)
 			 {
+			   //G4cout << "Survived: secondary photon" << G4endl;
 			   //correct weigth
 			   G4double gammaWeightTemp = gammaWeight*(fSplittingFactorNs);
 		       gammaTrack->SetWeight( gammaWeightTemp );
@@ -215,6 +218,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 			 }
 			 else //just don't add to secondaries list
 			 {
+				 //G4cout << "Killed: secondary photon" << G4endl;
 			   //kill photon
 			 }
 	      }
