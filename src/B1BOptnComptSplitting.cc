@@ -129,7 +129,8 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 	 {
 		 //G4cout << "Killed: main photon" << G4endl;
 	   fParticleChange.ProposeWeight(0.0);
-	   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
+	   //fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
+	   fParticleChange.ProposeTrackStatus( fStopAndKill );
 	   fParticleChange.SetProposedKineticEnergy( 0.0 );
 	   //THIS IS DONE FOR CONSISTENCY
 	   AuxTrackData->fFSState = FSState::start;

@@ -12,7 +12,7 @@
 
 
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -33,7 +33,7 @@ public:
 		int runVerbose = 1;
 		int eventVerbose = 0;
 		int trackVerbose = 0;
-		G4int onOffBiasing = 0; //set to 1 for on biasing
+		G4int onOffBiasing = 1; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 	}Myparams;
 
@@ -54,7 +54,9 @@ public:
 		G4bool BiasPrimaryOnly = true;
 		G4bool BiasOnlyOnce = false;
 		G4int BiasTimes = 4;
-		G4bool cutElectrons = true;
+		G4bool detectorSpecialCuts = true;
+		G4bool phantomProductionCuts = true;
+		G4bool killElectrons = true;
 
 	}Bias;
 

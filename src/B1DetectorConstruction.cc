@@ -181,7 +181,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
   // Set additional contraints on the track, with G4UserSpecialCuts
   //
-   G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = 60*keV;
+   G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = parameters.MyparamsGun.particleEnergy + 5*keV;
    detectorPixelLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
    //waterPhantomLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
 

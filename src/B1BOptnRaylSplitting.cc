@@ -122,7 +122,8 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 	 else //kill by setting 0 kinetic energy
 	 {
 	   fParticleChange.ProposeWeight(0.0);
-	   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
+	   //fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
+	   fParticleChange.ProposeTrackStatus( fStopAndKill );
 	   fParticleChange.SetProposedKineticEnergy( 0.0 );
 	   //THIS IS DONE FOR CONSISTENCY
 	   AuxTrackData->fFSState = FSState::start;

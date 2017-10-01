@@ -76,12 +76,16 @@ int main(int argc,char** argv)
 	runManager->SetUserInitialization(new B1DetectorConstruction());
 
 	// Physics list
-//	G4PhysListFactory factory;
-//	G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_PEN");
-	//FTFP_BERT_PEN
-	//G4VModularPhysicsList* physicsList = new QBBC;
-
-	B1ModularPhysicsList* physicsList = new B1ModularPhysicsList("myList");
+	G4VModularPhysicsList* physicsList;
+	if (parameters.Bias.phantomProductionCuts == true){
+		physicsList = new B1ModularPhysicsList("myList");
+	}
+	else{
+		G4PhysListFactory factory;
+		physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
+		//FTFP_BERT_PEN
+		//G4VModularPhysicsList* physicsList = new QBBC;
+	}
 
 	//physicsList->SetCutsForRegion(10*km,"waterRegion");
 
@@ -113,7 +117,7 @@ int main(int argc,char** argv)
 
 	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
 
-	if (parameters.Bias.cutElectrons==true) {
+	if (parameters.Bias.detectorSpecialCuts==true) {
 	physicsList->RegisterPhysics(new B1ExtraPhysics());
 	}
 	runManager->SetUserInitialization(physicsList);

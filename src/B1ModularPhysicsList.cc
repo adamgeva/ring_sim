@@ -22,7 +22,7 @@
 
 B1ModularPhysicsList::B1ModularPhysicsList(G4String name) :  G4VModularPhysicsList(){
 
-	defaultCutValue  = 1.*mm;
+	defaultCutValue  = 2.*mm;
     fCutForGamma     = defaultCutValue;
 
 
@@ -60,7 +60,7 @@ void B1ModularPhysicsList::SetCuts()
 	  G4ProductionCuts* cuts = new G4ProductionCuts;
 	  //cuts->SetProductionCut(1*m); // same cuts  for gamma e- and e+
 	  //cuts->SetProductionCut(1000*km);
-	  cuts->SetProductionCut(5000*m,G4ProductionCuts::GetIndex("gamma"));
+	  cuts->SetProductionCut(1*cm,G4ProductionCuts::GetIndex("gamma"));
 	  cuts->SetProductionCut(5000*m,G4ProductionCuts::GetIndex("e-"));
 	  cuts->SetProductionCut(5000*m,G4ProductionCuts::GetIndex("e+"));
 	  region->SetProductionCuts(cuts);
