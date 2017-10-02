@@ -55,7 +55,12 @@ void B1TrackInformation::Print() const
 {
     G4cout
      << "Original track ID " << originalTrackID
-     << " at " << originalPosition << G4endl;
+     << " originalPosition " << originalPosition
+     << " originalMomentum " << originalMomentum
+     << " originalEnergy " << originalEnergy
+     << " numberOfCompton " << numberOfCompton
+     << " numberOfRayl " << numberOfRayl << G4endl;
+
 }
 
 

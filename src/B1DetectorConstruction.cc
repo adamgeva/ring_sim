@@ -23,6 +23,13 @@
 
 #include "G4GeometryTolerance.hh"
 #include "G4GeometryManager.hh"
+#include "G4LogicalVolumeStore.hh"
+#include "B1BOptrMultiParticleChangeCrossSection.hh"
+#include "B1BOptrFS.hh"
+
+
+#include "G4BOptrForceCollision.hh"
+
 
 #include "G4UserLimits.hh"
 
@@ -183,11 +190,17 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
   // Set additional contraints on the track, with G4UserSpecialCuts
   //
-   G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = 60*keV;
+   G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = parameters.MyparamsGun.particleEnergy + 5*keV;
    detectorPixelLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
-   if (parameters.MyparamsGeometry.buildPhantom==1){
-	   fvoxel_logic->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
-   }
+//   if (parameters.MyparamsGeometry.buildPhantom==1){
+//	   fvoxel_logic->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
+//   }
+
+ //-------------------regions-------------------
+
+   G4Region* voxel_region = new G4Region("voxelRegion");
+   fvoxel_logic->SetRegion(voxel_region);
+   voxel_region->AddRootLogicalVolume(fvoxel_logic);
 
 	//always return the physical World
 	return worldPHS;
@@ -940,18 +953,45 @@ void B1DetectorConstruction::ConstructSDandField()
 {
 	params parameters;
 
+// -- Fetch volume for biasing:
+//  G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("water_phantom");
+  //G4LogicalVolume* logicWorld = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
+  //G4LogicalVolume* logicTestBone = G4LogicalVolumeStore::GetInstance()->GetVolume("bone");
+
+//  // ----------------------------------------------
+//  // -- operator creation and attachment to volume:
+//  // ----------------------------------------------
+//  B1BOptrMultiParticleChangeCrossSection* testMany = new B1BOptrMultiParticleChangeCrossSection();
+//  testMany->AddParticle("gamma");
+//  testMany->AttachTo(logicTest);
+//  testMany->AttachTo(logicWorld);
+//   ----------------------------------------------
+//   -- operator creation and attachment to volume:
+//   ----------------------------------------------
+  B1BOptrFS* FSOptr =  new B1BOptrFS("gamma","FSOperator");
+  FSOptr->AttachTo(fvoxel_logic);
+  //FSOptr->AttachTo(logicWorld);
+  //comptLEOptr->AttachTo(logicTestBone);
+  G4cout << " Attaching biasing operator " << FSOptr->GetName()
+         << " to logical volume " << fvoxel_logic->GetName()
+         << G4endl;
+
+//  G4BOptrForceCollision* OptrForceCollision =  new G4BOptrForceCollision("gamma","forceCollision");
+//  OptrForceCollision->AttachTo(logicTest);
+//  //OptrForceCollision->AttachTo(logicTestBone);
+
 	// sensitive detectors
 	G4SDManager* SDman = G4SDManager::GetSDMpointer();
 	//detector1 - SD
 	//detector2 - Scorer
 	//creating my sensitive detector and adding it to the SD manager - the data will be saved in histograms only if record hist is on
-	if (parameters.Myparams.recordHist==1){
-		G4String SDname;
-		G4VSensitiveDetector* detector1 = new myDetectorSD(SDname="/detector1");
-		SDman->AddNewDetector(detector1);
-		//attaching my sensitive detector to the detector logical element
-		SetSensitiveDetector(detectorPixelLV,detector1);
-	}
+//	if (parameters.Myparams.recordHist==1){
+//		G4String SDname;
+//		G4VSensitiveDetector* detector1 = new myDetectorSD(SDname="/detector1");
+//		SDman->AddNewDetector(detector1);
+//		//attaching my sensitive detector to the detector logical element
+//		SetSensitiveDetector(detectorPixelLV,detector1);
+//	}
 	//creating scorer
 	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
 	SDman->AddNewDetector(detector2);

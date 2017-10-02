@@ -11,12 +11,14 @@
 #include "G4RunManager.hh"
 #endif
 
+#include "G4GenericBiasingPhysics.hh"
 #include "G4UImanager.hh"
 #include "G4ScoringManager.hh"
 #include "QBBC.hh"
 #include "FTFP_BERT.hh"
 #include "G4PhysListFactory.hh"
 #include "G4EmPenelopePhysics.hh"
+
 #include "B1ExtraPhysics.hh"
 
 #include "G4Run.hh"
@@ -36,6 +38,7 @@
 #include "G4Material.hh"
 
 #include "G4StepLimiterPhysics.hh"
+#include "B1ModularPhysicsList.hh"
 
 
 
@@ -75,13 +78,48 @@ int main(int argc,char** argv)
 	runManager->SetUserInitialization(theGeometry);
 
 	// Physics list
-	G4PhysListFactory factory;
-	G4VModularPhysicsList* physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
-	//FTFP_BERT_PEN
-	//G4VModularPhysicsList* physicsList = new QBBC;
+	G4VModularPhysicsList* physicsList;
+	if (parameters.Bias.phantomProductionCuts == true){
+		physicsList = new B1ModularPhysicsList();
+	}
+	else{
+		G4PhysListFactory factory;
+		physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
+		//FTFP_BERT_PEN
+		//G4VModularPhysicsList* physicsList = new QBBC;
+	}
+
+	//physicsList->SetCutsForRegion(10*km,"waterRegion");
+
+	//biasing
+	G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
+	  if ( parameters.Myparams.onOffBiasing == 1 )
+	    {
+	      //TODO:fix
+		  biasingPhysics->Bias("gamma");
+	      // -- Create list of physics processes to be biased: only brem. in this case:
+	      //TODO: is this necessary??
+	      //std::vector< G4String > processToBias;
+	      //processToBias.push_back("compt");
+	      // -- Pass the list to the G4GenericBiasingPhysics, which will wrap the eBrem
+	      // -- process of e- and e+ to activate the biasing of it:
+	      //biasingPhysics->PhysicsBias("gamma", processToBias);
+
+	      physicsList->RegisterPhysics(biasingPhysics);
+	      G4cout << "      ********************************************************* " << G4endl;
+	      G4cout << "      ********** processes are wrapped for biasing ************ " << G4endl;
+	      G4cout << "      ********************************************************* " << G4endl;
+	    }
+	  else
+	    {
+	      G4cout << "      ************************************************* " << G4endl;
+	      G4cout << "      ********** processes are not wrapped ************ " << G4endl;
+	      G4cout << "      ************************************************* " << G4endl;
+	    }
+
 	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
 
-	if (parameters.Biasing.cutElectrons==true) {
+	if (parameters.Bias.detectorSpecialCuts==true) {
 	physicsList->RegisterPhysics(new B1ExtraPhysics());
 	}
 	runManager->SetUserInitialization(physicsList);

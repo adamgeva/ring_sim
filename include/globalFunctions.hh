@@ -8,12 +8,18 @@
 #ifndef GLOBALFUNCTIONS_HH_
 #define GLOBALFUNCTIONS_HH_
 
-
+#include "G4Types.hh"
 #include <string>
 #include <sstream>
+#include "globals.hh"
+#include "G4ios.hh"
+#include "G4ThreeVector.hh"
 
 //todo: remove from here to a macro!!!
 std::string IntToString (int a);
 
+G4bool RR (G4double p);
+
+G4bool outOfRing (G4ThreeVector position, G4ThreeVector momentumDirection, G4double Zup , G4double Zdown, G4double ringRadius);
 
 #endif /* GLOBALFUNCTIONS_HH_ */

@@ -36,6 +36,7 @@ public:
 		int trackVerbose = 0;
 		//set to 0 to suppress navigator msgs
 		int G4navigatorVerbos = 0;
+		G4int onOffBiasing = 1; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 	}Myparams;
 
@@ -49,9 +50,19 @@ public:
 		G4double MaxPhi = 0;
 	}MyparamsGun;
 
-	struct Biasing{
-			G4bool cutElectrons = true;
-		}Biasing;
+	struct Bias{
+		//G4int ComptSplittingFactor = 10;
+		G4int splittingFactorNp = 70;
+		G4int splittingFactorNs = 70;
+		G4bool BiasPrimaryOnly = true;
+		G4bool BiasOnlyOnce = false;
+		G4int BiasTimes = 4;
+		G4bool detectorSpecialCuts = true;
+		G4bool phantomProductionCuts = true;
+		G4bool killElectrons = true;
+
+	}Bias;
+
 
 	struct MyparamsGeometry{
 		G4double worldXY = 70*cm; //half sizes
