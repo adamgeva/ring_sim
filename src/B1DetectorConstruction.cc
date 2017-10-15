@@ -198,9 +198,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
  //-------------------regions-------------------
 
-   G4Region* voxel_region = new G4Region("voxelRegion");
-   fvoxel_logic->SetRegion(voxel_region);
-   voxel_region->AddRootLogicalVolume(fvoxel_logic);
+   G4Region* Container_region = new G4Region("ContainerRegion");
+   fContainer_logic->SetRegion(Container_region);
+   Container_region->AddRootLogicalVolume(fContainer_logic);
 
 	//always return the physical World
 	return worldPHS;
