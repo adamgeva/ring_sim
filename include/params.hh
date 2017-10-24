@@ -25,7 +25,7 @@ class params
 {
 public:
 	struct Myparams{
-		G4int numberOfThreads = 10;
+		G4int numberOfThreads = 20;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;
@@ -49,8 +49,8 @@ public:
 
 	struct Bias{
 		//G4int ComptSplittingFactor = 10;
-		G4int splittingFactorNp = 70;
-		G4int splittingFactorNs = 70;
+		G4int splittingFactorNp = 10;
+		G4int splittingFactorNs = 10;
 		G4bool BiasPrimaryOnly = true;
 		G4bool BiasOnlyOnce = false;
 		G4int BiasTimes = 4;

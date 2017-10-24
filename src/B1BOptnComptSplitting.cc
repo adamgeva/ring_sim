@@ -52,14 +52,8 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
   //fetch track data and split factor
   B1BOptrFSTrackData* AuxTrackData = (B1BOptrFSTrackData*)(track->GetAuxiliaryTrackInformation(fFSModelID));
   G4int splitFactor;
-  if (AuxTrackData->IsPrimary())
-  {
-	  splitFactor = fSplittingFactorNp;
-  }
-  else
-  {
-	  splitFactor = fSplittingFactorNs;
-  }
+  splitFactor = fSplittingFactorNp;
+
 
   // -- Collect compt. process (wrapped process) final state:
   G4VParticleChange* processFinalState =
@@ -89,58 +83,23 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 
   //*** -- Store first gamma final state:
 
-  //change main photons weight
-  G4double gammaWeight = actualParticleChange->GetWeight() / splitFactor;
+  //main photon maintains its weight
+  G4double gammaWeight = actualParticleChange->GetWeight();
 
-  G4bool out = outOfRing (track->GetPosition(), actualParticleChange->GetProposedMomentumDirection(), parameters.MyparamsGeometry.detectorY ,
- 				  parameters.MyparamsGeometry.detectorY*(-1), parameters.MyparamsGeometry.radius);
-  if (!out) // the photon is aimed at the detector
-  {
-	  fParticleChange.ProposeWeight(gammaWeight);
-	  //G4cout << "gammaWeight " << gammaWeight << G4endl;
-	  fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
-	  fParticleChange.SetProposedKineticEnergy( actualParticleChange->GetProposedKineticEnergy() );
-	  fParticleChange.ProposeMomentumDirection( actualParticleChange->GetProposedMomentumDirection() );
-	  fParticleChange.ProposePolarization( actualParticleChange->GetProposedPolarization() );
-	  AuxTrackData->fFSState = FSState::toBeFreeFlight;
-	  AuxTrackData->SetSecondary();
-	  track->SetAuxiliaryTrackInformation(fFSModelID, AuxTrackData);
-  }
-  else // main photon is heading out - we need to kill him but not his secondaries - after playin RR
-  {
-	 //play Russian Roullete
-	 G4bool survive = RR(1.0/G4double(fSplittingFactorNs));
-	 if (survive)
-	 {
-	   //G4cout << "Survived: main photon" << G4endl;
-	   //correct weigth
-	   G4double gammaWeightTemp = gammaWeight*(fSplittingFactorNs);
-	   AuxTrackData->fFSState = FSState::start;
-	   AuxTrackData->SetSecondary();
-	   track->SetAuxiliaryTrackInformation(fFSModelID, AuxTrackData);
-	   fParticleChange.ProposeWeight(gammaWeightTemp);
-	   //G4cout << "gammaWeight " << gammaWeight << G4endl;
-	   fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
-	   fParticleChange.SetProposedKineticEnergy( actualParticleChange->GetProposedKineticEnergy() );
-	   fParticleChange.ProposeMomentumDirection( actualParticleChange->GetProposedMomentumDirection() );
-	   fParticleChange.ProposePolarization( actualParticleChange->GetProposedPolarization() );
-	 }
-	 else //kill by setting 0 kinetic energy
-	 {
-		 //G4cout << "Killed: main photon" << G4endl;
-	   fParticleChange.ProposeWeight(0.0);
-	   //fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
-	   fParticleChange.ProposeTrackStatus( fStopAndKill );
-	   fParticleChange.SetProposedKineticEnergy( 0.0 );
-	   //THIS IS DONE FOR CONSISTENCY
-	   AuxTrackData->fFSState = FSState::start;
-	   AuxTrackData->SetSecondary();
-	   track->SetAuxiliaryTrackInformation(fFSModelID, AuxTrackData);
-     }
-  }
 
-  // ***-- inform we will have (fSplittingFactor-1) gamma's + 1 electron:
-  fParticleChange.SetNumberOfSecondaries( splitFactor );
+  fParticleChange.ProposeWeight(gammaWeight);
+  //G4cout << "gammaWeight " << gammaWeight << G4endl;
+  fParticleChange.ProposeTrackStatus( actualParticleChange->GetTrackStatus() );
+  fParticleChange.SetProposedKineticEnergy( actualParticleChange->GetProposedKineticEnergy() );
+  fParticleChange.ProposeMomentumDirection( actualParticleChange->GetProposedMomentumDirection() );
+  fParticleChange.ProposePolarization( actualParticleChange->GetProposedPolarization() );
+  AuxTrackData->fFSState = FSState::start;
+  track->SetAuxiliaryTrackInformation(fFSModelID, AuxTrackData);
+
+
+
+  // ***-- inform we will have (fSplittingFactor) gamma's + 1 electron:
+  fParticleChange.SetNumberOfSecondaries( splitFactor + 1 );
 
   // -- inform we take care of secondaries weight (otherwise these
   // -- secondaries are by default given the primary weight).
@@ -159,9 +118,9 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
    actualParticleChange->Clear();
 
 
-  // ***-- now start the fSplittingFactor-1 calls to the compt. process to store each
+  // ***-- now start the fSplittingFactor calls to the compt. process to store each
   // -- related gamma:
-  G4int nCalls = 1;
+  G4int nCalls = 0;
   G4Track* gammaTrack;
   while ( nCalls < splitFactor )
   {
@@ -181,14 +140,14 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 //    	  G4VUserTrackInformation* info = track->GetUserInformation();
 
 
-          gammaTrack->SetWeight( gammaWeight );
+          gammaTrack->SetWeight( gammaWeight/ splitFactor);
           gammaTrack->SetKineticEnergy(actualParticleChange->GetProposedKineticEnergy());
 		  gammaTrack->SetMomentumDirection(actualParticleChange->GetProposedMomentumDirection());
 		  gammaTrack->SetTrackStatus(actualParticleChange->GetTrackStatus());
 		  gammaTrack->SetPolarization(actualParticleChange->GetProposedPolarization());
 
 		  //check if directed towards to detector
-		  out = outOfRing (gammaTrack->GetPosition(), actualParticleChange->GetProposedMomentumDirection(), parameters.MyparamsGeometry.detectorY ,
+		  G4bool out = outOfRing (gammaTrack->GetPosition(), actualParticleChange->GetProposedMomentumDirection(), parameters.MyparamsGeometry.detectorY ,
 				  parameters.MyparamsGeometry.detectorY*(-1), parameters.MyparamsGeometry.radius);
 		  if (!out) //directed at the detector
 		  {
@@ -201,27 +160,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
           }
 		  else//not direct to the detector
 	      {
-			 //play Russian Roullete
-			 G4bool survive = RR(1.0/G4double(fSplittingFactorNs));
-			 if (survive)
-			 {
-			   //G4cout << "Survived: secondary photon" << G4endl;
-			   //correct weigth
-			   G4double gammaWeightTemp = gammaWeight*(fSplittingFactorNs);
-		       gammaTrack->SetWeight( gammaWeightTemp );
-			   B1BOptrFSTrackData* SecondaryAuxTrackData = new B1BOptrFSTrackData(AuxTrackData->GetOptr());
-			   SecondaryAuxTrackData->fFSState = FSState::start;
-			   SecondaryAuxTrackData->SetSecondary();
-			   gammaTrack->SetAuxiliaryTrackInformation(fFSModelID, SecondaryAuxTrackData);
-//			   fsplitTracksVector.push_back(gammaTrack);
-			   fParticleChange.G4VParticleChange::AddSecondary( gammaTrack );
-
-			 }
-			 else //just don't add to secondaries list
-			 {
-				 //G4cout << "Killed: secondary photon" << G4endl;
-			   //kill photon
-			 }
+		   //just don't add to secondaries list
 	      }
 	  }
       // -- very rare special case: we ignore for now.
