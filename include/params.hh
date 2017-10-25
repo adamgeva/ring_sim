@@ -12,7 +12,7 @@
 
 
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -51,9 +51,6 @@ public:
 		//G4int ComptSplittingFactor = 10;
 		G4int splittingFactorNp = 10;
 		G4int splittingFactorNs = 10;
-		G4bool BiasPrimaryOnly = true;
-		G4bool BiasOnlyOnce = false;
-		G4int BiasTimes = 4;
 		G4bool detectorSpecialCuts = true;
 		G4bool phantomProductionCuts = true;
 		G4bool killElectrons = true;

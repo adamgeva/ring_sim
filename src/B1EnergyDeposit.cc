@@ -49,7 +49,7 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	//very rare case in biasing - in case the photon underwent an interaction but wasnt split even tho it should have, example:
 	//a photon hits the detector, potoelectric absorption and the an emittion of a new photon (ID 1 for example) then this photon undergoes Rayl in the phantom and arrives at the detector with weight 1.
 	//TODO: check if correct!
-	if ((parameters.Myparams.onOffBiasing==1) && (totalNumOfInteractions>0) && (trackWeight==1)) {
+	if ((parameters.Myparams.onOffBiasing==1) && (track->GetParentID()==0)) {
 		result = FALSE;
 	}
 	//G4cout << "TrackId = " << track->GetTrackID() << " number of total interactions = " << totalNumOfInteractions << G4endl;
