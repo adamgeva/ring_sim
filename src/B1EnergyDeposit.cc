@@ -46,6 +46,13 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	G4VUserTrackInformation* info = track->GetUserInformation();
 	B1TrackInformation* theInfo = (B1TrackInformation*)info;
 	G4int totalNumOfInteractions = theInfo->GetNumberOfCompton() + theInfo->GetNumberOfRayl();
+
+	//printing debug info:
+//	G4cout << "track ID:" << track->GetTrackID() << G4endl;
+//	G4cout << "track parent ID:" << track->GetParentID() << G4endl;
+//	G4cout << "num of compt:" << theInfo->GetNumberOfCompton() << G4endl;
+//	G4cout << "num of rayl:" << theInfo->GetNumberOfRayl() << G4endl;
+
 	//very rare case in biasing - in case the photon underwent an interaction but wasnt split even tho it should have, example:
 	//a photon hits the detector, potoelectric absorption and the an emittion of a new photon (ID 1 for example) then this photon undergoes Rayl in the phantom and arrives at the detector with weight 1.
 	//TODO: check if correct!

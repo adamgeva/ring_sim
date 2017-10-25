@@ -40,8 +40,12 @@ void B1TrackingAction::PostUserTrackingAction(const G4Track* aTrack)
     {
       for(size_t i=0;i<nSeco;i++)
       {
-        B1TrackInformation* infoNew = new B1TrackInformation(info);
-        (*secondaries)[i]->SetUserInformation(infoNew);
+    	  //todo: could write this method more efficiently
+    	if ((*secondaries)[i]->GetUserInformation()==0)
+    	{
+    		B1TrackInformation* infoNew = new B1TrackInformation(info);
+        	(*secondaries)[i]->SetUserInformation(infoNew);
+    	}
       }
     }
   }

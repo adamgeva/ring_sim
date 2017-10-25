@@ -142,6 +142,10 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 			  SecondaryAuxTrackData->fFSState = FSState::toBeFreeFlight;
 			  SecondaryAuxTrackData->SetSecondary();
 			  gammaTrack->SetAuxiliaryTrackInformation(fFSModelID, SecondaryAuxTrackData);
+			  //take regular track information
+			  B1TrackInformation* info = (B1TrackInformation*)(track->GetUserInformation());
+			  B1TrackInformation* infoNew = new B1TrackInformation(info);
+			  gammaTrack->SetUserInformation(infoNew);
 //			  fsplitTracksVector.push_back(gammaTrack);
 			  fParticleChange.G4VParticleChange::AddSecondary( gammaTrack );
           }
