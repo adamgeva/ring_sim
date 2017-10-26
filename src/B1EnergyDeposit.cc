@@ -38,7 +38,7 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 
 	//test: getting information from tracks
 	G4Track* track = aStep->GetTrack();
-	G4double trackWeight = track->GetWeight();
+//	G4double trackWeight = track->GetWeight();
 
 	//G4cout << "We have a hit, Weight: " << track->GetWeight() << G4endl;
 

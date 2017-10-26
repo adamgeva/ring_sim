@@ -145,6 +145,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 			  //take regular track information
 			  B1TrackInformation* info = (B1TrackInformation*)(track->GetUserInformation());
 			  B1TrackInformation* infoNew = new B1TrackInformation(info);
+			  infoNew->AddRayl();
 			  gammaTrack->SetUserInformation(infoNew);
 //			  fsplitTracksVector.push_back(gammaTrack);
 			  fParticleChange.G4VParticleChange::AddSecondary( gammaTrack );
@@ -152,6 +153,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 		  else//not direct to the detector
 	      {
 			//kill photon
+			  delete gammaTrack;
 	      }
 	  }
       // -- very rare special case: we ignore for now.

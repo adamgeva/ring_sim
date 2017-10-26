@@ -36,7 +36,7 @@ public:
   virtual void            StartRun() final;
   virtual void       StartTracking( const G4Track* track ) final;
   virtual void         ExitBiasing( const G4Track*, const G4BiasingProcessInterface* ) final {};
-  virtual void         EndTracking() final;
+  //virtual void         EndTracking() final;
 
   // -- operation applied:
 //  void OperationApplied( const G4BiasingProcessInterface* callingProcess, G4BiasingAppliedCase biasingCase,

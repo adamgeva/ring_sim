@@ -238,9 +238,9 @@ void B1BOptrFS::StartTracking( const G4Track* track )
 }
 
 
-void B1BOptrFS::EndTracking()
-{
-}
+//void B1BOptrFS::EndTracking()
+//{
+//}
 
 
 //void B1BOptrFS::OperationApplied( const G4BiasingProcessInterface*   /*callingProcess*/,

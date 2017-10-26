@@ -20,7 +20,7 @@ B1TrackingAction::~B1TrackingAction()
 
 void B1TrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
-  //track just been created
+  //track just been created- split track already have thier parent information copied in the opration
   if(aTrack->GetParentID()==0 && aTrack->GetUserInformation()==0)
   {
     B1TrackInformation* anInfo = new B1TrackInformation(aTrack);
@@ -29,26 +29,27 @@ void B1TrackingAction::PreUserTrackingAction(const G4Track* aTrack)
   }
 }
 
-void B1TrackingAction::PostUserTrackingAction(const G4Track* aTrack)
-{
-  G4TrackVector* secondaries = fpTrackingManager->GimmeSecondaries();
-  if(secondaries)
-  {
-    B1TrackInformation* info = (B1TrackInformation*)(aTrack->GetUserInformation());
-    size_t nSeco = secondaries->size();
-    if(nSeco>0)
-    {
-      for(size_t i=0;i<nSeco;i++)
-      {
-    	  //todo: could write this method more efficiently
-    	if ((*secondaries)[i]->GetUserInformation()==0)
-    	{
-    		B1TrackInformation* infoNew = new B1TrackInformation(info);
-        	(*secondaries)[i]->SetUserInformation(infoNew);
-    	}
-      }
-    }
-  }
-}
+//void B1TrackingAction::PostUserTrackingAction(const G4Track* aTrack)
+//{
+//	//why should we copy the information after the track is killed???
+//  G4TrackVector* secondaries = fpTrackingManager->GimmeSecondaries();
+//  if(secondaries)
+//  {
+//    B1TrackInformation* info = (B1TrackInformation*)(aTrack->GetUserInformation());
+//    size_t nSeco = secondaries->size();
+//    if(nSeco>0)
+//    {
+//      for(size_t i=0;i<nSeco;i++)
+//      {
+//    	  //todo: could write this method more efficiently
+//    	if ((*secondaries)[i]->GetUserInformation()==0)
+//    	{
+//    		B1TrackInformation* infoNew = new B1TrackInformation(info);
+//        	(*secondaries)[i]->SetUserInformation(infoNew);
+//    	}
+//      }
+//    }
+//  }
+//}
 
 
