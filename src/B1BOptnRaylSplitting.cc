@@ -149,6 +149,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 			  gammaTrack->SetUserInformation(infoNew);
 //			  fsplitTracksVector.push_back(gammaTrack);
 			  fParticleChange.G4VParticleChange::AddSecondary( gammaTrack );
+
           }
 		  else//not direct to the detector
 	      {

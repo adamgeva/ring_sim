@@ -20,8 +20,9 @@ B1TrackingAction::~B1TrackingAction()
 
 void B1TrackingAction::PreUserTrackingAction(const G4Track* aTrack)
 {
-  //track just been created- split track already have thier parent information copied in the opration
-  if(aTrack->GetParentID()==0 && aTrack->GetUserInformation()==0)
+  //track just been created - split track already have their parent information copied in the operation
+	//could be a new track parentID=0 or photon that was created in flourescent
+  if(aTrack->GetUserInformation()==0)
   {
     B1TrackInformation* anInfo = new B1TrackInformation(aTrack);
     G4Track* theTrack = (G4Track*)aTrack;

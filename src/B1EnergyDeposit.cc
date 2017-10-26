@@ -41,6 +41,10 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 //	G4double trackWeight = track->GetWeight();
 
 	//G4cout << "We have a hit, Weight: " << track->GetWeight() << G4endl;
+//	G4String creatorProcessName = track->GetCreatorModelName();
+//	G4int ParentID = track->GetParentID();
+//	G4int ID = track->GetTrackID();
+//	G4String type = track->GetDefinition()->GetParticleType();
 
 	G4bool result = FALSE;
 	G4VUserTrackInformation* info = track->GetUserInformation();
