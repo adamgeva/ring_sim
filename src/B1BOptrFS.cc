@@ -110,7 +110,7 @@ G4VBiasingOperation* B1BOptrFS::ProposeNonPhysicsBiasingOperation(const G4Track*
 G4VBiasingOperation* B1BOptrFS::ProposeOccurenceBiasingOperation(const G4Track* track, const G4BiasingProcessInterface* callingProcess)
 {
   // -- does nothing if particle is not of requested type:
-  if ( track->GetDefinition() != fParticleToBias ) return 0;
+  //if ( track->GetDefinition() != fParticleToBias ) return 0;
   //G4int trackID = track->GetTrackID();
   G4String process_name = callingProcess->GetProcessName();
 
@@ -154,7 +154,7 @@ G4VBiasingOperation* B1BOptrFS::ProposeOccurenceBiasingOperation(const G4Track* 
 G4VBiasingOperation* B1BOptrFS::ProposeFinalStateBiasingOperation(const G4Track* track, const G4BiasingProcessInterface* callingProcess)
 {
 
-  if ( track->GetDefinition() != fParticleToBias ) return 0;
+  //if ( track->GetDefinition() != fParticleToBias ) return 0;
   //fetch track data
   fCurrentTrackData = (B1BOptrFSTrackData*)(track->GetAuxiliaryTrackInformation(fFSModelID));
 
@@ -221,12 +221,12 @@ G4VBiasingOperation* B1BOptrFS::ProposeFinalStateBiasingOperation(const G4Track*
 void B1BOptrFS::StartTracking( const G4Track* track )
 {
   fCurrentTrack     = track;
-  G4String creating_process = track->GetCreatorModelName();
-  G4String logicalName = track->GetLogicalVolumeAtVertex()->GetName();
-  //G4int ParentID = track->GetParentID();
-  //G4int trackID = track->GetTrackID();
-  G4String volumeName = track->GetVolume()->GetName();
-  G4String nextVolName = track->GetNextVolume()->GetName();
+//  G4String creating_process = track->GetCreatorModelName();
+//  G4String logicalName = track->GetLogicalVolumeAtVertex()->GetName();
+//  //G4int ParentID = track->GetParentID();
+//  //G4int trackID = track->GetTrackID();
+//  G4String volumeName = track->GetVolume()->GetName();
+//  G4String nextVolName = track->GetNextVolume()->GetName();
   fCurrentTrackData = (B1BOptrFSTrackData*)track->GetAuxiliaryTrackInformation(fFSModelID);
   if (fCurrentTrackData==nullptr)
   {

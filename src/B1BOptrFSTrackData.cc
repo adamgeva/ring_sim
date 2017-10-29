@@ -14,17 +14,17 @@ B1BOptrFSTrackData::B1BOptrFSTrackData( const B1BOptrFS* optr )
 B1BOptrFSTrackData::~B1BOptrFSTrackData()
 {
 	//TODO: fix
-	if ( (fFSState == FSState::toBeSplitCompt) || (fFSState == FSState::toBeSplitRayl) )
-	    {
-	      G4ExceptionDescription ed;
-	      ed << "Track deleted while under G4BOptrForceCollision biasing scheme of operator `";
-	      if ( fFSOperator == nullptr ) ed << "(none)"; else ed << fFSOperator->GetName();
-	      ed <<"'. Will result in inconsistencies.";
-	      G4Exception(" B1BOptrFSTrackData::~B1BOptrFSTrackData()",
-			  "BIAS.GEN.19",
-			  JustWarning,
-			  ed);
-	    }
+//	if ( (fFSState == FSState::toBeSplitCompt) || (fFSState == FSState::toBeSplitRayl) )
+//	    {
+//	      G4ExceptionDescription ed;
+//	      ed << "Track deleted while under G4BOptrForceCollision biasing scheme of operator `";
+//	      if ( fFSOperator == nullptr ) ed << "(none)"; else ed << fFSOperator->GetName();
+//	      ed <<"'. Will result in inconsistencies.";
+//	      G4Exception(" B1BOptrFSTrackData::~B1BOptrFSTrackData()",
+//			  "BIAS.GEN.19",
+//			  JustWarning,
+//			  ed);
+//	    }
 }
 
 void B1BOptrFSTrackData::Print() const
