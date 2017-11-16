@@ -27,7 +27,7 @@ class B1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     const G4ParticleGun* GetParticleGun(G4int gunNumber) const { return fParticleGun[gunNumber]; }
   
   private:
-    G4ParticleGun*  fParticleGun[NUM_OF_SOURCES]; // pointer a to G4 gun class
+    G4ParticleGun*  fParticleGun; // pointer a to G4 gun class
     G4Box* fEnvelopeBox;
 };
 
