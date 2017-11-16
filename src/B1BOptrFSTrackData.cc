@@ -13,7 +13,7 @@ B1BOptrFSTrackData::B1BOptrFSTrackData( const B1BOptrFS* optr )
 
 B1BOptrFSTrackData::~B1BOptrFSTrackData()
 {
-	//TODO: fix
+//	//TODO: fix
 //	if ( (fFSState == FSState::toBeSplitCompt) || (fFSState == FSState::toBeSplitRayl) )
 //	    {
 //	      G4ExceptionDescription ed;

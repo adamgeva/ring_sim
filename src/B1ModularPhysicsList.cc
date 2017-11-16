@@ -29,8 +29,8 @@ B1ModularPhysicsList::B1ModularPhysicsList(G4String name) :  G4VModularPhysicsLi
 	// Physics list
 	G4PhysListFactory factory;
 	G4VModularPhysicsList* phys = NULL;
-	//phys = factory.GetReferencePhysList("FTFP_BERT_LIV");
-	phys = factory.GetReferencePhysList("FTFP_BERT");
+	phys = factory.GetReferencePhysList("FTFP_BERT_LIV");
+	//phys = factory.GetReferencePhysList("FTFP_BERT");
 	//FTFP_BERT_PEN
 	//G4VModularPhysicsList* physicsList = new QBBC;
 
