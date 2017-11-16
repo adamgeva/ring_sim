@@ -69,10 +69,11 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4VPhysicalVolume* worldPHS = new G4PVPlacement(0, G4ThreeVector(),worldLV,"World",0,false,0,checkOverlaps);
 
 	// Water phantom
+	G4double waterBox_size = parameters.MyparamsGeometry.waterBox;
 	//todo: make generic and not hard coded
 	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
 
-	G4Tubs* waterPhantomS = new G4Tubs("water_phantom",0,7*cm,50*cm,0,2*M_PI);
+	G4Box* waterPhantomS = new G4Box("water_phantom",waterBox_size,waterBox_size,waterBox_size);
 	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
 	//G4RotationMatrix* rot = new G4RotationMatrix();
 	//rot->rotateX(-M_PI/2);
