@@ -76,6 +76,7 @@ public:
 		G4int numberOfRows = 1;
 		//G4int numberOfRows = 1;
 		G4int numberOfDetectors = 5;
+		std::string matFile = "waterMatFile.txt";
 
 	}MyparamsGeometry;
 

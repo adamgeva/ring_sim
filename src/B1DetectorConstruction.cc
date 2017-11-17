@@ -21,6 +21,7 @@
 #include "globalFunctions.hh"
 #include "B1EnergyDeposit.hh"
 
+
 #include "G4LogicalVolumeStore.hh"
 #include "B1BOptrMultiParticleChangeCrossSection.hh"
 #include "B1BOptrFS.hh"
@@ -71,22 +72,16 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	// Water phantom
 	G4double waterBox_size = parameters.MyparamsGeometry.waterBox;
 	//todo: make generic and not hard coded
-	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
+	//G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
+	matProps waterMatProps = ReadMatProperties(parameters.MyparamsGeometry.matFile);
+    // define water using effective Z, a and density
+    G4Material* waterMat = new G4Material("effWater", waterMatProps.zEff ,waterMatProps.aEff*g/mole, waterMatProps.density*g/cm3);
 
 	G4Box* waterPhantomS = new G4Box("water_phantom",waterBox_size,waterBox_size,waterBox_size);
 	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
 	//G4RotationMatrix* rot = new G4RotationMatrix();
 	//rot->rotateX(-M_PI/2);
 	new G4PVPlacement(0,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
-
-//	//bone
-//	//todo: make generic and not hard coded
-//	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-//
-//	G4ThreeVector posBone = G4ThreeVector(0, 0, 0);
-//	G4Tubs* boneS = new G4Tubs("bone",0, 1.5*cm, 50*cm,0,2*M_PI);
-//	G4LogicalVolume* boneLV = new G4LogicalVolume(boneS,boneMat,"bone");
-//	new G4PVPlacement(0,posBone,boneLV,"bone",waterPhantomLV,false,0,checkOverlaps);
 
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
@@ -184,7 +179,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
   //
    G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = parameters.MyparamsGun.particleEnergy + 5*keV;
    detectorPixelLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
-   //waterPhantomLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
+   //waterPhantomLV->SetUserLimincludeits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
 
   //-------------------regions-------------------
 
@@ -195,6 +190,30 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	//always return the physical World
 	return worldPHS;
 }
+
+
+matProps B1DetectorConstruction::ReadMatProperties(const G4String& fname)
+{
+  std::cout << " B1DetectorConstruction::ReadMatProperties opening file "
+		 << fname << std::endl;
+  //TODO: handle reading from phantom files
+  std::ifstream fin(fname.c_str(), std::ios_base::in);
+  if( !fin.is_open() ) {
+    G4Exception("B1DetectorConstruction::ReadMatProperties",
+                "",
+                FatalErrorInArgument,
+                G4String("File not found " + fname ).c_str());
+  }
+
+  matProps waterProps;
+  // reading material properties from file
+  fin >> waterProps.density;
+  fin >> waterProps.aEff;
+  fin >> waterProps.zEff;
+  fin.close();
+  return waterProps;
+}
+
 
 void B1DetectorConstruction::ConstructSDandField()
 {
