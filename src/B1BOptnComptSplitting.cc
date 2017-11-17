@@ -11,6 +11,10 @@
 #include "G4TrackStatus.hh"
 #include "params.hh"
 #include <math.h>
+//********************
+#include "G4EmCalculator.hh"
+#include "G4ParticleTable.hh"
+//**********************
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 B1BOptnComptSplitting::B1BOptnComptSplitting(G4String name)
@@ -47,7 +51,16 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
                         G4bool&                                         )
 {
 
-  params parameters;
+	params parameters;
+	//*************************************
+				G4Material* waterMatEff = new G4Material("waser", 7.49 ,18*g/mole, 1*g/cm3);
+			    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+			   	G4EmCalculator emCalculator;
+
+				G4double cross = emCalculator.ComputeCrossSectionPerVolume(parameters.MyparamsGun.particleEnergy,track->GetDefinition(),callingProcess->GetProcessName(),waterMatEff);
+
+	//**********************************************
+
 
   //fetch track data and split factor
   B1BOptrFSTrackData* AuxTrackData = (B1BOptrFSTrackData*)(track->GetAuxiliaryTrackInformation(fFSModelID));
@@ -125,6 +138,9 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
   while ( nCalls < splitFactor )
   {
 	  //sample again
+	  G4VProcess* cal = callingProcess->GetWrappedProcess();
+	  G4String nameP = cal->GetProcessName();
+
 	  processFinalState = callingProcess->GetWrappedProcess()->PostStepDoIt(*track, *step);
 	  actualParticleChange = ( G4ParticleChangeForGamma* ) processFinalState ;
 

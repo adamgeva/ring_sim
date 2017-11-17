@@ -211,6 +211,7 @@ matProps B1DetectorConstruction::ReadMatProperties(const G4String& fname)
   fin >> waterProps.aEff;
   fin >> waterProps.zEff;
   fin.close();
+  std::cout << waterProps.density << " , " << waterProps.aEff << " , " << waterProps.zEff << " , " << std::endl;
   return waterProps;
 }
 
