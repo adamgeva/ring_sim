@@ -83,7 +83,7 @@ int main(int argc,char** argv)
 	}
 	else{
 		G4PhysListFactory factory;
-		physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
+		physicsList = factory.GetReferencePhysList("FTFP_BERT_EMV");
 		//FTFP_BERT_PEN
 		//G4VModularPhysicsList* physicsList = new QBBC;
 	}
