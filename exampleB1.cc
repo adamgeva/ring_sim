@@ -37,6 +37,9 @@
 #include "G4ParticleDefinition.hh"
 #include "G4Material.hh"
 #include "G4LivermoreComptonModel.hh"
+#include "G4ComptonScattering.hh"
+#include "G4MaterialCutsCouple.hh"
+#include "G4PEEffectFluoModel.hh"
 
 #include "G4StepLimiterPhysics.hh"
 #include "B1ModularPhysicsList.hh"
@@ -128,7 +131,6 @@ int main(int argc,char** argv)
 	runManager->SetUserInitialization(new B1ActionInitialization());
 
 
-
 		// Initialize visualization
 	G4VisManager* visManager = new G4VisExecutive;
 	// G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
@@ -157,22 +159,39 @@ int main(int argc,char** argv)
 		delete ui;
 	}
 
-
+// TODO : delete
 	//******************************************************************
+//	G4Material* waterMatEff = new G4Material("waser", 20 ,40*g/mole, 1*g/cm3);
+//	G4MaterialCutsCouple* couple = new G4MaterialCutsCouple(waterMatEff,0);
 
+//	G4PEEffectFluoModel* pee = new G4PEEffectFluoModel("cat");
+//	pee->SetCurrentCouple(couple);
+//	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+//	G4String particleName;
+//	G4ParticleDefinition* particle = particleTable->FindParticle(particleName="gamma");
+//	G4double Z=1.1;
+//	//writing coeff to file locations to file
+//	G4double cross;
+//	std::ofstream outputCoeff;
+//	std::string fileName = "Res.csv";
+//	outputCoeff.open(fileName.c_str());
+//	outputCoeff << "coefficeints" << "\n";
+//	for (G4int i=1; i<1500; i++) {
+//		cross = pee->ComputeCrossSectionPerAtom(particle, 40*keV, Z, 0.0, 0.0,0.0);
+//		outputCoeff<<cross/(cm2/g)<<",";
+//		Z = Z + 0.1;
+//	}
+//	outputCoeff.close();
 	// material
 //	G4NistManager* nist = G4NistManager::Instance();
 //	G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
 //	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
 //	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-
-         	G4Material* waterMatEff = new G4Material("waser", 7 ,18*g/mole, 1*g/cm3);
-		    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-		    G4String particleName;
-		    G4ParticleDefinition* particle = particleTable->FindParticle(particleName="gamma");
-			G4LivermoreComptonModel* mod = new G4LivermoreComptonModel(particle,"namee");
-			G4double cross = mod->ComputeCrossSectionPerAtom(particle,parameters.MyparamsGun.particleEnergy,7.9,18.0,0.0,DBL_MAX);
-
+//
+//         	G4Material* waterMatEff = new G4Material("waser", 7.49 ,18*g/mole, 1*g/cm3);
+//		    //			G4ComptonScattering* componation = new G4ComptonScattering();
+//			G4MaterialCutsCouple* couple = new G4MaterialCutsCouple(waterMatEff,0);
+//			G4double cross = componation->CrossSectionPerVolume(parameters.MyparamsGun.particleEnergy,couple);
 //
 //		   	G4EmCalculator emCalculator;
 //

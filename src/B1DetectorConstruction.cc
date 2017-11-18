@@ -38,7 +38,7 @@
 
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
-  detectorPixelLV(0),fVisAttributes()
+  detectorPixelLV(0),fVisAttributes(),fwaterMat(0)
 
 { }
 
@@ -69,16 +69,15 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4LogicalVolume* worldLV = new G4LogicalVolume(worldS, world_mat, "World");
 	G4VPhysicalVolume* worldPHS = new G4PVPlacement(0, G4ThreeVector(),worldLV,"World",0,false,0,checkOverlaps);
 
-	// Water phantom
+	//phantom
 	G4double waterBox_size = parameters.MyparamsGeometry.waterBox;
 	//todo: make generic and not hard coded
 	//G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
-	matProps waterMatProps = ReadMatProperties(parameters.MyparamsGeometry.matFile);
-    // define water using effective Z, a and density
-    G4Material* waterMat = new G4Material("effWater", waterMatProps.zEff ,waterMatProps.aEff*g/mole, waterMatProps.density*g/cm3);
+    // define water using fractional mass
+	InitialisationOfMaterials();
 
 	G4Box* waterPhantomS = new G4Box("water_phantom",waterBox_size,waterBox_size,waterBox_size);
-	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,waterMat,"water_phantom");
+	G4LogicalVolume* waterPhantomLV = new G4LogicalVolume(waterPhantomS,fwaterMat,"water_phantom");
 	//G4RotationMatrix* rot = new G4RotationMatrix();
 	//rot->rotateX(-M_PI/2);
 	new G4PVPlacement(0,G4ThreeVector(),waterPhantomLV,"water_phantom",worldLV,false,0,checkOverlaps);
@@ -208,10 +207,9 @@ matProps B1DetectorConstruction::ReadMatProperties(const G4String& fname)
   matProps waterProps;
   // reading material properties from file
   fin >> waterProps.density;
-  fin >> waterProps.aEff;
-  fin >> waterProps.zEff;
+  fin >> waterProps.Oel;
+  fin >> waterProps.Cel;
   fin.close();
-  std::cout << waterProps.density << " , " << waterProps.aEff << " , " << waterProps.zEff << " , " << std::endl;
   return waterProps;
 }
 
@@ -270,4 +268,39 @@ void B1DetectorConstruction::ConstructSDandField()
 	    detector2->RegisterPrimitive(primitive);
 	}
     SetSensitiveDetector(detectorPixelLV,detector2);
+}
+
+void B1DetectorConstruction::InitialisationOfMaterials()
+{
+	params parameters;
+
+	matProps waterMatProps = ReadMatProperties(parameters.MyparamsGeometry.matFile);
+
+    // Creating elements :
+    G4double z, a, density;
+    G4String name, symbol;
+
+
+
+    G4Element* elC = new G4Element( name = "Carbon",
+								   symbol = "C",
+								   z = 6.0, a = 12.011 * g/mole );
+
+    G4Element* elO = new G4Element( name = "Oxygen",
+                                   symbol = "O",
+                                   z = 8.0, a = 16.00  * g/mole );
+
+
+    // Creating Materials :
+    G4int numberofElements;
+
+    // Custom Material
+	fwaterMat = new G4Material( "effWater",
+									   density = waterMatProps.density*g/cm3,
+									   numberofElements = 2);
+
+	fwaterMat->AddElement(elC,waterMatProps.Cel);
+	fwaterMat->AddElement(elO,waterMatProps.Oel);
+
+
 }
