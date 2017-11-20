@@ -12,7 +12,7 @@
 
 
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used

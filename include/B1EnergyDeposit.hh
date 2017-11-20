@@ -26,6 +26,7 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
       //G4THitsMap<G4double>* EvtMap;
     //scorer type: 0=no_scatter, 1=include_single_scatter, 2=include_multi_scatter, 3=include_single_scatter_compt, 4=include_single_scatter_Rayl
     G4int fscorerType;
+    std::ofstream outputPathsFile;
  };
 
 

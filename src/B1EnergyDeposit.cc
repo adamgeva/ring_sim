@@ -15,10 +15,23 @@
 
 B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 : G4PSEnergyDeposit(name)
-{fscorerType =  type;}
+{
+	fscorerType =  type;
+	if (type==0){ //randomly pick the 0 scorer
+		//open file to append info about paths
+		G4int threadID = G4Threading::G4GetThreadId();
+		std::string fileName =  IntToString(threadID) + "paths.txt";
+		outputPathsFile.open(fileName.c_str());
+	}
+
+}
 
 B1EnergyDeposit::~B1EnergyDeposit()
-{ }
+{
+	if (fscorerType==0){
+		outputPathsFile.close();
+	}
+}
 
 G4int B1EnergyDeposit::GetIndex(G4Step* step){
 	params parameters;
@@ -93,16 +106,10 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 		}
 	}
 
-	if (fscorerType==0){ //randomly pick the 0 scorer
-		//open file to append info about paths
-		G4int threadID = G4Threading::G4GetThreadId();
-		std::ofstream outputPathsFile;
-		std::string fileName =  IntToString(threadID) + "paths.txt";
-		outputPathsFile.open(fileName.c_str(),std::ofstream::app);
-		outputPathsFile << track->GetParentID();
-
-		outputPathsFile.close();
+	if(fscorerType==0){
+		outputPathsFile << "Hey" << "/n";
 	}
+
 
 
 	return result;
