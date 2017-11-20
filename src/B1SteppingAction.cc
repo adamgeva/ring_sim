@@ -63,12 +63,12 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 	//adding segment to list
 	theInfo->AddSegment(currSegmant);
 
-	std::cout << "currSegmant.incidentEnergy" << currSegmant.incidentEnergy << " , currSegmant.scatteredEnergy " <<
-			currSegmant.scatteredEnergy << " , currSegmant.pathLen" << currSegmant.pathLen <<
-			" , currSegmant.thetaScatter" << currSegmant.thetaScatter << " , currSegmant.endingProcess" << currSegmant.endingProcess << std::endl;
-
-	std::cout << "startPoint" << startPoint->GetPosition() << " , endPoint" << endPoint->GetPosition() << std::endl;
-	std::cout << "procName" << procName << std::endl;
+//	std::cout << "currSegmant.incidentEnergy" << currSegmant.incidentEnergy << " , currSegmant.scatteredEnergy " <<
+//			currSegmant.scatteredEnergy << " , currSegmant.pathLen" << currSegmant.pathLen <<
+//			" , currSegmant.thetaScatter" << currSegmant.thetaScatter << " , currSegmant.endingProcess" << currSegmant.endingProcess << std::endl;
+//
+//	std::cout << "startPoint" << startPoint->GetPosition() << " , endPoint" << endPoint->GetPosition() << std::endl;
+//	std::cout << "procName" << procName << std::endl;
 
 
 	//is this necessary?

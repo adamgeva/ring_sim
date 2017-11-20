@@ -39,6 +39,17 @@ B1RunAction::B1RunAction()
 		}
 		//G4cout << "H3 Created " <<  G4endl;
 	}
+
+	//create files for outputting photon paths
+	G4int threadID = G4Threading::G4GetThreadId();
+	std::cout << "threadID : " << threadID << std::endl;
+
+	std::ofstream outputPathsFile;
+	std::string fileName =  IntToString(threadID) + "paths.txt";
+	outputPathsFile.open(fileName.c_str());
+	outputPathsFile << "threadId:" << threadID << "\n";
+	outputPathsFile.close();
+
 }
 
 B1RunAction::~B1RunAction()

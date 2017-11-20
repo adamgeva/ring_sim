@@ -8,6 +8,8 @@
 #include "B1EnergyDeposit.hh"
 #include "params.hh"
 #include "B1TrackInformation.hh"
+#include "globalFunctions.hh"
+
 
 
 
@@ -90,6 +92,19 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 			result = FALSE;
 		}
 	}
+
+	if (fscorerType==0){ //randomly pick the 0 scorer
+		//open file to append info about paths
+		G4int threadID = G4Threading::G4GetThreadId();
+		std::ofstream outputPathsFile;
+		std::string fileName =  IntToString(threadID) + "paths.txt";
+		outputPathsFile.open(fileName.c_str(),std::ofstream::app);
+		outputPathsFile << track->GetParentID();
+
+		outputPathsFile.close();
+	}
+
+
 	return result;
 }
 

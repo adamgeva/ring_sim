@@ -21,6 +21,7 @@ B1Run::B1Run()
 	for(G4int i=0; i<NUM_OF_SCORERS; i++){
 		fColIDSum[i] = SDMan->GetCollectionID("detector2/eDep_" + IntToString(i));
 	}
+
 }
 
 B1Run::~B1Run()
