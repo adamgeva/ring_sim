@@ -65,7 +65,7 @@ class B1TrackInformation : public G4VUserTrackInformation
     inline G4int GetNumberOfRayl() const {return numberOfRayl;}
     void AddCompton()  { numberOfCompton++;}
     void AddRayl()  {numberOfRayl++;}
-    void AddSegment(struct segment);
+    void AddSegment(struct segment seg) {fpathLogList.push_back(seg);}
 };
 
 
