@@ -446,13 +446,17 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 
     //  Lung Inhale
     G4Material* lung = new G4Material( "Lung",
-                                            density = 0.3*g/cm3,
+                                            density = 0.29*g/cm3,
                                             numberofElements = 5);
-    lung->AddElement(elH,0.099);
-    lung->AddElement(elC,0.1);
-    lung->AddElement(elN,0.028);
-    lung->AddElement(elO,0.740);
-    lung->AddElement(elP,0.001);
+    lung->AddElement(elH,0.103);
+    lung->AddElement(elC,0.105);
+    lung->AddElement(elN,0.031);
+    lung->AddElement(elO,0.749);
+    lung->AddElement(elNa,0.002);
+    lung->AddElement(elP,0.002);
+    lung->AddElement(elS,0.003);
+    lung->AddElement(elCl,0.003);
+    lung->AddElement(elK,0.002);
 
     // Dry spine
     G4Material* dry_spine = new G4Material( "DrySpine",
@@ -722,7 +726,7 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 									   numberofElements = 8);
 	breast_mammary->AddElement(elH,0.106);
 	breast_mammary->AddElement(elC,0.332);
-	breast_mammary->AddElement(elN,0.003);
+	breast_mammary->AddElement(elN,0.03);
 	breast_mammary->AddElement(elO,0.527);
 	breast_mammary->AddElement(elNa,0.001);
 	breast_mammary->AddElement(elP,0.001);
@@ -735,7 +739,7 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 									   numberofElements = 9);
 	skin->AddElement(elH,0.10);
 	skin->AddElement(elC,0.204);
-	skin->AddElement(elN,0.0042);
+	skin->AddElement(elN,0.042);
 	skin->AddElement(elO,0.645);
 	skin->AddElement(elNa,0.002);
 	skin->AddElement(elP,0.001);
