@@ -15,6 +15,16 @@
 #include "G4Track.hh"
 #include "G4Allocator.hh"
 #include "G4VUserTrackInformation.hh"
+#include <list>
+
+// struct that holds information of a segment of the photon path
+struct segment {
+	G4double pathLen;
+	G4double incidentEnergy;
+	G4double scatteredEnergy;
+	G4double thetaScatter;
+	G4String endingProcess;
+};
 
 class B1TrackInformation : public G4VUserTrackInformation
 {
@@ -41,6 +51,8 @@ class B1TrackInformation : public G4VUserTrackInformation
     G4int 				  numberOfCompton;
     G4int 				  numberOfRayl;
 
+    // a list that holds photons path log in segments
+    std::list<struct segment> fpathLogList;
 
   public:
     inline G4int GetOriginalTrackID() const {return originalTrackID;}
@@ -53,6 +65,7 @@ class B1TrackInformation : public G4VUserTrackInformation
     inline G4int GetNumberOfRayl() const {return numberOfRayl;}
     void AddCompton()  { numberOfCompton++;}
     void AddRayl()  {numberOfRayl++;}
+    void AddSegment(struct segment);
 };
 
 

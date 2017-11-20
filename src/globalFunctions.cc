@@ -78,6 +78,28 @@ G4bool outOfRing (G4ThreeVector position, G4ThreeVector momentumDirection, G4dou
 	return false;
 
 }
+
+G4double angleBetweenVecs(G4ThreeVector vecA, G4ThreeVector vecB) {
+
+	G4double P1x = vecA[0];
+	G4double P1y = vecA[1];
+	G4double P1z = vecA[2];
+	G4double P0x = vecB[0];
+	G4double P0y = vecB[1];
+	G4double P0z = vecB[2];
+	//normalize P0 to unit vector in x,y - p0 (small letters)
+	G4double P0Norm = sqrt(pow(P0x,2)+pow(P0y,2));
+	G4double p0x = P0x/P0Norm;
+	G4double p0y = P0y/P0Norm;
+	//normalize P1 to unit vector in x,y - p1 (small letters)
+	G4double P1Norm = sqrt(pow(P1x,2)+pow(P1y,2));
+	G4double p1x = P1x/P1Norm;
+	G4double p1y = P1y/P1Norm;
+	//calc angles
+	G4double alpha = acos(-(p0x*p1x + p0y*p1y)); //radians
+
+	return alpha;
+}
 //G4ThreeVector Mom = actualParticleChange->GetProposedMomentumDirection();
 //G4cout << "Mom = " << Mom << G4endl;
 //G4cout << "MomX = " << Mom[0] << " MomY = " << Mom[1] << " MomZ= " << Mom[2] << G4endl;

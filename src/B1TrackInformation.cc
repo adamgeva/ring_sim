@@ -21,6 +21,7 @@ B1TrackInformation::B1TrackInformation()
     originalTime = 0.;
     numberOfCompton = 0;
     numberOfRayl = 0;
+
 }
 
 B1TrackInformation::B1TrackInformation(const G4Track* aTrack)
@@ -33,6 +34,16 @@ B1TrackInformation::B1TrackInformation(const G4Track* aTrack)
     originalTime = aTrack->GetGlobalTime();
     numberOfCompton = 0;
     numberOfRayl = 0;
+
+    //creating initial segment - infact this is not yet a segment
+    segment initialSegment;
+    initialSegment.pathLen = -1;
+    initialSegment.incidentEnergy = aTrack->GetKineticEnergy();
+    initialSegment.scatteredEnergy = -1;
+    initialSegment.thetaScatter = -1;
+    initialSegment.endingProcess = "start";
+    // adding to path log
+    fpathLogList.push_back(initialSegment);
 }
 
 B1TrackInformation::B1TrackInformation(const B1TrackInformation* aTrackInfo)
@@ -47,9 +58,14 @@ B1TrackInformation::B1TrackInformation(const B1TrackInformation* aTrackInfo)
     //secondary particles recieve the parent's compton and rayl num of interactions
     numberOfCompton = aTrackInfo->GetNumberOfCompton();
     numberOfRayl = aTrackInfo->GetNumberOfRayl();
+    //TODO: !!!
+    //path log continues! but neet to account for weigths - they should be collected in segment
+    fpathLogList = aTrackInfo->fpathLogList;
 }
 
-B1TrackInformation::~B1TrackInformation(){;}
+B1TrackInformation::~B1TrackInformation(){
+	//no need to delete list because it is done automatically when the photon dies
+	}
 
 void B1TrackInformation::Print() const
 {

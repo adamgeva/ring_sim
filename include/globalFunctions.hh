@@ -22,4 +22,7 @@ G4bool RR (G4double p);
 
 G4bool outOfRing (G4ThreeVector position, G4ThreeVector momentumDirection, G4double Zup , G4double Zdown, G4double ringRadius);
 
+G4double angleBetweenVecs(G4ThreeVector vecA, G4ThreeVector vecB);
+
+
 #endif /* GLOBALFUNCTIONS_HH_ */
