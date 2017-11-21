@@ -222,7 +222,7 @@ void printXSPerAtom(G4Element* el){
 	// print phot
 	while (Energy<highE) {
 		photXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","phot",el,0);
-		outputElementFile << photXS << ",";
+		outputElementFile << photXS/cm2 << ",";
 		Energy = Energy + DeltaEnergy;
 	}
 	outputElementFile << "\n";
@@ -230,7 +230,7 @@ void printXSPerAtom(G4Element* el){
 	Energy = DeltaEnergy; //delta Energy
 	while (Energy<highE) {
 		comptXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","compt",el,0);
-		outputElementFile << comptXS << ",";
+		outputElementFile << comptXS/cm2 << ",";
 		Energy = Energy + DeltaEnergy;
 	}
 	outputElementFile << "\n";

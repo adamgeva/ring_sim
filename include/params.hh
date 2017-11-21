@@ -38,7 +38,7 @@ public:
 	}Myparams;
 
 	struct MyparamsGun{
-		G4double particleEnergy = 57*keV; //keV
+		G4double particleEnergy = 297*keV; //keV
 		G4int detectorCoverage = 1;
 		G4double MinTheta = 0 ;
 		G4double MaxTheta = M_PI/6;
