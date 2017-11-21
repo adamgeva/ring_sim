@@ -23,6 +23,7 @@ struct segment {
 	G4double incidentEnergy;
 	G4double scatteredEnergy;
 	G4double thetaScatter;
+	G4int voxel;
 	G4String endingProcess;
 };
 
@@ -41,6 +42,9 @@ class B1TrackInformation : public G4VUserTrackInformation
 
     void Print() const;
 
+    // a list that holds photons path log in segments
+    std::list<struct segment> fpathLogList;
+
   private:
     G4int                 originalTrackID;
     G4ParticleDefinition* particleDefinition;
@@ -51,8 +55,7 @@ class B1TrackInformation : public G4VUserTrackInformation
     G4int 				  numberOfCompton;
     G4int 				  numberOfRayl;
 
-    // a list that holds photons path log in segments
-    std::list<struct segment> fpathLogList;
+
 
   public:
     inline G4int GetOriginalTrackID() const {return originalTrackID;}
@@ -66,6 +69,8 @@ class B1TrackInformation : public G4VUserTrackInformation
     void AddCompton()  { numberOfCompton++;}
     void AddRayl()  {numberOfRayl++;}
     void AddSegment(struct segment seg) {fpathLogList.push_back(seg);}
+
+
 };
 
 

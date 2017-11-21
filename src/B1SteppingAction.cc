@@ -60,6 +60,17 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 	currSegmant.thetaScatter = angleBetweenVecs(startPoint->GetMomentumDirection(),endPoint->GetMomentumDirection());
 	currSegmant.endingProcess = procName;
 
+	//TODO: this is only correct for 1 voxel case - need to generalize!
+	if (endPoint->GetStepStatus()!=fWorldBoundary){
+			if (endPoint->GetPhysicalVolume()->GetName() == "water_phantom"){
+				currSegmant.voxel = 1;
+			}
+			else
+			{
+				currSegmant.voxel = 0;
+			}
+		}
+
 	//adding segment to list
 	theInfo->AddSegment(currSegmant);
 
@@ -67,8 +78,6 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 //			currSegmant.scatteredEnergy << " , currSegmant.pathLen" << currSegmant.pathLen <<
 //			" , currSegmant.thetaScatter" << currSegmant.thetaScatter << " , currSegmant.endingProcess" << currSegmant.endingProcess << std::endl;
 //
-//	std::cout << "startPoint" << startPoint->GetPosition() << " , endPoint" << endPoint->GetPosition() << std::endl;
-//	std::cout << "procName" << procName << std::endl;
 
 
 	//is this necessary?

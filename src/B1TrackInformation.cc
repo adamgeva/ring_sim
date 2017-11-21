@@ -36,14 +36,14 @@ B1TrackInformation::B1TrackInformation(const G4Track* aTrack)
     numberOfRayl = 0;
 
     //creating initial segment - infact this is not yet a segment
-    segment initialSegment;
-    initialSegment.pathLen = -1;
-    initialSegment.incidentEnergy = aTrack->GetKineticEnergy();
-    initialSegment.scatteredEnergy = -1;
-    initialSegment.thetaScatter = -1;
-    initialSegment.endingProcess = "start";
-    // adding to path log
-    fpathLogList.push_back(initialSegment);
+//    segment initialSegment;
+//    initialSegment.pathLen = -1;
+//    initialSegment.incidentEnergy = aTrack->GetKineticEnergy();
+//    initialSegment.scatteredEnergy = -1;
+//    initialSegment.thetaScatter = -1;
+//    initialSegment.endingProcess = "start";
+//    // adding to path log
+//    fpathLogList.push_back(initialSegment);
 }
 
 B1TrackInformation::B1TrackInformation(const B1TrackInformation* aTrackInfo)
