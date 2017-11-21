@@ -44,7 +44,7 @@
 #include "G4StepLimiterPhysics.hh"
 #include "B1ModularPhysicsList.hh"
 
-
+void printXSPerAtom(G4Element* el); //implemented at the end
 
 int main(int argc,char** argv)
 {
@@ -159,56 +159,36 @@ int main(int argc,char** argv)
 		delete ui;
 	}
 
-// TODO : delete
+	// TODO : delete
 	//******************************************************************
-//	G4Material* waterMatEff = new G4Material("waser", 20 ,40*g/mole, 1*g/cm3);
-//	G4MaterialCutsCouple* couple = new G4MaterialCutsCouple(waterMatEff,0);
-
-//	G4PEEffectFluoModel* pee = new G4PEEffectFluoModel("cat");
-//	pee->SetCurrentCouple(couple);
-//	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-//	G4String particleName;
-//	G4ParticleDefinition* particle = particleTable->FindParticle(particleName="gamma");
-//	G4double Z=1.1;
-//	//writing coeff to file locations to file
-//	G4double cross;
-//	std::ofstream outputCoeff;
-//	std::string fileName = "Res.csv";
-//	outputCoeff.open(fileName.c_str());
-//	outputCoeff << "coefficeints" << "\n";
-//	for (G4int i=1; i<1500; i++) {
-//		cross = pee->ComputeCrossSectionPerAtom(particle, 40*keV, Z, 0.0, 0.0,0.0);
-//		outputCoeff<<cross/(cm2/g)<<",";
-//		Z = Z + 0.1;
-//	}
-//	outputCoeff.close();
-	// material
-//	G4NistManager* nist = G4NistManager::Instance();
-//	G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
-//	G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
-//	G4Material* boneMat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-//
-//         	G4Material* waterMatEff = new G4Material("waser", 7.49 ,18*g/mole, 1*g/cm3);
-//		    //			G4ComptonScattering* componation = new G4ComptonScattering();
-//			G4MaterialCutsCouple* couple = new G4MaterialCutsCouple(waterMatEff,0);
-//			G4double cross = componation->CrossSectionPerVolume(parameters.MyparamsGun.particleEnergy,couple);
-//
-//		   	G4EmCalculator emCalculator;
-//
-//			G4double cross = emCalculator.ComputeCrossSectionPerVolume(parameters.MyparamsGun.particleEnergy,particle,"compt",waterMatEff);
-
-	//calculates MFP of all processes - gammaConversion,phot,compt,Rayl
-//	G4double MFP_Air = emCalculator.ComputeGammaAttenuationLength(parameters.MyparamsGun.particleEnergy,world_mat);
-//	G4double MFP_Water = emCalculator.ComputeGammaAttenuationLength(parameters.MyparamsGun.particleEnergy,waterMat);
-//	G4double MFP_Bone= emCalculator.ComputeGammaAttenuationLength(parameters.MyparamsGun.particleEnergy,boneMat);
-//
-//
-//	std::cout <<"MFP_Air:"<< MFP_Air/m <<" Mu Air:" <<1.0/(MFP_Air/m)<<std::endl;
-//	std::cout <<"MFP_Water:"<< MFP_Water/m <<" Mu Water:" <<1.0/(MFP_Water/m)<<std::endl;
-//	std::cout <<"MFP_Bone:"<< MFP_Bone/m <<" Mu Bone:" <<1.0/(MFP_Bone/m)<<std::endl;
-//G4double GetMeanFreePath(G4double kinEnergy, const G4ParticleDefinition*,
-//			   const G4String& processName,  const G4Material*,
-//			   const G4Region* r = nullptr);
+	//print elements cross section
+	printXSPerAtom(new G4Element("Hydrogen","H",1.0,1.008 * g/mole));
+	printXSPerAtom(new G4Element("Helium","He",2.0,4.0026 * g/mole ));
+	printXSPerAtom(new G4Element( "Lithium","Li",3.0, 6.941  * g/mole ));
+	printXSPerAtom(new G4Element("Beryllium","Be",4.0, 9.012182  * g/mole ));
+	printXSPerAtom(new G4Element("Boron","B",5.0, 10.811  * g/mole ));
+	printXSPerAtom(new G4Element( "Carbon","C",6.0, 12.011 * g/mole ));
+	printXSPerAtom(new G4Element( "Nitrogen","N",7.0, 14.007 * g/mole ));
+	printXSPerAtom(new G4Element( "Oxygen","O",8.0, 16.00  * g/mole ));
+	printXSPerAtom(new G4Element( "Fluorine","F",9.0, 18.998404  * g/mole ));
+	printXSPerAtom(new G4Element(  "Neon","Ne",10.0, 20.1797  * g/mole ));
+	printXSPerAtom(new G4Element( "Sodium","Na",11.0, 22.98977 * g/mole ));
+	printXSPerAtom(new G4Element( "Magnesium","Mg",12.0, 24.305 * g/mole ));
+	printXSPerAtom(new G4Element( "Aluminum","Al",13.0, 26.981539 * g/mole ));
+	printXSPerAtom(new G4Element( "Phosphorus","P",15.0, 30.97376 * g/mole ));
+	printXSPerAtom(new G4Element( "Sulfur","S",16.0,32.065* g/mole ));
+	printXSPerAtom(new G4Element( "Chlorine","Cl",17.0, 35.453* g/mole ));
+	printXSPerAtom(new G4Element( "Argon","Ar",18.0, 39.948 * g/mole ));
+	printXSPerAtom(new G4Element( "Potassium","K",19.0, 39.0983* g/mole ));
+	printXSPerAtom(new G4Element("Calcium","Ca",20.0, 40.078* g/mole ));
+	printXSPerAtom(new G4Element( "Scandium","Sc",21.0, 44.95591 * g/mole ));
+	printXSPerAtom(new G4Element( "Titanium","Ti",22.0, 47.867 * g/mole ));
+	printXSPerAtom(new G4Element( "Vanadium","V",23.0, 50.9415 * g/mole ));
+	printXSPerAtom(new G4Element( "Chromium","Cr",24.0, 51.9961 * g/mole ));
+	printXSPerAtom(new G4Element( "Manganese","Mn",25.0, 54.93805 * g/mole ));
+	printXSPerAtom(new G4Element( "Iron","Fe",26, 55.845* g/mole ));
+	printXSPerAtom(new G4Element( "Iodine","I",53, 126.90447 * g/mole ));
+	printXSPerAtom(new G4Element( "Lead","Pb",82, 207.2 * g/mole ));
 
 	//**********************************************************************
 
@@ -221,3 +201,39 @@ int main(int argc,char** argv)
 	delete runManager;
 }
 
+
+void printXSPerAtom(G4Element* el){
+	params parameters;
+	G4EmCalculator emCalculator;
+	std::string elementName = el->GetName();
+
+	std::ofstream outputElementFile;
+
+	std::string fileName =  "../other_code/ElementsXS/" + elementName + ".csv";
+	outputElementFile.open(fileName.c_str());
+
+	G4double highE = parameters.MyparamsGun.particleEnergy + 3*keV; //3 is buffer
+	G4double DeltaEnergy = 0.1*keV; //delta Energy
+	G4double Energy = DeltaEnergy;
+
+	G4double comptXS;
+	G4double photXS;
+
+	// print phot
+	while (Energy<highE) {
+		photXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","phot",el,0);
+		outputElementFile << photXS << ",";
+		Energy = Energy + DeltaEnergy;
+	}
+	outputElementFile << "\n";
+	// print compt
+	Energy = DeltaEnergy; //delta Energy
+	while (Energy<highE) {
+		comptXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","compt",el,0);
+		outputElementFile << comptXS << ",";
+		Energy = Energy + DeltaEnergy;
+	}
+	outputElementFile << "\n";
+	outputElementFile.close();
+
+}
