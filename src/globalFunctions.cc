@@ -88,15 +88,17 @@ G4double angleBetweenVecs(G4ThreeVector vecA, G4ThreeVector vecB) {
 	G4double P0y = vecB[1];
 	G4double P0z = vecB[2];
 	//normalize P0 to unit vector in x,y - p0 (small letters)
-	G4double P0Norm = sqrt(pow(P0x,2)+pow(P0y,2));
+	G4double P0Norm = sqrt(pow(P0x,2)+pow(P0y,2)+pow(P0z,2));
 	G4double p0x = P0x/P0Norm;
 	G4double p0y = P0y/P0Norm;
+	G4double p0z = P0z/P0Norm;
 	//normalize P1 to unit vector in x,y - p1 (small letters)
-	G4double P1Norm = sqrt(pow(P1x,2)+pow(P1y,2));
+	G4double P1Norm = sqrt(pow(P1x,2)+pow(P1y,2)+pow(P1z,2));
 	G4double p1x = P1x/P1Norm;
 	G4double p1y = P1y/P1Norm;
+	G4double p1z = P1z/P1Norm;
 	//calc angles
-	G4double alpha = acos(-(p0x*p1x + p0y*p1y)); //radians
+	G4double alpha = acos(-(p0x*p1x + p0y*p1y + p0z*p1z)); //radians
 
 	return alpha;
 }
