@@ -159,36 +159,37 @@ int main(int argc,char** argv)
 		delete ui;
 	}
 
-	// TODO : delete
 	//******************************************************************
 	//print elements cross section
-	printXSPerAtom(new G4Element("Hydrogen","H",1.0,1.008 * g/mole));
-	printXSPerAtom(new G4Element("Helium","He",2.0,4.0026 * g/mole ));
-	printXSPerAtom(new G4Element( "Lithium","Li",3.0, 6.941  * g/mole ));
-	printXSPerAtom(new G4Element("Beryllium","Be",4.0, 9.012182  * g/mole ));
-	printXSPerAtom(new G4Element("Boron","B",5.0, 10.811  * g/mole ));
-	printXSPerAtom(new G4Element( "Carbon","C",6.0, 12.011 * g/mole ));
-	printXSPerAtom(new G4Element( "Nitrogen","N",7.0, 14.007 * g/mole ));
-	printXSPerAtom(new G4Element( "Oxygen","O",8.0, 16.00  * g/mole ));
-	printXSPerAtom(new G4Element( "Fluorine","F",9.0, 18.998404  * g/mole ));
-	printXSPerAtom(new G4Element(  "Neon","Ne",10.0, 20.1797  * g/mole ));
-	printXSPerAtom(new G4Element( "Sodium","Na",11.0, 22.98977 * g/mole ));
-	printXSPerAtom(new G4Element( "Magnesium","Mg",12.0, 24.305 * g/mole ));
-	printXSPerAtom(new G4Element( "Aluminum","Al",13.0, 26.981539 * g/mole ));
-	printXSPerAtom(new G4Element( "Phosphorus","P",15.0, 30.97376 * g/mole ));
-	printXSPerAtom(new G4Element( "Sulfur","S",16.0,32.065* g/mole ));
-	printXSPerAtom(new G4Element( "Chlorine","Cl",17.0, 35.453* g/mole ));
-	printXSPerAtom(new G4Element( "Argon","Ar",18.0, 39.948 * g/mole ));
-	printXSPerAtom(new G4Element( "Potassium","K",19.0, 39.0983* g/mole ));
-	printXSPerAtom(new G4Element("Calcium","Ca",20.0, 40.078* g/mole ));
-	printXSPerAtom(new G4Element( "Scandium","Sc",21.0, 44.95591 * g/mole ));
-	printXSPerAtom(new G4Element( "Titanium","Ti",22.0, 47.867 * g/mole ));
-	printXSPerAtom(new G4Element( "Vanadium","V",23.0, 50.9415 * g/mole ));
-	printXSPerAtom(new G4Element( "Chromium","Cr",24.0, 51.9961 * g/mole ));
-	printXSPerAtom(new G4Element( "Manganese","Mn",25.0, 54.93805 * g/mole ));
-	printXSPerAtom(new G4Element( "Iron","Fe",26, 55.845* g/mole ));
-	printXSPerAtom(new G4Element( "Iodine","I",53, 126.90447 * g/mole ));
-	printXSPerAtom(new G4Element( "Lead","Pb",82, 207.2 * g/mole ));
+	if (parameters.Myparams.printElementsXS==true){
+		printXSPerAtom(new G4Element("Hydrogen","H",1.0,1.008 * g/mole));
+		printXSPerAtom(new G4Element("Helium","He",2.0,4.0026 * g/mole ));
+		printXSPerAtom(new G4Element( "Lithium","Li",3.0, 6.941  * g/mole ));
+		printXSPerAtom(new G4Element("Beryllium","Be",4.0, 9.012182  * g/mole ));
+		printXSPerAtom(new G4Element("Boron","B",5.0, 10.811  * g/mole ));
+		printXSPerAtom(new G4Element( "Carbon","C",6.0, 12.011 * g/mole ));
+		printXSPerAtom(new G4Element( "Nitrogen","N",7.0, 14.007 * g/mole ));
+		printXSPerAtom(new G4Element( "Oxygen","O",8.0, 16.00  * g/mole ));
+		printXSPerAtom(new G4Element( "Fluorine","F",9.0, 18.998404  * g/mole ));
+		printXSPerAtom(new G4Element(  "Neon","Ne",10.0, 20.1797  * g/mole ));
+		printXSPerAtom(new G4Element( "Sodium","Na",11.0, 22.98977 * g/mole ));
+		printXSPerAtom(new G4Element( "Magnesium","Mg",12.0, 24.305 * g/mole ));
+		printXSPerAtom(new G4Element( "Aluminum","Al",13.0, 26.981539 * g/mole ));
+		printXSPerAtom(new G4Element( "Phosphorus","P",15.0, 30.97376 * g/mole ));
+		printXSPerAtom(new G4Element( "Sulfur","S",16.0,32.065* g/mole ));
+		printXSPerAtom(new G4Element( "Chlorine","Cl",17.0, 35.453* g/mole ));
+		printXSPerAtom(new G4Element( "Argon","Ar",18.0, 39.948 * g/mole ));
+		printXSPerAtom(new G4Element( "Potassium","K",19.0, 39.0983* g/mole ));
+		printXSPerAtom(new G4Element("Calcium","Ca",20.0, 40.078* g/mole ));
+		printXSPerAtom(new G4Element( "Scandium","Sc",21.0, 44.95591 * g/mole ));
+		printXSPerAtom(new G4Element( "Titanium","Ti",22.0, 47.867 * g/mole ));
+		printXSPerAtom(new G4Element( "Vanadium","V",23.0, 50.9415 * g/mole ));
+		printXSPerAtom(new G4Element( "Chromium","Cr",24.0, 51.9961 * g/mole ));
+		printXSPerAtom(new G4Element( "Manganese","Mn",25.0, 54.93805 * g/mole ));
+		printXSPerAtom(new G4Element( "Iron","Fe",26, 55.845* g/mole ));
+		printXSPerAtom(new G4Element( "Iodine","I",53, 126.90447 * g/mole ));
+		printXSPerAtom(new G4Element( "Lead","Pb",82, 207.2 * g/mole ));
+	}
 
 	//**********************************************************************
 
@@ -206,10 +207,10 @@ void printXSPerAtom(G4Element* el){
 	params parameters;
 	G4EmCalculator emCalculator;
 	std::string elementName = el->GetName();
-
+	G4int elementZ = el->GetZ();
 	std::ofstream outputElementFile;
 
-	std::string fileName =  "../other_code/ElementsXS/" + elementName + ".csv";
+	std::string fileName =  "../run_outputs/ElementsXS/" + IntToString(elementZ) + ".csv";
 	outputElementFile.open(fileName.c_str());
 
 	G4double highE = parameters.MyparamsGun.particleEnergy + 3*keV; //3 is buffer

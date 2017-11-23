@@ -57,7 +57,7 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 							   pow((endPoint->GetPosition().y() - startPoint->GetPosition().y()),2) +
 							   pow((endPoint->GetPosition().z() - startPoint->GetPosition().z()),2));
 
-	currSegmant.thetaScatter = angleBetweenVecs(startPoint->GetMomentumDirection(),endPoint->GetMomentumDirection());
+	//currSegmant.thetaScatter = angleBetweenVecs(startPoint->GetMomentumDirection(),endPoint->GetMomentumDirection());
 	currSegmant.endingProcess = procName;
 
 	//TODO: this is only correct for 1 voxel case - need to generalize!

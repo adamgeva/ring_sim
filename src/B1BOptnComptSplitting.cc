@@ -52,15 +52,6 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 {
 
 	params parameters;
-	//*************************************
-				G4Material* waterMatEff = new G4Material("waser", 7.49 ,18*g/mole, 1*g/cm3);
-			    G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-			   	G4EmCalculator emCalculator;
-
-				G4double cross = emCalculator.ComputeCrossSectionPerVolume(parameters.MyparamsGun.particleEnergy,track->GetDefinition(),callingProcess->GetProcessName(),waterMatEff);
-
-	//**********************************************
-
 
   //fetch track data and split factor
   B1BOptrFSTrackData* AuxTrackData = (B1BOptrFSTrackData*)(track->GetAuxiliaryTrackInformation(fFSModelID));

@@ -12,7 +12,7 @@
 
 
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -25,7 +25,7 @@ class params
 {
 public:
 	struct Myparams{
-		G4int numberOfThreads = 5;
+		G4int numberOfThreads = 35;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;
@@ -35,10 +35,11 @@ public:
 		int trackVerbose = 0;
 		G4int onOffBiasing = 0; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
+		G4bool printElementsXS = true;
 	}Myparams;
 
 	struct MyparamsGun{
-		G4double particleEnergy = 297*keV; //keV
+		G4double particleEnergy = 57*keV; //keV
 		G4int detectorCoverage = 1;
 		G4double MinTheta = 0 ;
 		G4double MaxTheta = M_PI/6;
@@ -76,7 +77,7 @@ public:
 		G4int numberOfRows = 1;
 		//G4int numberOfRows = 1;
 		G4int numberOfDetectors = 5;
-		std::string matFile = "waterMatFile.txt";
+		std::string matFile = "../run_inputs/waterMatFile.txt";
 
 	}MyparamsGeometry;
 

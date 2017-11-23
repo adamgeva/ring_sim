@@ -20,7 +20,7 @@ B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 	if (type==0){ //randomly pick the 0 scorer
 		//open file to append info about paths
 		G4int threadID = G4Threading::G4GetThreadId();
-		std::string fileName =  IntToString(threadID) + "paths.txt";
+		std::string fileName =  "../run_outputs/" + IntToString(threadID) + "paths.csv";
 		outputPathsFile.open(fileName.c_str());
 	}
 
@@ -115,11 +115,12 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	   		theInfo->fpathLogList.pop_front();
 	   		outputPathsFile << seg.voxel << "," << seg.pathLen << ",";
 	   		//TODO: needs to be generalized - maybe there will be another process once!
+	   		G4String enddd = seg.endingProcess;
 	   		if (seg.endingProcess == "compt"){
-	   			outputPathsFile << -2 << "," << seg.incidentEnergy << "," << seg.scatteredEnergy << "," << seg.thetaScatter << ",";
+	   			outputPathsFile << -2 << "," << seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ",";
 	   		}
 	   	}
-	   	outputPathsFile << ReplicaNum1 << "\n";
+	   	outputPathsFile << ReplicaNum1 << "," << -100 << "\n";
 
 	}
 

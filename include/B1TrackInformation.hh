@@ -22,7 +22,7 @@ struct segment {
 	G4double pathLen;
 	G4double incidentEnergy;
 	G4double scatteredEnergy;
-	G4double thetaScatter;
+	//G4double thetaScatter;
 	G4int voxel;
 	G4String endingProcess;
 };
