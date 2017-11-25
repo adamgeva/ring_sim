@@ -25,7 +25,7 @@ class params
 {
 public:
 	struct Myparams{
-		G4int numberOfThreads = 35;
+		G4int numberOfThreads = 20;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;

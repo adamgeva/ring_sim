@@ -14,7 +14,7 @@ class G4LogicalVolume;
 struct matProps {
 	  G4double density;
 	  G4double Oel;
-	  G4double Cel;
+	  G4double Cael;
 };
 
 // Detector construction class to define materials and geometry.

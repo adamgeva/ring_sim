@@ -208,8 +208,9 @@ matProps B1DetectorConstruction::ReadMatProperties(const G4String& fname)
   // reading material properties from file
   fin >> waterProps.density;
   fin >> waterProps.Oel;
-  fin >> waterProps.Cel;
+  fin >> waterProps.Cael;
   fin.close();
+  std::cout << "density, " << waterProps.density << " ,O " <<  waterProps.Oel << " ,Ca " << waterProps.Cael << std::endl;
   return waterProps;
 }
 
@@ -280,7 +281,9 @@ void B1DetectorConstruction::InitialisationOfMaterials()
     G4double z, a, density;
     G4String name, symbol;
 
-
+    G4Element* elPb = new G4Element( name = "Lead",
+                                        symbol = "Pb",
+                                        z = 82, a = 207.2 * g/mole );
 
     G4Element* elC = new G4Element( name = "Carbon",
 								   symbol = "C",
@@ -289,6 +292,10 @@ void B1DetectorConstruction::InitialisationOfMaterials()
     G4Element* elO = new G4Element( name = "Oxygen",
                                    symbol = "O",
                                    z = 8.0, a = 16.00  * g/mole );
+
+    G4Element* elCa = new G4Element( name="Calcium",
+                                    symbol = "Ca",
+                                    z = 20.0, a = 40.078* g/mole );
 
 
     // Creating Materials :
@@ -299,7 +306,7 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 									   density = waterMatProps.density*g/cm3,
 									   numberofElements = 2);
 
-	fwaterMat->AddElement(elC,waterMatProps.Cel);
+	fwaterMat->AddElement(elCa,waterMatProps.Cael);
 	fwaterMat->AddElement(elO,waterMatProps.Oel);
 
 

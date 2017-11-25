@@ -53,9 +53,10 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 
 	currSegmant.incidentEnergy = startPoint->GetKineticEnergy();
 	currSegmant.scatteredEnergy = endPoint->GetKineticEnergy();
-	currSegmant.pathLen = sqrt(pow((endPoint->GetPosition().x() - startPoint->GetPosition().x()),2) +
-							   pow((endPoint->GetPosition().y() - startPoint->GetPosition().y()),2) +
-							   pow((endPoint->GetPosition().z() - startPoint->GetPosition().z()),2));
+	G4double Len = sqrt(pow((endPoint->GetPosition().x() - startPoint->GetPosition().x()),2) +
+			   pow((endPoint->GetPosition().y() - startPoint->GetPosition().y()),2) +
+			   pow((endPoint->GetPosition().z() - startPoint->GetPosition().z()),2));
+	currSegmant.pathLen = Len/10.0; //from mm to cm
 
 	//currSegmant.thetaScatter = angleBetweenVecs(startPoint->GetMomentumDirection(),endPoint->GetMomentumDirection());
 	currSegmant.endingProcess = procName;
