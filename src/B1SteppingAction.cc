@@ -9,13 +9,21 @@
 #include "G4VUserTrackInformation.hh"
 #include "B1TrackInformation.hh"
 #include "G4RunManager.hh"
+#include "G4TransportationManager.hh"
+#include "params.hh"
 #include "globalFunctions.hh"
-
 
 
 B1SteppingAction::B1SteppingAction()
 :G4UserSteppingAction()
-{ }
+{
+	params parameters;
+	if (parameters.Myparams.G4navigatorVerbos==0){
+		//suppressing navigator msgs
+		G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->SetPushVerbosity(0);
+	}
+}
+
 
 
 B1SteppingAction::~B1SteppingAction()

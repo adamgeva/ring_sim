@@ -26,21 +26,23 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
   fEnvelopeBox(0)
 {
   params parameters;
+  //calculations for file export
+  //calculating angle between two detectors - same calculation is done in detector construction
+  G4double detectorAngleDiff = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
+  G4int numOfItr = (2*M_PI)/detectorAngleDiff;
+  //correct for numeric errors - gap is spread
+  detectorAngleDiff = (2*M_PI)/numOfItr;
+  //beta is the angle coverage (cone) of the source
+  G4double beta = 2*parameters.MyparamsGun.MaxTheta;
+  // sourceAngleDiff is the angle between every source
+  G4double sourceAngleDiff = 2*M_PI/NUM_OF_SOURCES;
+
   G4int n_particle = 1;
   // default particle kinematic
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4String particleName;
   G4ParticleDefinition* particle = particleTable->FindParticle(particleName="gamma");
-  //place gun
-  fParticleGun  = new G4ParticleGun(n_particle);
-  fParticleGun->SetParticleDefinition(particle);
-  fParticleGun->SetParticleEnergy(parameters.MyparamsGun.particleEnergy);
-  //setting positions for all sources
-  G4double alpha = 0;
-  G4double x0 = parameters.MyparamsGeometry.radius*(std::cos(alpha+M_PI));
-  G4double y0 = 0;
-  G4double z0 = 0;
-  fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
+
 
 
 }
@@ -48,22 +50,64 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 
 B1PrimaryGeneratorAction::~B1PrimaryGeneratorAction()
 {
-	delete fParticleGun;
-
+	for (G4int i=0; i<NUM_OF_SOURCES; i++){
+		delete fParticleGun[i];
+	}
 
 }
 
 
 void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
+	params parameters;
+	G4int runID = G4RunManager::GetRunManager()->GetNonConstCurrentRun()->GetRunID();
 
+	//G4double MinTheta = parameters.MyparamsGun.MinTheta;
+	G4double MaxTheta = parameters.MyparamsGun.MaxTheta;
+//	G4double MinTheta = M_PI/2  ;
+//	G4double MaxTheta = M_PI/2 ;
+//	G4double MinPhi = -M_PI/8;
+//	G4double MaxPhi = M_PI/8;
+	G4double MinPhi = parameters.MyparamsGun.MinPhi;
+	G4double MaxPhi = parameters.MyparamsGun.MaxPhi;
+
+
+	//phi
+	G4double rndm1 = G4UniformRand();
+	G4double phi = MinPhi + rndm1 * (MaxPhi - MinPhi);
+	//cos,sin theta - used for cone beam
+//	G4double rndm = G4UniformRand();
+//	G4double costheta = std::cos(MinTheta) - rndm * (std::cos(MinTheta) - std::cos(MaxTheta));
+//	G4double sintheta = std::sqrt(1. - costheta*costheta);
+	//cos,sin theta - used for fan beam
+	G4double rndm = G4UniformRand();
+	G4double theta = -MaxTheta + rndm*(2*MaxTheta);
+	G4double costheta = std::cos(theta);
+	G4double sintheta = std::sin(theta);
+	//cos,sin phi
+	G4double cosphi = std::cos(phi);
+	G4double sinphi = std::sin(phi);
 	//coordinates
-	G4double px = 1;
-	G4double py = 0;
-	G4double pz = 0;
+	G4double px = costheta;
+	G4double py = sintheta * cosphi;
+	G4double pz = sintheta * sinphi;
 
-	fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
-	fParticleGun->GeneratePrimaryVertex(anEvent);
 
+
+	//if switching sources is applied
+	if (ALT_SOURCES==1){
+		// sourceAngleDiff is the angle between every source
+		G4double sourceAngleDiff = 2*M_PI/NUM_OF_SOURCES;
+		G4double angleTransform = sourceAngleDiff*runID;
+		//T is after transformation because of new source position
+		G4double pxT = px*std::cos(angleTransform) - py*std::sin(angleTransform);
+		G4double pyT = px*std::sin(angleTransform) + py*std::cos(angleTransform);
+		fParticleGun[runID]->SetParticleMomentumDirection(G4ThreeVector(pxT,pyT,pz));
+		fParticleGun[runID]->GeneratePrimaryVertex(anEvent);
+	}
+	else {
+		fParticleGun[0]->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
+		fParticleGun[0]->GeneratePrimaryVertex(anEvent);
+	}
 }
 

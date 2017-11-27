@@ -56,7 +56,7 @@ void B1ModularPhysicsList::SetCuts()
 
 	  SetCutsWithDefault();
 	  // Production thresholds for detector regions
-	  G4String regName = "waterRegion";
+	  G4String regName = "ContainerRegion";
 	  G4Region* region = G4RegionStore::GetInstance()->GetRegion(regName);
 	  G4ProductionCuts* cuts = new G4ProductionCuts;
 	  //cuts->SetProductionCut(1*m); // same cuts  for gamma e- and e+

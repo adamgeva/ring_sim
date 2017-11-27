@@ -1,5 +1,5 @@
 
-#include "B1DetectorConstruction.hh"
+#include "B1RegularDetectorConstruction.hh"
 #include "B1ActionInitialization.hh"
 #include "params.hh"
 #include "globalFunctions.hh"
@@ -77,7 +77,9 @@ int main(int argc,char** argv)
 
 	// Set mandatory initialization classes
 	// Detector construction
-	runManager->SetUserInitialization(new B1DetectorConstruction());
+	B1DetectorConstruction* theGeometry = 0;
+	theGeometry = new B1RegularDetectorConstruction();
+	runManager->SetUserInitialization(theGeometry);
 
 	// Physics list
 	G4VModularPhysicsList* physicsList;

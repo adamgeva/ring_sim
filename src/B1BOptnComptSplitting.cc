@@ -51,7 +51,7 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
                         G4bool&                                         )
 {
 
-	params parameters;
+  params parameters;
 
   //fetch track data and split factor
   B1BOptrFSTrackData* AuxTrackData = (B1BOptrFSTrackData*)(track->GetAuxiliaryTrackInformation(fFSModelID));

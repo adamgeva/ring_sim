@@ -8,11 +8,12 @@
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
 #include "G4SystemOfUnits.hh"
+#include "G4String.hh"
 #include "G4Types.hh"
-
+#include <math.h>
 
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -33,6 +34,8 @@ public:
 		int runVerbose = 1;
 		int eventVerbose = 0;
 		int trackVerbose = 0;
+		//set to 0 to suppress navigator msgs
+		int G4navigatorVerbos = 0;
 		G4int onOffBiasing = 0; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 		G4bool printElementsXS = true;
@@ -60,6 +63,9 @@ public:
 
 
 	struct MyparamsGeometry{
+		//flags to build phantom and detectors
+		G4int buildDetectors = 1;
+		G4int buildPhantom = 1;
 		G4double worldXY = 70*cm; //half sizes
 		G4double worldZ = 70*cm;
 		G4double waterBox = 5*cm;
@@ -77,15 +83,21 @@ public:
 		G4int numberOfRows = 1;
 		//G4int numberOfRows = 1;
 		G4int numberOfDetectors = 5;
-		std::string matFile = "../run_inputs/waterMatFile.txt";
+		//XCAT
+		//TODO: add in an external meta file
+		G4int numberOfZSlices = 64;
+		G4int numberOfVoxelsX = 64;
+		G4int numberOfVoxelsY = 64;
+		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;
+		//TODO: check that these sizes are correct
+		G4double voxelHalfX = 1*mm;
+		G4double voxelHalfY = 1*mm;
+		G4double voxelHalfZ = 1*mm;
+		G4String phantomFileName = "/home/adamgeva/XCAT/simplePhantom/simplePhantom_";
+		G4String IdToCompMapName = "id_to_comp.txt";
 
 	}MyparamsGeometry;
 
-	struct MyparamsHist{
-		G4int nx = 500;
-		G4int ny = 500;
-		G4int nz = 10;
-	}MyparamsHist;
 };
 
 
