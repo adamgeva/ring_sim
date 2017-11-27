@@ -17,7 +17,7 @@
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
-#define ALT_SOURCES 1
+#define ALT_SOURCES 0
 #define NUM_OF_SOURCES 100 //this defines the number of runs
 
 
@@ -45,7 +45,8 @@ public:
 		G4double particleEnergy = 57*keV; //keV
 		G4int detectorCoverage = 1;
 		G4double MinTheta = 0 ;
-		G4double MaxTheta = M_PI/6;
+		//G4double MaxTheta = M_PI/6;
+		G4double MaxTheta = 0;
 		G4double MinPhi = 0;
 //		G4double MaxPhi = 2*M_PI;
 		G4double MaxPhi = 0;
@@ -94,7 +95,7 @@ public:
 		G4double voxelHalfY = 1*mm;
 		G4double voxelHalfZ = 1*mm;
 		G4String phantomFileName = "/home/adamgeva/XCAT/simplePhantom/simplePhantom_";
-		G4String IdToCompMapName = "id_to_comp.txt";
+		G4String IdToCompMapName = "../run_inputs/id_to_comp.txt";
 
 	}MyparamsGeometry;
 

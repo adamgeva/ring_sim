@@ -954,7 +954,7 @@ void B1DetectorConstruction::ConstructSDandField()
 	params parameters;
 
   // -- Fetch volume for biasing:
-  G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("water_phantom");
+  G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("phantomContainer");
   //G4LogicalVolume* logicWorld = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
   //G4LogicalVolume* logicTestBone = G4LogicalVolumeStore::GetInstance()->GetVolume("bone");
 

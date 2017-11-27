@@ -32,8 +32,6 @@ G4bool RR (G4double p)
 
 //Check in or out of ring - true if out
 G4bool outOfRing (G4ThreeVector position, G4ThreeVector momentumDirection, G4double Zup , G4double Zdown, G4double ringRadius) {
-<<<<<<< HEAD
-
 	G4double P1x = momentumDirection[0];
 	G4double P1y = momentumDirection[1];
 	G4double P1z = momentumDirection[2];
