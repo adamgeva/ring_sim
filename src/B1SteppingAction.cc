@@ -71,8 +71,8 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 
 	//TODO: this is only correct for 1 voxel case - need to generalize!
 	if (endPoint->GetStepStatus()!=fWorldBoundary){
-			if (startPoint->GetPhysicalVolume()->GetName() == "water_phantom"){
-				currSegmant.voxel = 1;
+			if (startPoint->GetPhysicalVolume()->GetName() == "phantom"){
+				currSegmant.voxel = startPoint->GetPhysicalVolume()->GetCopyNo();
 			}
 			else
 			{

@@ -86,7 +86,7 @@ public:
 		G4int numberOfDetectors = 5;
 		//XCAT
 		//TODO: add in an external meta file
-		G4int numberOfZSlices = 64;
+		G4int numberOfZSlices = 1;
 		G4int numberOfVoxelsX = 64;
 		G4int numberOfVoxelsY = 64;
 		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;
