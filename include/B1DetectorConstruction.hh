@@ -32,19 +32,13 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
     
   protected:
     // create the original materials
-    void InitialisationOfMaterials();
-    void InitialisationOfMaterialsMap();
-    void ReadPhantomData();
-    void ReadPhantomDataFile(const G4String& fname,G4int sliceNumber);
-    // read one of the DICOM files describing the phantom (usually one per Z slice).
-    //  Build a DicomPhantomZSliceHeader for each file
+    void ReadPhantomDataAndInitialisationOfMaterials();
     void ConstructPhantomContainer();
     virtual void ConstructPhantom() = 0;
 	// construct the phantom volumes.
 	//  This method should be implemented for each of the derived classes
 
   protected:
-    G4int fNoFiles; // number of Phantom files- each file is one Z slice
     G4LogicalVolume* fvoxel_logic;
     G4Box* fContainer_solid;
    	G4LogicalVolume* fContainer_logic;
@@ -62,11 +56,6 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 	//TODO: what is this used for?
 	std::map<G4int,G4Material*> thePhantomMaterialsOriginal;
 	// map numberOfMaterial to G4Material. They are the list of materials as built from .geom file
-
-
-	std::map<G4int,materialIDs> intensityToMateID;
-	// maps the intensity value in every voxel to its material ID
-
 
   private:
 	G4LogicalVolume* worldLV;

@@ -41,7 +41,6 @@
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
 
-  fNoFiles(0),
   fvoxel_logic(0),
   fContainer_solid(0),
   fContainer_logic(0),
@@ -77,10 +76,6 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	std::cout << "GetAngularTolerance() = " << G4GeometryTolerance::GetInstance()->GetAngularTolerance()/mm << std::endl;
 	std::cout << "GetRadialTolerance() = " << G4GeometryTolerance::GetInstance()->GetRadialTolerance()/mm << std::endl;
 
-
-	//initialize materials
-    InitialisationOfMaterials();
-    InitialisationOfMaterialsMap();
 
 	// Get nist material manager
 	G4NistManager* nist = G4NistManager::Instance();
@@ -180,7 +175,8 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
 	//building phantom
 	if (parameters.MyparamsGeometry.buildPhantom==1){
-		ReadPhantomData();
+		//initialize materials
+		ReadPhantomDataAndInitialisationOfMaterials();
 		ConstructPhantomContainer();
 		ConstructPhantom();
 	}
@@ -206,63 +202,6 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	return worldPHS;
 }
 
-void B1DetectorConstruction::ReadPhantomData()
-{
-	params parameters;
-
-    fNoFiles = parameters.MyparamsGeometry.numberOfZSlices;
-    for(G4int i = 0; i < fNoFiles; i++ ) {
-        //--- Read one data file
-        G4String fileName = parameters.MyparamsGeometry.phantomFileName + IntToString(i) + ".txt";
-        ReadPhantomDataFile(fileName,i);
-    }
-}
-
-void B1DetectorConstruction::ReadPhantomDataFile(const G4String& fname, G4int sliceNumber)
-{
-	params parameters;
-
-  std::cout << " B1DetectorConstruction::ReadPhantomDataFile opening file "
-		 << fname << std::endl;
-  //TODO: handle reading from phantom files
-  std::ifstream fin(fname.c_str(), std::ios_base::in);
-  if( !fin.is_open() ) {
-    G4Exception("B1DetectorConstruction::ReadPhantomDataFile",
-                "",
-                FatalErrorInArgument,
-                G4String("File not found " + fname ).c_str());
-  }
-
-  G4int nVoxels = parameters.MyparamsGeometry.numberOfPixelsPerSlice; //256*256
-
-  //--- If first slice, initiliaze fMateIDs
-  if( sliceNumber==0 ) {
-    fMateIDs = new size_t[fNoFiles*nVoxels];
-  }
-
-  G4double mateID;
-  // number of voxels from previously read slices
-  G4int voxelCopyNo = (sliceNumber)*nVoxels;
-  materialIDs mateStruct;
-  G4double ID;
-  for( G4int ii = 0; ii < nVoxels; ii++, voxelCopyNo++ ){
-    fin >> ID;
-    mateStruct = intensityToMateID[ID];
-    mateID = mateStruct.mat1ID;
-//    if (mateID!=0) {
-//    	std::cout << "structureMateID = " << mateID << std::endl;
-//    	std::cout << "ii = " << ii << " voxelCopyNo = " << voxelCopyNo << std::endl;
-//    }
-    fMateIDs[voxelCopyNo] = mateID;
-  }
-
-
-
-//    //-- Get material from list of original materials
-//    mateID = fMateIDs[voxelCopyNo];
-//    G4Material* mateOrig  = fMaterials[mateID];
-
-}
 
 void B1DetectorConstruction::ConstructPhantomContainer()
 {
@@ -302,66 +241,16 @@ void B1DetectorConstruction::ConstructPhantomContainer()
   //fContainer_logic->SetVisAttributes(new G4VisAttributes(G4Colour(1.,0.,0.)));
 }
 
-void B1DetectorConstruction::InitialisationOfMaterialsMap()
-{
-	params parameters;
-	G4String fname = parameters.MyparamsGeometry.IdToCompMapName;
-	std::ifstream fin(fname.c_str(), std::ios_base::in);
-	if( !fin.is_open() ) {
-	   G4Exception("B1DetectorConstruction::ReadPhantomDataFile",
-	                "",
-	                FatalErrorInArgument,
-	                G4String("File not found " + fname ).c_str());
-	  }
-	//read header - dummy line
-	std::string line;
-	std::getline(fin,line);
-	//std::cout << line << std::endl;
-	//read file and create a map
-	while (true) {
-	    if( fin.eof() ) break;
 
-	    G4int NumOfMaterials;
-	    G4int ID;
-	    G4int MateA;
-	    G4int MateB;
-
-	    fin >> NumOfMaterials;
-	    fin >> ID;
-	    //std::cout<<"NumOfMaterials: " << NumOfMaterials << " ID: " << ID << std::endl;
-	    //create material struct
-	    materialIDs MaterialStruct;
-	    if (NumOfMaterials==1){
-	    	fin >> MateA;
-	    	//std::cout<<"MateA: " << MateA << std::endl;
-	    	MaterialStruct.mat1ID=MateA;
-	    	MaterialStruct.mat2ID=-1;
-	    } else { //NumOfMaterials==2
-	    	fin >> MateA;
-	    	fin >> MateB;
-	    	//std::cout<<"MateA: " << MateA << "MateB: " << MateB << std::endl;
-	    	MaterialStruct.mat1ID=MateA;
-	    	MaterialStruct.mat2ID=MateB;
-	    }
-
-	    //insert to map
-	    std::pair<std::map<G4int,materialIDs>::iterator,bool> ret;
-	    //std::cout << "inserting ID: " << ID << std::endl;
-	    ret = intensityToMateID.insert ( std::pair<G4int,materialIDs>(ID,MaterialStruct) );
-	    if (ret.second==false) {
-	      std::cout << "element " << ID << " already existed" << std::endl;
-	      //std::cout << " with a value of " << intensityToMateID[ret.first] << '\n';
-	    }
-	}
-	//std::cout << "intensityToMateID.size() is " << intensityToMateID.size() << std::endl;
-
-}
-
-void B1DetectorConstruction::InitialisationOfMaterials()
+void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
 {
     // Creating elements :
     G4double z, a, density;
     G4String name, symbol;
+    G4int numberofElements;
+
+    // initiallize fMateIDs
+    fMateIDs = new size_t[NUM_OF_VOXELS-1];
 
 
     G4Element* elH = new G4Element( name = "Hydrogen",
@@ -446,507 +335,73 @@ void B1DetectorConstruction::InitialisationOfMaterials()
                                     symbol = "Pb",
                                     z = 82, a = 207.2 * g/mole );
 
+//*******************************************************************************************************************************************************
+    params parameters;
+	G4String fname = parameters.MyparamsGeometry.voxels_materials_file;
+	std::ifstream fin(fname.c_str(), std::ios_base::in);
+	if( !fin.is_open() ) {
+	   G4Exception("Can't read voxels_materials_file",
+					"",
+					FatalErrorInArgument,
+					G4String("File not found " + fname ).c_str());
+	  }
+	//pointers to materials - number of voxels
+	G4Material* material[NUM_OF_VOXELS];
+	G4String MaterialName[NUM_OF_VOXELS];
+	//iterate over the voxels - every voxel as a material
+	G4int voxel = 0;
+	for (voxel = 0; voxel<parameters.MyparamsGeometry.numberOfPixelsPerSlice*parameters.MyparamsGeometry.numberOfZSlices; voxel ++){
+		if( fin.eof() ) break;
+		// material - place in an array
+		MaterialName[voxel] = "mat" + IntToString(voxel);
+		G4double rau;
+		G4double fracs[NUM_OF_ELEMENTS];
+		// read density
+		fin >> rau;
+		// create material
+		material[voxel] = new G4Material( name = MaterialName[voxel],
+											   density = rau*g/cm3,
+											   numberofElements = parameters.Myparams.numberOfElements );
 
-    // Creating Materials :
-    G4int numberofElements;
+		// read fractions
+		for (G4int i=1; i<=parameters.Myparams.numberOfElements; i++){
+			fin >> fracs[i];
+		}
 
-    // Water
-    G4Material* water = new G4Material( "Water",
-                                       density = 1.0*g/cm3,
-                                       numberofElements = 2 );
-    water->AddElement(elH,0.112);
-    water->AddElement(elO,0.888);
+		//adding elements according to fractions
+		material[voxel]->AddElement(elH,fracs[1]);
+		material[voxel]->AddElement(elHe,fracs[2]);
+		material[voxel]->AddElement(elLi,fracs[3]);
+		material[voxel]->AddElement(elBe,fracs[4]);
+		material[voxel]->AddElement(elB,fracs[5]);
+		material[voxel]->AddElement(elC,fracs[6]);
+		material[voxel]->AddElement(elN,fracs[7]);
+		material[voxel]->AddElement(elO,fracs[8]);
+		material[voxel]->AddElement(elF,fracs[9]);
+		material[voxel]->AddElement(elNe,fracs[10]);
+		material[voxel]->AddElement(elNa,fracs[11]);
+		material[voxel]->AddElement(elMg,fracs[12]);
+		material[voxel]->AddElement(elAl,fracs[13]);
+		material[voxel]->AddElement(elP,fracs[14]);
+		material[voxel]->AddElement(elS,fracs[15]);
+		material[voxel]->AddElement(elCl,fracs[16]);
+		material[voxel]->AddElement(elAr,fracs[17]);
+		material[voxel]->AddElement(elK,fracs[18]);
+		material[voxel]->AddElement(elCa,fracs[19]);
+		material[voxel]->AddElement(elSc,fracs[20]);
+		material[voxel]->AddElement(elTi,fracs[21]);
+		material[voxel]->AddElement(elV,fracs[22]);
+		material[voxel]->AddElement(elCr,fracs[23]);
+		material[voxel]->AddElement(elMn,fracs[24]);
+		material[voxel]->AddElement(elFe,fracs[25]);
+		material[voxel]->AddElement(elI,fracs[26]);
+		material[voxel]->AddElement(elPb,fracs[27]);
 
-    // Muscle
-	G4Material* muscle = new G4Material( "Muscle",
-										density = 1.05*g/cm3,
-										numberofElements = 9 );
-	muscle->AddElement(elH,0.102);
-	muscle->AddElement(elC,0.143);
-	muscle->AddElement(elN,0.034);
-	muscle->AddElement(elO,0.710);
-	muscle->AddElement(elNa,0.001);
-	muscle->AddElement(elP,0.002);
-	muscle->AddElement(elS,0.003);
-	muscle->AddElement(elCl,0.001);
-	muscle->AddElement(elK,0.004);
-
-    //  Lung Inhale
-    G4Material* lung = new G4Material( "Lung",
-                                            density = 0.3*g/cm3,
-                                            numberofElements = 5);
-    lung->AddElement(elH,0.099);
-    lung->AddElement(elC,0.1);
-    lung->AddElement(elN,0.028);
-    lung->AddElement(elO,0.740);
-    lung->AddElement(elP,0.001);
-
-    // Dry spine
-    G4Material* dry_spine = new G4Material( "DrySpine",
-                                            density = 1.42*g/cm3,
-                                            numberofElements = 11);
-    dry_spine->AddElement(elH,0.063);
-    dry_spine->AddElement(elC,0.261);
-    dry_spine->AddElement(elN,0.039);
-    dry_spine->AddElement(elO,0.436);
-    dry_spine->AddElement(elNa,0.001);
-    dry_spine->AddElement(elMg,0.001);
-    dry_spine->AddElement(elP,0.061);
-    dry_spine->AddElement(elS,0.003);
-    dry_spine->AddElement(elCl,0.001);
-    dry_spine->AddElement(elK,0.001);
-    dry_spine->AddElement(elCa,0.133);
-
-    // Dry rib
-    G4Material* dry_rib = new G4Material( "DryRib",
-                                            density = 1.92*g/cm3,
-                                            numberofElements = 9);
-    dry_rib->AddElement(elH,0.034);
-    dry_rib->AddElement(elC,0.155);
-    dry_rib->AddElement(elN,0.042);
-    dry_rib->AddElement(elO,0.435);
-    dry_rib->AddElement(elNa,0.001);
-    dry_rib->AddElement(elMg,0.002);
-    dry_rib->AddElement(elP,0.103);
-    dry_rib->AddElement(elS,0.003);
-    dry_rib->AddElement(elCa,0.225);
-
-
-    // Adipose tissue
-    G4Material* adiposeTissue = new G4Material( "AdiposeTissue",
-                                               density = 0.95*g/cm3,
-                                               numberofElements = 7);
-    adiposeTissue->AddElement(elH,0.114);
-    adiposeTissue->AddElement(elC,0.598);
-    adiposeTissue->AddElement(elN,0.007);
-    adiposeTissue->AddElement(elO,0.278);
-    adiposeTissue->AddElement(elNa,0.001);
-    adiposeTissue->AddElement(elS,0.001);
-    adiposeTissue->AddElement(elCl,0.001);
-
-    // Blood
-    G4Material* blood = new G4Material( "Blood",
-                                               density = 1.06*g/cm3,
-                                               numberofElements = 10);
-    blood->AddElement(elH,0.102);
-    blood->AddElement(elC,0.11);
-    blood->AddElement(elN,0.033);
-    blood->AddElement(elO,0.745);
-    blood->AddElement(elNa,0.001);
-    blood->AddElement(elP,0.001);
-    blood->AddElement(elS,0.002);
-    blood->AddElement(elCl,0.003);
-    blood->AddElement(elK,0.002);
-    blood->AddElement(elFe,0.001);
-
-    // Heart
-    G4Material* heart = new G4Material( "Heart",
-                                               density = 1.05*g/cm3,
-                                               numberofElements = 9);
-    heart->AddElement(elH,0.104);
-    heart->AddElement(elC,0.139);
-    heart->AddElement(elN,0.029);
-    heart->AddElement(elO,0.718);
-    heart->AddElement(elNa,0.001);
-    heart->AddElement(elP,0.002);
-    heart->AddElement(elS,0.002);
-    heart->AddElement(elCl,0.002);
-    heart->AddElement(elK,0.003);
-
-    // Kidney
-    G4Material* kidney = new G4Material( "Kidney",
-                                               density = 1.05*g/cm3,
-                                               numberofElements = 10);
-    kidney->AddElement(elH,0.103);
-    kidney->AddElement(elC,0.132);
-    kidney->AddElement(elN,0.03);
-    kidney->AddElement(elO,0.724);
-    kidney->AddElement(elNa,0.002);
-    kidney->AddElement(elP,0.002);
-    kidney->AddElement(elS,0.002);
-    kidney->AddElement(elCl,0.002);
-    kidney->AddElement(elK,0.002);
-    kidney->AddElement(elCa,0.001);
-
-    // Liver
-	G4Material* liver = new G4Material( "Liver",
-									   density = 1.06*g/cm3,
-									   numberofElements = 9);
-	liver->AddElement(elH,0.102);
-	liver->AddElement(elC,0.139);
-	liver->AddElement(elN,0.030);
-	liver->AddElement(elO,0.716);
-	liver->AddElement(elNa,0.002);
-	liver->AddElement(elP,0.003);
-	liver->AddElement(elS,0.003);
-	liver->AddElement(elCl,0.002);
-	liver->AddElement(elK,0.003);
-
-    // Lymph
-	G4Material* lymph = new G4Material( "Lymph",
-									   density = 1.03*g/cm3,
-									   numberofElements = 7);
-	lymph->AddElement(elH,0.108);
-	lymph->AddElement(elC,0.041);
-	lymph->AddElement(elN,0.011);
-	lymph->AddElement(elO,0.832);
-	lymph->AddElement(elNa,0.003);
-	lymph->AddElement(elS,0.001);
-	lymph->AddElement(elCl,0.004);
-
-    // Pancreas
-	G4Material* pancreas = new G4Material( "Pancreas",
-									   density = 1.04*g/cm3,
-									   numberofElements = 9);
-	pancreas->AddElement(elH,0.106);
-	pancreas->AddElement(elC,0.169);
-	pancreas->AddElement(elN,0.022);
-	pancreas->AddElement(elO,0.694);
-	pancreas->AddElement(elNa,0.002);
-	pancreas->AddElement(elP,0.002);
-	pancreas->AddElement(elS,0.001);
-	pancreas->AddElement(elCl,0.002);
-	pancreas->AddElement(elK,0.002);
-
-    // Intestine
-	G4Material* intestine = new G4Material( "Intestine",
-									   density = 1.03*g/cm3,
-									   numberofElements = 9);
-	intestine->AddElement(elH,0.106);
-	intestine->AddElement(elC,0.115);
-	intestine->AddElement(elN,0.022);
-	intestine->AddElement(elO,0.751);
-	intestine->AddElement(elNa,0.001);
-	intestine->AddElement(elP,0.001);
-	intestine->AddElement(elS,0.001);
-	intestine->AddElement(elCl,0.002);
-	intestine->AddElement(elK,0.001);
-
-    // Skull
-	G4Material* skull = new G4Material( "Skull",
-									   density = 1.61*g/cm3,
-									   numberofElements = 9);
-	skull->AddElement(elH,0.05);
-	skull->AddElement(elC,0.212);
-	skull->AddElement(elN,0.04);
-	skull->AddElement(elO,0.435);
-	skull->AddElement(elNa,0.001);
-	skull->AddElement(elMg,0.002);
-	skull->AddElement(elP,0.081);
-	skull->AddElement(elS,0.003);
-	skull->AddElement(elCa,0.176);
-
-    // Cartilage
-	G4Material* cartilage = new G4Material( "Cartilage",
-									   density = 1.10*g/cm3,
-									   numberofElements = 8);
-	cartilage->AddElement(elH,0.096);
-	cartilage->AddElement(elC,0.099);
-	cartilage->AddElement(elN,0.022);
-	cartilage->AddElement(elO,0.744);
-	cartilage->AddElement(elNa,0.005);
-	cartilage->AddElement(elP,0.022);
-	cartilage->AddElement(elS,0.009);
-	cartilage->AddElement(elCl,0.003);
-
-    // Brain
-	G4Material* brain = new G4Material( "Brain",
-									   density = 1.04*g/cm3,
-									   numberofElements = 9);
-	brain->AddElement(elH,0.107);
-	brain->AddElement(elC,0.145);
-	brain->AddElement(elN,0.022);
-	brain->AddElement(elO,0.712);
-	brain->AddElement(elNa,0.002);
-	brain->AddElement(elP,0.004);
-	brain->AddElement(elS,0.002);
-	brain->AddElement(elCl,0.003);
-	brain->AddElement(elK,0.003);
-
-    // Spleen
-	G4Material* spleen = new G4Material( "Spleen",
-									   density = 1.06*g/cm3,
-									   numberofElements = 9);
-	spleen->AddElement(elH,0.103);
-	spleen->AddElement(elC,0.113);
-	spleen->AddElement(elN,0.032);
-	spleen->AddElement(elO,0.741);
-	spleen->AddElement(elNa,0.001);
-	spleen->AddElement(elP,0.003);
-	spleen->AddElement(elS,0.002);
-	spleen->AddElement(elCl,0.002);
-	spleen->AddElement(elK,0.003);
-
-    // Iodine Blood
-	G4Material* iodine_blood = new G4Material( "IodineBlood",
-									   density = 1.09096*g/cm3,
-									   numberofElements = 11);
-	iodine_blood->AddElement(elH,0.101184);
-	iodine_blood->AddElement(elC,0.10912);
-	iodine_blood->AddElement(elN,0.032736);
-	iodine_blood->AddElement(elO,0.73904);
-	iodine_blood->AddElement(elNa,0.000992);
-	iodine_blood->AddElement(elP,0.000992);
-	iodine_blood->AddElement(elS,0.001984);
-	iodine_blood->AddElement(elCl,0.002976);
-	iodine_blood->AddElement(elK,0.001984);
-	iodine_blood->AddElement(elFe,0.000992);
-	iodine_blood->AddElement(elI,0.008);
-
-    // Iron
-    G4Material* iron = new G4Material( "Iron",
-                                        density = 7.86 * g/cm3,
-                                        numberofElements = 1 );
-    iron->AddElement(elFe,1.0);
-
-    // Pmma
-    G4Material* pmma = new G4Material( "Pmma",
-                                        density = 1.19 * g/cm3,
-                                        numberofElements = 3 );
-    pmma->AddElement(elH,0.08);
-    pmma->AddElement(elC,0.6);
-    pmma->AddElement(elO,0.32);
-
-    // Aluminum
-    G4Material* aluminum = new G4Material( "Aluminum",
-                                        density = 2.6941 * g/cm3,
-                                        numberofElements = 1 );
-    aluminum->AddElement(elAl,1.0);
-
-    // Titanium
-    G4Material* titanium = new G4Material( "Titanium",
-                                        density = 4.53 * g/cm3,
-                                        numberofElements = 1 );
-    titanium->AddElement(elTi,1.0);
-
-    // Air
-    // Get nist Air instead of phantoms air
-    G4NistManager* nist = G4NistManager::Instance();
-    G4Material* air = nist->FindOrBuildMaterial("G4_AIR");
-//    G4Material* air = new G4Material( "Air",
-//    								0.001205*mg/cm3,
-//    								numberofElements = 4 );
-//    air->AddElement(elC, 0.000124);
-//    air->AddElement(elN, 0.755268);
-//    air->AddElement(elO, 0.231781);
-//    air->AddElement(elCl, 0.012827);
-
-    // Graphite
-    G4Material* graphite = new G4Material( "Graphite",
-                                        density = 1.82 * g/cm3,
-                                        numberofElements = 1 );
-    graphite->AddElement(elC,1.0);
-
-    // Lead
-    G4Material* lead = new G4Material( "Lead",
-                                        density = 11.34 * g/cm3,
-                                        numberofElements = 1 );
-    lead->AddElement(elPb,1.0);
-
-    // Breast Mammary
-	G4Material* breast_mammary = new G4Material( "breastMammary",
-									   density = 1.02*g/cm3,
-									   numberofElements = 8);
-	breast_mammary->AddElement(elH,0.106);
-	breast_mammary->AddElement(elC,0.332);
-	breast_mammary->AddElement(elN,0.003);
-	breast_mammary->AddElement(elO,0.527);
-	breast_mammary->AddElement(elNa,0.001);
-	breast_mammary->AddElement(elP,0.001);
-	breast_mammary->AddElement(elS,0.002);
-	breast_mammary->AddElement(elCl,0.001);
-
-    // Skin
-	G4Material* skin = new G4Material( "Skin",
-									   density = 1.09*g/cm3,
-									   numberofElements = 9);
-	skin->AddElement(elH,0.10);
-	skin->AddElement(elC,0.204);
-	skin->AddElement(elN,0.0042);
-	skin->AddElement(elO,0.645);
-	skin->AddElement(elNa,0.002);
-	skin->AddElement(elP,0.001);
-	skin->AddElement(elS,0.002);
-	skin->AddElement(elCl,0.003);
-	skin->AddElement(elK,0.001);
-
-	 // Iodine
-	G4Material* iodine = new G4Material( "Iodine",
-									   density = 4.933*g/cm3,
-									   numberofElements = 1);
-	iodine->AddElement(elI,1.0);
-
-	 // eye_lens
-	G4Material* eye_lens = new G4Material( "EyeLens",
-									   density = 1.07*g/cm3,
-									   numberofElements = 8);
-	eye_lens->AddElement(elH,0.096);
-	eye_lens->AddElement(elC,0.195);
-	eye_lens->AddElement(elN,0.057);
-	eye_lens->AddElement(elO,0.646);
-	eye_lens->AddElement(elNa,0.001);
-	eye_lens->AddElement(elP,0.001);
-	eye_lens->AddElement(elS,0.003);
-	eye_lens->AddElement(elCl,0.001);
-
-	 // ovary
-	G4Material* ovary = new G4Material( "Ovary",
-									   density = 1.05*g/cm3,
-									   numberofElements = 9);
-	ovary->AddElement(elH,0.105);
-	ovary->AddElement(elC,0.093);
-	ovary->AddElement(elN,0.024);
-	ovary->AddElement(elO,0.768);
-	ovary->AddElement(elNa,0.002);
-	ovary->AddElement(elP,0.002);
-	ovary->AddElement(elS,0.002);
-	ovary->AddElement(elCl,0.002);
-	ovary->AddElement(elK,0.002);
-
-	 // red_marrow
-	G4Material* red_marrow = new G4Material( "RedMarrow",
-									   density = 1.03*g/cm3,
-									   numberofElements = 9);
-	red_marrow->AddElement(elH,0.105);
-	red_marrow->AddElement(elC,0.414);
-	red_marrow->AddElement(elN,0.034);
-	red_marrow->AddElement(elO,0.439);
-	red_marrow->AddElement(elP,0.001);
-	red_marrow->AddElement(elS,0.002);
-	red_marrow->AddElement(elCl,0.002);
-	red_marrow->AddElement(elK,0.002);
-	red_marrow->AddElement(elFe,0.001);
-
-	 // yellow_marrow
-	G4Material* yellow_marrow = new G4Material( "YellowMarrow",
-									   density = 0.98*g/cm3,
-									   numberofElements = 7);
-	yellow_marrow->AddElement(elH,0.115);
-	yellow_marrow->AddElement(elC,0.644);
-	yellow_marrow->AddElement(elN,0.007);
-	yellow_marrow->AddElement(elO,0.231);
-	yellow_marrow->AddElement(elNa,0.001);
-	yellow_marrow->AddElement(elS,0.001);
-	yellow_marrow->AddElement(elCl,0.001);
-
-	 // testis
-	G4Material* testis = new G4Material( "Testis",
-									   density = 1.04*g/cm3,
-									   numberofElements = 9);
-	testis->AddElement(elH,0.106);
-	testis->AddElement(elC,0.099);
-	testis->AddElement(elN,0.02);
-	testis->AddElement(elO,0.766);
-	testis->AddElement(elNa,0.002);
-	testis->AddElement(elP,0.001);
-	testis->AddElement(elS,0.002);
-	testis->AddElement(elCl,0.002);
-	testis->AddElement(elK,0.002);
-
-	 // thyroid
-	G4Material* thyroid = new G4Material( "Thyroid",
-									   density = 1.05*g/cm3,
-									   numberofElements = 10);
-	thyroid->AddElement(elH,0.104);
-	thyroid->AddElement(elC,0.119);
-	thyroid->AddElement(elN,0.024);
-	thyroid->AddElement(elO,0.745);
-	thyroid->AddElement(elNa,0.002);
-	thyroid->AddElement(elP,0.001);
-	thyroid->AddElement(elS,0.001);
-	thyroid->AddElement(elCl,0.002);
-	thyroid->AddElement(elK,0.001);
-	thyroid->AddElement(elI,0.001);
-
-	 // trabecular
-	G4Material* trabecular = new G4Material( "trabecular",
-									   density = 1.14*g/cm3,
-									   numberofElements = 5);
-	trabecular->AddElement(elH,0.079);
-	trabecular->AddElement(elC,0.6379);
-	trabecular->AddElement(elN,0.0423);
-	trabecular->AddElement(elO,0.0988);
-	trabecular->AddElement(elCa,0.142);
-
-	 // bladder
-	G4Material* bladder = new G4Material( "Bladder",
-									   density = 1.04*g/cm3,
-									   numberofElements = 9);
-	bladder->AddElement(elH,0.105);
-	bladder->AddElement(elC,0.096);
-	bladder->AddElement(elN,0.026);
-	bladder->AddElement(elO,0.761);
-	bladder->AddElement(elNa,0.002);
-	bladder->AddElement(elP,0.002);
-	bladder->AddElement(elS,0.002);
-	bladder->AddElement(elCl,0.003);
-	bladder->AddElement(elK,0.003);
-
-	//TODO: am I calculating the density correctly?
-	 // dry_spine with water 0,3
-	G4Material* dry_spine_water = new G4Material( "dry_spine_water",
-									   density = (0.5*water->GetDensity() + 0.5*dry_spine->GetDensity())*g/cm3,
-									   numberofElements = 2);
-	dry_spine_water->AddMaterial(dry_spine,50.*perCent);
-	dry_spine_water->AddMaterial(water,50.*perCent);
-
-	 // dry_rib with water 0,4
-	G4Material* dry_rib_water = new G4Material( "dry_rib_water",
-									   density = (0.5*water->GetDensity() + 0.5*dry_rib->GetDensity())*g/cm3,
-									   numberofElements = 2);
-	dry_rib_water->AddMaterial(dry_rib,50.*perCent);
-	dry_rib_water->AddMaterial(water,50.*perCent);
-
-	 // skull with water 0,13
-	G4Material* skull_water = new G4Material( "skull_water",
-									   density = (0.5*water->GetDensity() + 0.5*skull->GetDensity())*g/cm3,
-									   numberofElements = 2);
-	skull_water->AddMaterial(skull,50.*perCent);
-	skull_water->AddMaterial(water,50.*perCent);
-
-
-    //----- Put the materials in a vector
-    fMaterials.push_back(water);             //0
-    fMaterials.push_back(muscle);            //1
-    fMaterials.push_back(lung);              //2
-    fMaterials.push_back(dry_spine);         //3
-    fMaterials.push_back(dry_rib);			 //4
-    fMaterials.push_back(adiposeTissue);	 //5
-    fMaterials.push_back(blood);			 //6
-    fMaterials.push_back(heart);			 //7
-    fMaterials.push_back(kidney);			 //8
-    fMaterials.push_back(liver);			 //9
-    fMaterials.push_back(lymph);			 //10
-    fMaterials.push_back(pancreas);			 //11
-    fMaterials.push_back(intestine);		 //12
-    fMaterials.push_back(skull);			 //13
-    fMaterials.push_back(cartilage);		 //14
-    fMaterials.push_back(brain);			 //15
-    fMaterials.push_back(spleen);			 //16
-    fMaterials.push_back(iodine_blood);		 //17
-    fMaterials.push_back(iron);				 //18
-    fMaterials.push_back(pmma);				 //19
-    fMaterials.push_back(aluminum);			 //20
-    fMaterials.push_back(titanium);			 //21
-    fMaterials.push_back(air);				 //22
-    fMaterials.push_back(graphite);			 //23
-    fMaterials.push_back(lead);				 //24
-    fMaterials.push_back(breast_mammary);	 //25
-    fMaterials.push_back(skin);				 //26
-    fMaterials.push_back(iodine);			 //27
-    fMaterials.push_back(eye_lens);			 //28
-    fMaterials.push_back(ovary);			 //29
-    fMaterials.push_back(red_marrow);		 //30
-    fMaterials.push_back(yellow_marrow);	 //31
-    fMaterials.push_back(testis);			 //32
-    fMaterials.push_back(thyroid);			 //33
-    fMaterials.push_back(trabecular);		 //34
-    fMaterials.push_back(bladder);			 //35
-    fMaterials.push_back(dry_spine_water);	 //36
-    fMaterials.push_back(dry_rib_water);	 //37
-    fMaterials.push_back(skull_water);		 //38
-
-
+		//add material to fMaterials
+		fMaterials.push_back(material[voxel]);
+		//connecting the voxel to material
+		fMateIDs[voxel] = voxel;
+	}
 }
 
 void B1DetectorConstruction::ConstructSDandField()

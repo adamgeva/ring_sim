@@ -19,7 +19,8 @@
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 0
 #define NUM_OF_SOURCES 100 //this defines the number of runs
-
+#define NUM_OF_VOXELS 9 //this defines the number of voxels - redundant
+#define NUM_OF_ELEMENTS 27 //this defines the number of elements
 
 
 class params
@@ -39,6 +40,7 @@ public:
 		G4int onOffBiasing = 0; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 		G4bool printElementsXS = true;
+		G4int numberOfElements = 27; //equal to the number of elements we print at the end of exampleB1
 	}Myparams;
 
 	struct MyparamsGun{
@@ -87,15 +89,14 @@ public:
 		//XCAT
 		//TODO: add in an external meta file
 		G4int numberOfZSlices = 1;
-		G4int numberOfVoxelsX = 64;
-		G4int numberOfVoxelsY = 64;
+		G4int numberOfVoxelsX = 3;
+		G4int numberOfVoxelsY = 3;
 		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;
 		//TODO: check that these sizes are correct
-		G4double voxelHalfX = 1*mm;
-		G4double voxelHalfY = 1*mm;
-		G4double voxelHalfZ = 1*mm;
-		G4String phantomFileName = "/home/adamgeva/XCAT/simplePhantom/simplePhantom_";
-		G4String IdToCompMapName = "../run_inputs/id_to_comp.txt";
+		G4double voxelHalfX = 1.5*cm;
+		G4double voxelHalfY = 1.5*cm;
+		G4double voxelHalfZ = 1.5*cm;
+		std::string voxels_materials_file = "../run_inputs/voxels_materials.txt";
 
 	}MyparamsGeometry;
 

@@ -95,7 +95,7 @@ void B1RegularDetectorConstruction::ConstructPhantom()
   // material is not relevant, it will be changed by the
   // ComputeMaterial method of the parameterisation
 
-  fvoxel_logic->SetVisAttributes(new G4VisAttributes(G4VisAttributes::GetInvisible()));
+  fvoxel_logic->SetVisAttributes(new G4VisAttributes(G4Colour(0.9,0.9,0.9)));
     
   //--- Assign the fContainer volume of the parameterisation
   param->BuildContainerSolid(fContainer_phys);
