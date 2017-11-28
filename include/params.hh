@@ -13,7 +13,7 @@
 #include <math.h>
 
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -56,7 +56,7 @@ public:
 		G4double phantomZ = 0.1*worldZ;
 		//flags to build phantom and detectors
 		G4int buildDetectors = 1;
-		G4int buildPhantom = 0;
+		G4int buildPhantom = 1;
 
 		G4double detectorX = 2*mm; //half size
 		G4double detectorY = 128*mm; //2mm * numberOfRows
@@ -67,7 +67,7 @@ public:
 		G4int numberOfDetectors = 5;
 		//XCAT
 		//TODO: add in an external meta file
-		G4int numberOfZSlices = 500;
+		G4int numberOfZSlices = 10;
 		G4int numberOfVoxelsX = 256;
 		G4int numberOfVoxelsY = 256;
 		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;

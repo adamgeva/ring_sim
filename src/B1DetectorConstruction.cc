@@ -447,7 +447,7 @@ void B1DetectorConstruction::InitialisationOfMaterials()
     //  Lung Inhale
     G4Material* lung = new G4Material( "Lung",
                                             density = 0.29*g/cm3,
-                                            numberofElements = 5);
+                                            numberofElements = 9);
     lung->AddElement(elH,0.103);
     lung->AddElement(elC,0.105);
     lung->AddElement(elN,0.031);
