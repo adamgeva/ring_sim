@@ -52,14 +52,11 @@ ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * physVol, const G4VToucha
         if( iuu != std::string::npos ) {
             mateName = mateName.substr( 0, iuu );
         }
-        std::map<G4String,G4VisAttributes*>::const_iterator ite =
-          fColours.find(mateName);
-        if( ite != fColours.end() ){
-            physVol->GetLogicalVolume()->SetVisAttributes( (*ite).second );
-        } else {
-            physVol->GetLogicalVolume()->SetVisAttributes( 
-                                  (*(fColours.begin()) ).second );
-            // set it as unseen
+        if (mateName=="mat7"){
+        		physVol->GetLogicalVolume()->SetVisAttributes(G4VisAttributes(G4Colour(1.0,0.0,0.0,1.0)));
+        }
+        else{
+        		physVol->GetLogicalVolume()->SetVisAttributes(G4VisAttributes(G4Colour(0.0,1.0,0.0,1.0)));
         }
     }
     

@@ -13,7 +13,7 @@
 #include <math.h>
 
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -39,7 +39,7 @@ public:
 		int G4navigatorVerbos = 0;
 		G4int onOffBiasing = 0; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
-		G4bool printElementsXS = true;
+		G4bool printElementsXS = false;
 		G4int numberOfElements = 27; //equal to the number of elements we print at the end of exampleB1
 	}Myparams;
 
@@ -47,8 +47,8 @@ public:
 		G4double particleEnergy = 57*keV; //keV
 		G4int detectorCoverage = 1;
 		G4double MinTheta = 0 ;
-		//G4double MaxTheta = M_PI/6;
-		G4double MaxTheta = 0;
+		G4double MaxTheta = M_PI/6;
+		//G4double MaxTheta = 0;
 		G4double MinPhi = 0;
 //		G4double MaxPhi = 2*M_PI;
 		G4double MaxPhi = 0;

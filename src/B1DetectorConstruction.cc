@@ -363,39 +363,42 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
 											   density = rau*g/cm3,
 											   numberofElements = parameters.Myparams.numberOfElements );
 
+		std::cout << "voxel number: " << voxel << " rho: " << rau << " fractions: ";
 		// read fractions
-		for (G4int i=1; i<=parameters.Myparams.numberOfElements; i++){
+		for (G4int i=0; i<parameters.Myparams.numberOfElements; i++){
 			fin >> fracs[i];
+			std::cout << fracs[i] << ",";
 		}
+		std::cout << "." << std::endl;
 
 		//adding elements according to fractions
-		material[voxel]->AddElement(elH,fracs[1]);
-		material[voxel]->AddElement(elHe,fracs[2]);
-		material[voxel]->AddElement(elLi,fracs[3]);
-		material[voxel]->AddElement(elBe,fracs[4]);
-		material[voxel]->AddElement(elB,fracs[5]);
-		material[voxel]->AddElement(elC,fracs[6]);
-		material[voxel]->AddElement(elN,fracs[7]);
-		material[voxel]->AddElement(elO,fracs[8]);
-		material[voxel]->AddElement(elF,fracs[9]);
-		material[voxel]->AddElement(elNe,fracs[10]);
-		material[voxel]->AddElement(elNa,fracs[11]);
-		material[voxel]->AddElement(elMg,fracs[12]);
-		material[voxel]->AddElement(elAl,fracs[13]);
-		material[voxel]->AddElement(elP,fracs[14]);
-		material[voxel]->AddElement(elS,fracs[15]);
-		material[voxel]->AddElement(elCl,fracs[16]);
-		material[voxel]->AddElement(elAr,fracs[17]);
-		material[voxel]->AddElement(elK,fracs[18]);
-		material[voxel]->AddElement(elCa,fracs[19]);
-		material[voxel]->AddElement(elSc,fracs[20]);
-		material[voxel]->AddElement(elTi,fracs[21]);
-		material[voxel]->AddElement(elV,fracs[22]);
-		material[voxel]->AddElement(elCr,fracs[23]);
-		material[voxel]->AddElement(elMn,fracs[24]);
-		material[voxel]->AddElement(elFe,fracs[25]);
-		material[voxel]->AddElement(elI,fracs[26]);
-		material[voxel]->AddElement(elPb,fracs[27]);
+		material[voxel]->AddElement(elH,fracs[0]);
+		material[voxel]->AddElement(elHe,fracs[1]);
+		material[voxel]->AddElement(elLi,fracs[2]);
+		material[voxel]->AddElement(elBe,fracs[3]);
+		material[voxel]->AddElement(elB,fracs[4]);
+		material[voxel]->AddElement(elC,fracs[5]);
+		material[voxel]->AddElement(elN,fracs[6]);
+		material[voxel]->AddElement(elO,fracs[7]);
+		material[voxel]->AddElement(elF,fracs[8]);
+		material[voxel]->AddElement(elNe,fracs[9]);
+		material[voxel]->AddElement(elNa,fracs[10]);
+		material[voxel]->AddElement(elMg,fracs[11]);
+		material[voxel]->AddElement(elAl,fracs[12]);
+		material[voxel]->AddElement(elP,fracs[13]);
+		material[voxel]->AddElement(elS,fracs[14]);
+		material[voxel]->AddElement(elCl,fracs[15]);
+		material[voxel]->AddElement(elAr,fracs[16]);
+		material[voxel]->AddElement(elK,fracs[17]);
+		material[voxel]->AddElement(elCa,fracs[18]);
+		material[voxel]->AddElement(elSc,fracs[19]);
+		material[voxel]->AddElement(elTi,fracs[20]);
+		material[voxel]->AddElement(elV,fracs[21]);
+		material[voxel]->AddElement(elCr,fracs[22]);
+		material[voxel]->AddElement(elMn,fracs[23]);
+		material[voxel]->AddElement(elFe,fracs[24]);
+		material[voxel]->AddElement(elI,fracs[25]);
+		material[voxel]->AddElement(elPb,fracs[26]);
 
 		//add material to fMaterials
 		fMaterials.push_back(material[voxel]);

@@ -40,11 +40,13 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 
 	G4TouchableHistory* startTouchable = (G4TouchableHistory*)(startPoint->GetTouchable());
 
-	G4String startPhysicalName = startTouchable->GetVolume()->GetName();
 
+	G4String startPhysicalName = startTouchable->GetVolume()->GetName();
 
 	G4VUserTrackInformation* info = theTrack->GetUserInformation();
 	B1TrackInformation* theInfo = (B1TrackInformation*)info;
+
+
 
 	segment currSegmant;
 
@@ -72,7 +74,8 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 	//TODO: this is only correct for 1 voxel case - need to generalize!
 	if (endPoint->GetStepStatus()!=fWorldBoundary){
 			if (startPoint->GetPhysicalVolume()->GetName() == "phantom"){
-				currSegmant.voxel = startPoint->GetPhysicalVolume()->GetCopyNo();
+				currSegmant.voxel = startTouchable->GetReplicaNumber(0) + 1;
+
 			}
 			else
 			{
