@@ -20,7 +20,7 @@
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
 #define NUM_OF_SOURCES 10 //this defines the number of runs
-#define NUM_OF_VOXELS 9 //this defines the number of voxels - redundant
+#define NUM_OF_VOXELS 784 //this defines the number of voxels - redundant
 #define NUM_OF_ELEMENTS 27 //this defines the number of elements
 #define NUM_OF_THREADS 20
 
@@ -92,13 +92,13 @@ public:
 		//XCAT
 		//TODO: add in an external meta file
 		G4int numberOfZSlices = 1;
-		G4int numberOfVoxelsX = 3;
-		G4int numberOfVoxelsY = 3;
+		G4int numberOfVoxelsX = 28;
+		G4int numberOfVoxelsY = 28;
 		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;
 		//TODO: check that these sizes are correct
-		G4double voxelHalfX = 1.5*cm;
-		G4double voxelHalfY = 1.5*cm;
-		G4double voxelHalfZ = 1.5*cm;
+		G4double voxelHalfX = 0.15*cm;
+		G4double voxelHalfY = 0.15*cm;
+		G4double voxelHalfZ = 0.15*cm;
 		std::string voxels_materials_file = "../run_inputs/voxels_materials.txt";
 
 	}MyparamsGeometry;
