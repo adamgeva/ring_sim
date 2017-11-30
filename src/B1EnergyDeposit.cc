@@ -26,7 +26,7 @@ B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 		}
 		else
 		{
-			detectorsArray[threadID] = this;
+			detectorsArray[threadID+1] = this;
 		}
 
 	}
@@ -145,10 +145,12 @@ G4bool B1EnergyDeposit::recordInteraction (G4Step* aStep,G4TouchableHistory* tou
 void B1EnergyDeposit::openFile(G4int threadNum,G4int runNum){
 		std::string fileName =  "../run_outputs/" + IntToString(runNum) + "run" + IntToString(threadNum) + "paths.csv";
 		outputPathsFile.open(fileName.c_str());
+		G4cout << "created file: " << fileName <<G4endl;
 }
 
 void B1EnergyDeposit::writeFile() {
 	if (fscorerType==0){ // safty only
+		G4cout << "closing file: " <<G4endl;
 		outputPathsFile.close();
 	}
 }
