@@ -80,7 +80,7 @@ public:
 		G4double boneX = 0.02*worldXY;
 		G4double boneY = 0.1*worldZ;
 		G4double boneZ = 0.02*worldXY;
-		G4double detectorX = 30*mm; //half size
+		G4double detectorX = 15*mm; //half size
 		G4double detectorY = 30*mm; //2mm * numberOfRows
 		//G4double detectorY = 2*mm; //2mm * numberOfRows
 		G4double detectorZ = 0.8*mm; //detector depth

@@ -198,6 +198,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    fContainer_logic->SetRegion(Container_region);
    Container_region->AddRootLogicalVolume(fContainer_logic);
 
+
 	//always return the physical World
 	return worldPHS;
 }
