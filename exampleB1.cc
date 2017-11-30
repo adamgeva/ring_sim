@@ -46,6 +46,9 @@
 
 void printXSPerAtom(G4Element* el); //implemented at the end
 
+//global array
+B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
+
 int main(int argc,char** argv)
 {
 	params parameters;

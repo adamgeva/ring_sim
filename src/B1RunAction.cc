@@ -12,22 +12,48 @@
 #include <iostream>
 #include <fstream>
 
+extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
+
 
 B1RunAction::B1RunAction()
  : G4UserRunAction()
-{}
+{
+	fMyEnergyDeposit = 0;
+}
 B1RunAction::~B1RunAction()
 {}
 
 G4Run* B1RunAction::GenerateRun()
-{ return new B1Run; }
+{
 
-void B1RunAction::BeginOfRunAction(const G4Run* /*run*/)
-{}
+	G4int Ind;
+	G4int threadID = G4Threading::G4GetThreadId();
+	if (threadID ==-1){
+		Ind = 0;
+	}
+	else
+	{
+		Ind = threadID;
+	}
+	fMyEnergyDeposit = detectorsArray[Ind];
+	return new B1Run;
+
+}
+
+void B1RunAction::BeginOfRunAction(const G4Run* run)
+{
+	G4int threadID = G4Threading::G4GetThreadId();
+	G4int runID = run->GetRunID();
+	fMyEnergyDeposit->openFile(threadID,runID);
+}
 
 void B1RunAction::EndOfRunAction(const G4Run* aRun)
 {
 	params parameters;
+
+	//write EnergyDepositFile
+	fMyEnergyDeposit->writeFile();
+
 	const B1Run* theRun = (const B1Run*)aRun;
 	//writing to CSV file the cylinder response
 	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);

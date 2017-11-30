@@ -11,23 +11,25 @@
 #include "G4String.hh"
 #include "G4Types.hh"
 #include <math.h>
+#include "B1EnergyDeposit.hh"
 
 //comment for a single threaded mode
 #define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
-#define ALT_SOURCES 0
-#define NUM_OF_SOURCES 100 //this defines the number of runs
+#define ALT_SOURCES 1
+#define NUM_OF_SOURCES 10 //this defines the number of runs
 #define NUM_OF_VOXELS 9 //this defines the number of voxels - redundant
 #define NUM_OF_ELEMENTS 27 //this defines the number of elements
-
+#define NUM_OF_THREADS 20
 
 class params
 {
 public:
 	struct Myparams{
-		G4int numberOfThreads = 20;
+		//todo: fix
+		G4int numberOfThreads = NUM_OF_THREADS;
 		G4int scoringVerbose = 0;
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;
@@ -41,6 +43,7 @@ public:
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 		G4bool printElementsXS = false;
 		G4int numberOfElements = 27; //equal to the number of elements we print at the end of exampleB1
+		G4int* RunId; //donot change
 	}Myparams;
 
 	struct MyparamsGun{

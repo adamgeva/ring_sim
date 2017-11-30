@@ -17,6 +17,9 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
 
     virtual G4int GetIndex(G4Step* step);
 
+    void openFile(G4int threadNum, G4int runNum);
+    void writeFile();
+
   protected: // with description
     virtual G4bool ProcessHits(G4Step*,G4TouchableHistory*);
 

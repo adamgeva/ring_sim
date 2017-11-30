@@ -9,28 +9,33 @@
 #include "params.hh"
 #include "B1TrackInformation.hh"
 #include "globalFunctions.hh"
+#include "G4RunManager.hh"
 
-
+extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 
 B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 : G4PSEnergyDeposit(name)
 {
+	params parameters;
 	fscorerType =  type;
 	if (type==0){ //randomly pick the 0 scorer
-		//open file to append info about paths
 		G4int threadID = G4Threading::G4GetThreadId();
-		std::string fileName =  "../run_outputs/" + IntToString(threadID) + "paths.csv";
-		outputPathsFile.open(fileName.c_str());
+		if (threadID==-1) { //single threaded mode
+			detectorsArray[0] = this;
+		}
+		else
+		{
+			detectorsArray[threadID] = this;
+		}
+
 	}
 
 }
 
 B1EnergyDeposit::~B1EnergyDeposit()
 {
-	if (fscorerType==0){
-		outputPathsFile.close();
-	}
+
 }
 
 G4int B1EnergyDeposit::GetIndex(G4Step* step){
@@ -54,6 +59,7 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	//test: getting information from tracks
 	G4Track* track = aStep->GetTrack();
 //	G4double trackWeight = track->GetWeight();
+
 
 	//G4cout << "We have a hit, Weight: " << track->GetWeight() << G4endl;
 //	G4String creatorProcessName = track->GetCreatorModelName();
@@ -135,3 +141,16 @@ G4bool B1EnergyDeposit::recordInteraction (G4Step* aStep,G4TouchableHistory* tou
 		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 	}
 }
+
+void B1EnergyDeposit::openFile(G4int threadNum,G4int runNum){
+		std::string fileName =  "../run_outputs/" + IntToString(runNum) + "run" + IntToString(threadNum) + "paths.csv";
+		outputPathsFile.open(fileName.c_str());
+}
+
+void B1EnergyDeposit::writeFile() {
+	if (fscorerType==0){ // safty only
+		outputPathsFile.close();
+	}
+}
+
+

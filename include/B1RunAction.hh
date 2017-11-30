@@ -3,6 +3,7 @@
 
 #include "G4UserRunAction.hh"
 #include "globals.hh"
+#include "B1EnergyDeposit.hh"
 
 class G4Run;
 
@@ -18,6 +19,9 @@ class B1RunAction : public G4UserRunAction
     virtual void   EndOfRunAction(const G4Run*);
     G4Run* GenerateRun();
     //virtual void   EndOfRunAction();
+
+  private:
+    B1EnergyDeposit* fMyEnergyDeposit;
 };
 
 
