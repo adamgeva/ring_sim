@@ -181,7 +181,6 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 		ConstructPhantom();
 	}
 
-
 	// User Limits
 
   // Set additional contraints on the track, with G4UserSpecialCuts
@@ -197,6 +196,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
    G4Region* Container_region = new G4Region("ContainerRegion");
    fContainer_logic->SetRegion(Container_region);
    Container_region->AddRootLogicalVolume(fContainer_logic);
+
 
 
 	//always return the physical World
@@ -462,6 +462,8 @@ void B1DetectorConstruction::ConstructSDandField()
 	    detector2->RegisterPrimitive(primitive);
 	}
     SetSensitiveDetector(detectorPixelLV,detector2);
+
+
 }
 
 

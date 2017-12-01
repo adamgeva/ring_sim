@@ -47,19 +47,19 @@ G4Material* B1PhantomParameterisationColour::
 ComputeMaterial(const G4int copyNo, G4VPhysicalVolume * physVol, const G4VTouchable *)
 {
     G4Material* mate = G4PhantomParameterisation::ComputeMaterial( copyNo, physVol, 0 );
-    if( physVol ) {
-        G4String mateName = mate->GetName();
-        std::string::size_type iuu = mateName.find("__");
-        if( iuu != std::string::npos ) {
-            mateName = mateName.substr( 0, iuu );
-        }
-        if (mateName=="mat7"){
-        		physVol->GetLogicalVolume()->SetVisAttributes(G4VisAttributes(G4Colour(1.0,0.0,0.0,1.0)));
-        }
-        else{
-        		physVol->GetLogicalVolume()->SetVisAttributes(G4VisAttributes(G4Colour(0.0,1.0,0.0,1.0)));
-        }
-    }
+//    if( physVol ) {
+//        G4String mateName = mate->GetName();
+//        std::string::size_type iuu = mateName.find("__");
+//        if( iuu != std::string::npos ) {
+//            mateName = mateName.substr( 0, iuu );
+//        }
+//        if (mateName=="mat7"){
+//        		physVol->GetLogicalVolume()->SetVisAttributes(G4VisAttributes(G4Colour(1.0,0.0,0.0,1.0)));
+//        }
+//        else{
+//        		physVol->GetLogicalVolume()->SetVisAttributes(G4VisAttributes(G4Colour(0.0,1.0,0.0,1.0)));
+//        }
+//    }
     
     return mate;
 }

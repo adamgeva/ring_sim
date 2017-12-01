@@ -26,6 +26,7 @@ B1RunAction::~B1RunAction()
 G4Run* B1RunAction::GenerateRun()
 {
 
+
 	G4int Ind;
 	G4int threadID = G4Threading::G4GetThreadId();
 	if (threadID ==-1){
@@ -36,6 +37,7 @@ G4Run* B1RunAction::GenerateRun()
 		Ind = threadID+1;
 	}
 	fMyEnergyDeposit = detectorsArray[Ind];
+
 	return new B1Run;
 
 }
