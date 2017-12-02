@@ -5,6 +5,7 @@
 #include "G4VisAttributes.hh"
 #include "globals.hh"
 #include "G4Box.hh"
+#include "params.hh"
 class G4Material;
 
 #include <vector>
@@ -46,7 +47,6 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
    	std::vector<G4Material*> fMaterials;
 
    	size_t* fMateIDs; // index of material of each voxel - this array is in the size of the number of voxels
-
 
    	G4int fNVoxelX, fNVoxelY, fNVoxelZ;
 	G4double fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ;

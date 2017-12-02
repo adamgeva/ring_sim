@@ -10,7 +10,7 @@ B1PhantomParameterisationColour::B1PhantomParameterisationColour()
 : G4PhantomParameterisation()
 {
 
-    ReadColourData();
+    //ReadColourData();
 
     SetSkipEqualMaterials(0);
 }

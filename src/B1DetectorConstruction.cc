@@ -193,9 +193,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
  //-------------------regions-------------------
 
-   G4Region* Container_region = new G4Region("ContainerRegion");
-   fContainer_logic->SetRegion(Container_region);
-   Container_region->AddRootLogicalVolume(fContainer_logic);
+//   G4Region* Container_region = new G4Region("ContainerRegion");
+//   fContainer_logic->SetRegion(Container_region);
+//   Container_region->AddRootLogicalVolume(fContainer_logic);
 
 
 
@@ -249,9 +249,10 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
     G4double z, a, density;
     G4String name, symbol;
     G4int numberofElements;
+    params parameters;
 
     // initiallize fMateIDs
-    fMateIDs = new size_t[NUM_OF_VOXELS-1];
+    fMateIDs = new size_t[NUM_OF_VOXELS];
 
 
     G4Element* elH = new G4Element( name = "Hydrogen",
@@ -337,7 +338,6 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
                                     z = 82, a = 207.2 * g/mole );
 
 //*******************************************************************************************************************************************************
-    params parameters;
 	G4String fname = parameters.MyparamsGeometry.voxels_materials_file;
 	std::ifstream fin(fname.c_str(), std::ios_base::in);
 	if( !fin.is_open() ) {
@@ -347,7 +347,7 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
 					G4String("File not found " + fname ).c_str());
 	  }
 	//pointers to materials - number of voxels
-	G4Material* material[NUM_OF_VOXELS];
+	G4Material* material;
 	G4String MaterialName[NUM_OF_VOXELS];
 	//iterate over the voxels - every voxel as a material
 	G4int voxel = 0;
@@ -360,10 +360,12 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
 		// read density
 		fin >> rau;
 		// create material
-		material[voxel] = new G4Material( name = MaterialName[voxel],
+//		material[voxel] = new G4Material( name = MaterialName[voxel],
+//											   density = rau*g/cm3,
+//											   numberofElements = parameters.Myparams.numberOfElements );
+		material = new G4Material( name = MaterialName[voxel],
 											   density = rau*g/cm3,
-											   numberofElements = parameters.Myparams.numberOfElements );
-
+											   numberofElements = 2);
 		std::cout << "voxel number: " << voxel << " rho: " << rau << " fractions: ";
 		// read fractions
 		for (G4int i=0; i<parameters.Myparams.numberOfElements; i++){
@@ -373,36 +375,36 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
 		std::cout << "." << std::endl;
 
 		//adding elements according to fractions
-		material[voxel]->AddElement(elH,fracs[0]);
-		material[voxel]->AddElement(elHe,fracs[1]);
-		material[voxel]->AddElement(elLi,fracs[2]);
-		material[voxel]->AddElement(elBe,fracs[3]);
-		material[voxel]->AddElement(elB,fracs[4]);
-		material[voxel]->AddElement(elC,fracs[5]);
-		material[voxel]->AddElement(elN,fracs[6]);
-		material[voxel]->AddElement(elO,fracs[7]);
-		material[voxel]->AddElement(elF,fracs[8]);
-		material[voxel]->AddElement(elNe,fracs[9]);
-		material[voxel]->AddElement(elNa,fracs[10]);
-		material[voxel]->AddElement(elMg,fracs[11]);
-		material[voxel]->AddElement(elAl,fracs[12]);
-		material[voxel]->AddElement(elP,fracs[13]);
-		material[voxel]->AddElement(elS,fracs[14]);
-		material[voxel]->AddElement(elCl,fracs[15]);
-		material[voxel]->AddElement(elAr,fracs[16]);
-		material[voxel]->AddElement(elK,fracs[17]);
-		material[voxel]->AddElement(elCa,fracs[18]);
-		material[voxel]->AddElement(elSc,fracs[19]);
-		material[voxel]->AddElement(elTi,fracs[20]);
-		material[voxel]->AddElement(elV,fracs[21]);
-		material[voxel]->AddElement(elCr,fracs[22]);
-		material[voxel]->AddElement(elMn,fracs[23]);
-		material[voxel]->AddElement(elFe,fracs[24]);
-		material[voxel]->AddElement(elI,fracs[25]);
-		material[voxel]->AddElement(elPb,fracs[26]);
+//		material[voxel]->AddElement(elH,fracs[0]);
+//		material[voxel]->AddElement(elHe,fracs[1]);
+//		material[voxel]->AddElement(elLi,fracs[2]);
+//		material[voxel]->AddElement(elBe,fracs[3]);
+//		material[voxel]->AddElement(elB,fracs[4]);
+//		material[voxel]->AddElement(elC,fracs[5]);
+//		material[voxel]->AddElement(elN,fracs[6]);
+		material->AddElement(elO,fracs[7]);
+//		material[voxel]->AddElement(elF,fracs[8]);
+//		material[voxel]->AddElement(elNe,fracs[9]);
+//		material[voxel]->AddElement(elNa,fracs[10]);
+//		material[voxel]->AddElement(elMg,fracs[11]);
+//		material[voxel]->AddElement(elAl,fracs[12]);
+//		material[voxel]->AddElement(elP,fracs[13]);
+//		material[voxel]->AddElement(elS,fracs[14]);
+//		material[voxel]->AddElement(elCl,fracs[15]);
+//		material[voxel]->AddElement(elAr,fracs[16]);
+//		material[voxel]->AddElement(elK,fracs[17]);
+		material->AddElement(elCa,fracs[18]);
+//		material[voxel]->AddElement(elSc,fracs[19]);
+//		material[voxel]->AddElement(elTi,fracs[20]);
+//		material[voxel]->AddElement(elV,fracs[21]);
+//		material[voxel]->AddElement(elCr,fracs[22]);
+//		material[voxel]->AddElement(elMn,fracs[23]);
+//		material[voxel]->AddElement(elFe,fracs[24]);
+//		material[voxel]->AddElement(elI,fracs[25]);
+//		material[voxel]->AddElement(elPb,fracs[26]);
 
 		//add material to fMaterials
-		fMaterials.push_back(material[voxel]);
+		fMaterials.push_back(material);
 		//connecting the voxel to material
 		fMateIDs[voxel] = voxel;
 	}
@@ -413,7 +415,7 @@ void B1DetectorConstruction::ConstructSDandField()
 	params parameters;
 
   // -- Fetch volume for biasing:
-  G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("phantomContainer");
+ // G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("phantomContainer");
   //G4LogicalVolume* logicWorld = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
   //G4LogicalVolume* logicTestBone = G4LogicalVolumeStore::GetInstance()->GetVolume("bone");
 
@@ -427,13 +429,13 @@ void B1DetectorConstruction::ConstructSDandField()
 //   ----------------------------------------------
 //   -- operator creation and attachment to volume:
 //   ----------------------------------------------
-  B1BOptrFS* FSOptr =  new B1BOptrFS("gamma","FSOperator");
-  FSOptr->AttachTo(logicTest);
-  //FSOptr->AttachTo(logicWorld);
-  //comptLEOptr->AttachTo(logicTestBone);
-  G4cout << " Attaching biasing operator " << FSOptr->GetName()
-         << " to logical volume " << logicTest->GetName()
-         << G4endl;
+//  B1BOptrFS* FSOptr =  new B1BOptrFS("gamma","FSOperator");
+//  FSOptr->AttachTo(logicTest);
+//  //FSOptr->AttachTo(logicWorld);
+//  //comptLEOptr->AttachTo(logicTestBone);
+//  G4cout << " Attaching biasing operator " << FSOptr->GetName()
+//         << " to logical volume " << logicTest->GetName()
+//         << G4endl;
 
 //  G4BOptrForceCollision* OptrForceCollision =  new G4BOptrForceCollision("gamma","forceCollision");
 //  OptrForceCollision->AttachTo(logicTest);
