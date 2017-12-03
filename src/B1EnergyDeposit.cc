@@ -119,15 +119,14 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	   	while (!theInfo->fpathLogList.empty()){
 	   		segment seg = theInfo->fpathLogList.front();
 	   		theInfo->fpathLogList.pop_front();
-	   		outputPathsFile << seg.voxel << "," << seg.pathLen << ",";
 	   		//TODO: needs to be generalized - maybe there will be another process once!
+   			outputPathsFile << seg.voxel << "," << 0 << "," << seg.incidentEnergy/keV << "," << seg.pathLen << ",";
 	   		G4String enddd = seg.endingProcess;
 	   		if (seg.endingProcess == "compt"){
-	   			outputPathsFile << -2 << "," << seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ",";
+	   			outputPathsFile << seg.voxel << "," << 1 << "," << seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ","; //<< seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ",";
 	   		}
 	   	}
 	   	outputPathsFile << ReplicaNum1 << "," << -100 << "\n";
-
 	}
 
 	return result;
