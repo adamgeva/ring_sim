@@ -30,6 +30,8 @@ class B1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   private:
     G4ParticleGun*  fParticleGun[NUM_OF_SOURCES]; // pointer a to G4 gun class
     G4Box* fEnvelopeBox;
+    G4int frunIDRand;
+    G4int fAllSources;
 };
 
 

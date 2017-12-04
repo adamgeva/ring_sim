@@ -99,7 +99,13 @@ public:
 		G4double voxelHalfX = 0.15*cm;
 		G4double voxelHalfY = 0.15*cm;
 		G4double voxelHalfZ = 1.5*cm;
+
 		std::string voxels_materials_file = "../run_inputs/voxels_materials.txt";
+		std::string fixed_source_file = "../run_inputs/all_sources.txt";
+		std::string sourceToDet_file = "../run_outputs_geom/sourceToDet.csv";
+		std::string sourcesPos_file = "../run_outputs_geom/sourcesPos.csv";
+		std::string detectorsPos_file = "../run_outputs_geom/detectorsPos.csv";
+
 
 	}MyparamsGeometry;
 

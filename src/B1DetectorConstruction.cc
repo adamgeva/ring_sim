@@ -122,7 +122,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
 	//writing detector locations to file
 	std::ofstream outputDet;
-	std::string fileName = "../run_outputs/detectorsPos.csv";
+	std::string fileName = parameters.MyparamsGeometry.detectorsPos_file;
 	outputDet.open(fileName.c_str());
 	outputDet << "Detectors Location" << "\n";
 

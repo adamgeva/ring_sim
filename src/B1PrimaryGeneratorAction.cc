@@ -13,9 +13,10 @@
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 #include "G4ios.hh"
+#include "globalFunctions.hh"
 #include <iostream>
 #include <cmath>
-
+#include <time.h>
 #include <string>
 #include <sstream>
 #include <fstream>
@@ -25,7 +26,29 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),
   fEnvelopeBox(0)
 {
- params parameters;
+	//writing to file the chosen source
+	params parameters;
+	fAllSources = 0;
+
+	srand (time(NULL));
+	frunIDRand = rand() % NUM_OF_SOURCES;
+	//writing source chosen to file
+	std::ofstream outputChosenSource;
+	std::string fileNameSourceChosen = "../run_outputs_geom/sourceChosen.csv";
+	outputChosenSource.open(fileNameSourceChosen.c_str());
+	outputChosenSource << IntToString(frunIDRand) << "\n";
+	outputChosenSource.close();
+
+	G4String fname = parameters.MyparamsGeometry.fixed_source_file;
+	std::ifstream fin(fname.c_str(), std::ios_base::in);
+	if( !fin.is_open() ) {
+	   G4Exception("Can't read change_sources_file",
+					"",
+					FatalErrorInArgument,
+					G4String("File not found " + fname ).c_str());
+	  }
+	fin >> fAllSources;
+
   //calculations for file export
   //calculating angle between two detectors - same calculation is done in detector construction
   G4double detectorAngleDiff = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
@@ -45,13 +68,13 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 
   //writing sources locations to file
   std::ofstream outputSources;
-  std::string fileName = "sourcesPos.csv";
+  std::string fileName = parameters.MyparamsGeometry.sourcesPos_file;
   outputSources.open(fileName.c_str());
   outputSources << "Sources Location" << "\n";
 
   //writing source to detectors to file
   std::ofstream sourceToDet;
-  std::string fileName_sToD = "sourceToDet.csv";
+  std::string fileName_sToD = parameters.MyparamsGeometry.sourceToDet_file;
   sourceToDet.open(fileName_sToD.c_str());
   sourceToDet << "Active detectors for every source" << "\n";
 
@@ -126,7 +149,14 @@ B1PrimaryGeneratorAction::~B1PrimaryGeneratorAction()
 void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
 	params parameters;
-	G4int runID = G4RunManager::GetRunManager()->GetNonConstCurrentRun()->GetRunID();
+	G4int runID;
+	if (fAllSources == 0){
+		runID = frunIDRand;
+	}
+	else
+	{
+		runID = G4RunManager::GetRunManager()->GetNonConstCurrentRun()->GetRunID();
+	}
 
 	//G4double MinTheta = parameters.MyparamsGun.MinTheta;
 	G4double MaxTheta = parameters.MyparamsGun.MaxTheta;
