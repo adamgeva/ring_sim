@@ -20,8 +20,8 @@
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
 #define NUM_OF_SOURCES 100 //this defines the number of runs
-#define NUM_OF_VOXELS 100 //this defines the number of voxels - redundant
-#define NUM_OF_ELEMENTS 27 //this defines the number of elements
+#define NUM_OF_VOXELS 784 //this defines the number of voxels - redundant
+#define NUM_OF_ELEMENTS 5 //this defines the number of elements
 #define NUM_OF_THREADS 20
 
 class params
@@ -42,7 +42,7 @@ public:
 		G4int onOffBiasing = 0; //set to 1 for on biasing
 		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
 		G4bool printElementsXS = false;
-		G4int numberOfElements = 27;//27 //equal to the number of elements we print at the end of exampleB1
+		G4int numberOfElements = NUM_OF_ELEMENTS;//27 //equal to the number of elements we print at the end of exampleB1
 		G4int* RunId; //donot change
 	}Myparams;
 
@@ -80,8 +80,8 @@ public:
 		G4double boneX = 0.02*worldXY;
 		G4double boneY = 0.1*worldZ;
 		G4double boneZ = 0.02*worldXY;
-		G4double detectorX = 15*mm; //half size
-		G4double detectorY = 30*mm; //2mm * numberOfRows
+		G4double detectorX = 5*mm; //half size
+		G4double detectorY = 10*mm; //2mm * numberOfRows
 		//G4double detectorY = 2*mm; //2mm * numberOfRows
 		G4double detectorZ = 0.8*mm; //detector depth
 		G4double radius = 15*cm;
@@ -92,12 +92,12 @@ public:
 		//XCAT
 		//TODO: add in an external meta file
 		G4int numberOfZSlices = 1;
-		G4int numberOfVoxelsX = 10;
-		G4int numberOfVoxelsY = 10;
+		G4int numberOfVoxelsX = 28;
+		G4int numberOfVoxelsY = 28;
 		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;
 		//TODO: check that these sizes are correct
-		G4double voxelHalfX = 0.5*cm;
-		G4double voxelHalfY = 0.5*cm;
+		G4double voxelHalfX = 0.15*cm;
+		G4double voxelHalfY = 0.15*cm;
 		G4double voxelHalfZ = 1.5*cm;
 		std::string voxels_materials_file = "../run_inputs/voxels_materials.txt";
 

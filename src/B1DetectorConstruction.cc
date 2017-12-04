@@ -382,7 +382,7 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
 //		material[voxel]->AddElement(elB,fracs[4]);
 //		material[voxel]->AddElement(elC,fracs[5]);
 //		material[voxel]->AddElement(elN,fracs[6]);
-		material->AddElement(elO,fracs[7]);
+		material->AddElement(elO,fracs[2]);
 //		material[voxel]->AddElement(elF,fracs[8]);
 //		material[voxel]->AddElement(elNe,fracs[9]);
 //		material[voxel]->AddElement(elNa,fracs[10]);
@@ -393,7 +393,7 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
 //		material[voxel]->AddElement(elCl,fracs[15]);
 //		material[voxel]->AddElement(elAr,fracs[16]);
 //		material[voxel]->AddElement(elK,fracs[17]);
-		material->AddElement(elCa,fracs[18]);
+		material->AddElement(elCa,fracs[4]);
 //		material[voxel]->AddElement(elSc,fracs[19]);
 //		material[voxel]->AddElement(elTi,fracs[20]);
 //		material[voxel]->AddElement(elV,fracs[21]);
