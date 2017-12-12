@@ -28,7 +28,7 @@ public:
 
   G4double GetTotal(const G4THitsMap<G4double> &map) const;
 
-  // Maps for accumulation
+  // Maps for accumulation - energy scorers
   G4THitsMap<G4double> fMapSum[NUM_OF_SCORERS];
   G4int fColIDSum[NUM_OF_SCORERS];
 

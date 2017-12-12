@@ -22,7 +22,8 @@
 #define NUM_OF_SOURCES 100 //this defines the number of runs
 #define NUM_OF_VOXELS 784 //this defines the number of voxels - redundant
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
-#define NUM_OF_THREADS 20
+#define NUM_OF_THREADS 35
+#define NUM_OF_MATERIALS 100 // all materials are quantized to 100 materials with different densities
 
 class params
 {
@@ -34,7 +35,7 @@ public:
 		G4int physicsListVerbose = 0;
 		G4int analysisManagerVerbose = 0;
 		G4int visVerbose = 0;
-		int runVerbose = 1;
+		int runVerbose = 0;
 		int eventVerbose = 0;
 		int trackVerbose = 0;
 		//set to 0 to suppress navigator msgs
@@ -47,7 +48,7 @@ public:
 	}Myparams;
 
 	struct MyparamsGun{
-		G4double particleEnergy = 57*keV; //keV
+		G4double particleEnergy = 60*keV; //keV
 		G4int detectorCoverage = 1;
 		G4double MinTheta = 0 ;
 		G4double MaxTheta = M_PI/6;
@@ -72,19 +73,19 @@ public:
 		//flags to build phantom and detectors
 		G4int buildDetectors = 1;
 		G4int buildPhantom = 1;
-		G4double worldXY = 70*cm; //half sizes
-		G4double worldZ = 70*cm;
+		G4double worldXY = 210*cm; //half sizes
+		G4double worldZ = 210*cm;
 		G4double waterBox = 5*cm;
 		G4double phantomXY = 0.1*worldXY;
 		G4double phantomZ = 0.1*worldZ;
 		G4double boneX = 0.02*worldXY;
 		G4double boneY = 0.1*worldZ;
 		G4double boneZ = 0.02*worldXY;
-		G4double detectorX = 5*mm; //half size
-		G4double detectorY = 10*mm; //2mm * numberOfRows
+		G4double detectorX = 15*mm; //half size
+		G4double detectorY = 30*mm; //2mm * numberOfRows
 		//G4double detectorY = 2*mm; //2mm * numberOfRows
 		G4double detectorZ = 0.8*mm; //detector depth
-		G4double radius = 15*cm;
+		G4double radius = 45*cm;
 		G4double shift = 1*cm; //shift of each ring
 		G4int numberOfRows = 1;
 		//G4int numberOfRows = 1;
@@ -96,11 +97,12 @@ public:
 		G4int numberOfVoxelsY = 28;
 		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;
 		//TODO: check that these sizes are correct
-		G4double voxelHalfX = 0.15*cm;
-		G4double voxelHalfY = 0.15*cm;
-		G4double voxelHalfZ = 1.5*cm;
+		G4double voxelHalfX = 0.45*cm;
+		G4double voxelHalfY = 0.45*cm;
+		G4double voxelHalfZ = 4.5*cm;
 
-		std::string voxels_materials_file = "../run_inputs/voxels_materials.txt";
+		std::string materials_file = "../run_inputs/materials.txt";
+		std::string voxels_to_materials_file = "../run_inputs/voxels_to_materials.txt";
 		std::string fixed_source_file = "../run_inputs/all_sources.txt";
 		std::string sourceToDet_file = "../run_outputs_geom/sourceToDet.csv";
 		std::string sourcesPos_file = "../run_outputs_geom/sourcesPos.csv";

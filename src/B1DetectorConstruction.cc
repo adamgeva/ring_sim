@@ -20,6 +20,7 @@
 #include "G4ios.hh"
 #include "globalFunctions.hh"
 #include "B1EnergyDeposit.hh"
+#include "G4PSTrackLength.hh"
 
 #include "G4GeometryTolerance.hh"
 #include "G4GeometryManager.hh"
@@ -176,7 +177,8 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	//building phantom
 	if (parameters.MyparamsGeometry.buildPhantom==1){
 		//initialize materials
-		ReadPhantomDataAndInitialisationOfMaterials();
+		InitialisationOfMaterials();
+		ReadPhantomData();
 		ConstructPhantomContainer();
 		ConstructPhantom();
 	}
@@ -243,17 +245,13 @@ void B1DetectorConstruction::ConstructPhantomContainer()
 }
 
 
-void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
+void B1DetectorConstruction::InitialisationOfMaterials()
 {
     // Creating elements :
     G4double z, a, density;
     G4String name, symbol;
     G4int numberofElements;
     params parameters;
-
-    // initiallize fMateIDs
-    fMateIDs = new size_t[NUM_OF_VOXELS];
-
 
     G4Element* elH = new G4Element( name = "Hydrogen",
                                    symbol = "H",
@@ -338,37 +336,32 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
                                     z = 82, a = 207.2 * g/mole );
 
 //*******************************************************************************************************************************************************
-	G4String fname = parameters.MyparamsGeometry.voxels_materials_file;
+	G4String fname = parameters.MyparamsGeometry.materials_file;
 	std::ifstream fin(fname.c_str(), std::ios_base::in);
 	if( !fin.is_open() ) {
-	   G4Exception("Can't read voxels_materials_file",
+	   G4Exception("Can't read materials_file",
 					"",
 					FatalErrorInArgument,
 					G4String("File not found " + fname ).c_str());
 	  }
-	//pointers to materials - number of voxels
+	//pointers to materials
 	G4Material* material;
-	G4String MaterialName[NUM_OF_VOXELS];
-	//iterate over the voxels - every voxel as a material
-	G4int voxel = 0;
-	for (voxel = 0; voxel<parameters.MyparamsGeometry.numberOfPixelsPerSlice*parameters.MyparamsGeometry.numberOfZSlices; voxel ++){
+	G4String MaterialName[NUM_OF_MATERIALS];
+	//iterate over the base materials
+	G4int mat = 0;
+	for (mat = 0; mat<NUM_OF_MATERIALS; mat ++){
 		if( fin.eof() ) break;
 		// material - place in an array
-		MaterialName[voxel] = "mat" + IntToString(voxel);
-		G4double rau;
+		MaterialName[mat] = "mat" + IntToString(mat);
 		G4double fracs[NUM_OF_ELEMENTS];
 		// read density
-		fin >> rau;
-		// create material
-//		material[voxel] = new G4Material( name = MaterialName[voxel],
-//											   density = rau*g/cm3,
-//											   numberofElements = parameters.Myparams.numberOfElements );
-		material = new G4Material( name = MaterialName[voxel],
-											   density = rau*g/cm3,
+
+		material = new G4Material( name = MaterialName[mat],
+											   density = 1*g/cm3,
 											   numberofElements = 2);
-		std::cout << "voxel number: " << voxel << " rho: " << rau << " fractions: ";
+		std::cout << "material number: " << mat << " rho: " << 1 << " fractions: ";
 		// read fractions
-		for (G4int i=0; i<parameters.Myparams.numberOfElements; i++){
+		for (G4int i=0; i<NUM_OF_ELEMENTS; i++){
 			fin >> fracs[i];
 			std::cout << fracs[i] << ",";
 		}
@@ -404,8 +397,48 @@ void B1DetectorConstruction::ReadPhantomDataAndInitialisationOfMaterials()
 //		material[voxel]->AddElement(elPb,fracs[26]);
 
 		//add material to fMaterials
-		fMaterials.push_back(material);
-		//connecting the voxel to material
+		fBaseMaterials[mat] = material;
+	}
+}
+
+
+void B1DetectorConstruction::ReadPhantomData()
+{
+    params parameters;
+
+    // initiallize fMateIDs
+    fMateIDs = new size_t[NUM_OF_VOXELS];
+
+    G4String fname = parameters.MyparamsGeometry.voxels_to_materials_file;
+	std::ifstream fin(fname.c_str(), std::ios_base::in);
+	if( !fin.is_open() ) {
+	   G4Exception("Can't read voxels_to_materials_file",
+					"",
+					FatalErrorInArgument,
+					G4String("File not found " + fname ).c_str());
+	}
+
+    G4int voxel;
+    G4double index;
+    G4double newRho;
+	G4Material* newMaterial;
+	G4String baseMaterialName;
+	G4String newMaterialName;
+
+	for (voxel = 0; voxel<NUM_OF_VOXELS; voxel ++){
+		if( fin.eof() ) break;
+
+		fin >> index;
+		fin >> newRho;
+
+		baseMaterialName = fBaseMaterials[G4int(index)]->GetName();
+		//const G4double* fracs = fBaseMaterials[G4int(index)]->GetFractionVector();
+		//std::cout << "voxel number: " << voxel << " rho: " << newRho << " atom1 fraction: " << fracs[0] << " atom 2 fraction: " << fracs[1] << "\n";
+		newMaterialName = "voxelMat" + IntToString(voxel);
+		newMaterial = G4NistManager::Instance()->
+		  BuildMaterialWithNewDensity(newMaterialName,baseMaterialName,newRho*g/cm3);
+
+		fMaterials.push_back(newMaterial);
 		fMateIDs[voxel] = voxel;
 	}
 }
@@ -454,7 +487,7 @@ void B1DetectorConstruction::ConstructSDandField()
 		//attaching my sensitive detector to the detector logical element
 		SetSensitiveDetector(detectorPixelLV,detector1);
 	}
-	//creating scorer
+	//creating scorer for detector
 	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
 	SDman->AddNewDetector(detector2);
 	// setting primitive scorers
@@ -464,7 +497,6 @@ void B1DetectorConstruction::ConstructSDandField()
 	    detector2->RegisterPrimitive(primitive);
 	}
     SetSensitiveDetector(detectorPixelLV,detector2);
-
 
 }
 

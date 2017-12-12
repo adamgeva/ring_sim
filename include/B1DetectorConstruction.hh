@@ -33,7 +33,9 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
     
   protected:
     // create the original materials
-    void ReadPhantomDataAndInitialisationOfMaterials();
+    void ReadPhantomData();
+    void InitialisationOfMaterials();
+
     void ConstructPhantomContainer();
     virtual void ConstructPhantom() = 0;
 	// construct the phantom volumes.
@@ -44,8 +46,9 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
     G4Box* fContainer_solid;
    	G4LogicalVolume* fContainer_logic;
    	G4VPhysicalVolume* fContainer_phys;
-   	std::vector<G4Material*> fMaterials;
 
+   	std::vector<G4Material*> fMaterials;
+   	G4Material* fBaseMaterials[NUM_OF_MATERIALS];
    	size_t* fMateIDs; // index of material of each voxel - this array is in the size of the number of voxels
 
    	G4int fNVoxelX, fNVoxelY, fNVoxelZ;
@@ -62,9 +65,6 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 	//logical detectors
     G4LogicalVolume* detectorPixelLV;
     std::vector<G4VisAttributes*> fVisAttributes;
-
-
-
 
 };
 
