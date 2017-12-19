@@ -43,6 +43,9 @@
 
 #include "G4StepLimiterPhysics.hh"
 #include "B1ModularPhysicsList.hh"
+#include <ctime>
+#include <iostream>
+
 
 void printXSPerAtom(G4Element* el); //implemented at the end
 
@@ -59,8 +62,16 @@ int main(int argc,char** argv)
 	}
 
 	// Choose the Random engine
+//	CLHEP::HepJamesRandom* eng = new CLHEP::HepJamesRandom;
+//    std::time_t result = std::time(nullptr);
+//    eng->setSeed(result);
+//	G4Random::setTheEngine(eng);
+
+	// Choose the Random engine
 	CLHEP::RanecuEngine* eng = new CLHEP::RanecuEngine;
 	//eng->setIndex(8);
+	std::time_t result = std::time(nullptr);
+	eng->setSeed(result);
 	G4Random::setTheEngine(eng);
 
 	// Construct the default run manager
