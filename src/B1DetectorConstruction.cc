@@ -426,19 +426,9 @@ void B1DetectorConstruction::ReadPhantomData()
 	G4String newMaterialName;
 
 	for (voxel = 0; voxel<NUM_OF_VOXELS; voxel ++){
-		if( fin.eof() ) break;
-
-		fin >> index;
-		fin >> newRho;
-
-		baseMaterialName = fBaseMaterials[G4int(index)]->GetName();
-		//const G4double* fracs = fBaseMaterials[G4int(index)]->GetFractionVector();
-		//std::cout << "voxel number: " << voxel << " rho: " << newRho << " atom1 fraction: " << fracs[0] << " atom 2 fraction: " << fracs[1] << "\n";
-		newMaterialName = "voxelMat" + IntToString(voxel);
-		newMaterial = G4NistManager::Instance()->
-		  BuildMaterialWithNewDensity(newMaterialName,baseMaterialName,newRho*g/cm3);
-
-		fMaterials.push_back(newMaterial);
+		G4NistManager* nist = G4NistManager::Instance();
+		G4Material* waterMat = nist->FindOrBuildMaterial("G4_WATER");
+		fMaterials.push_back(waterMat);
 		fMateIDs[voxel] = voxel;
 	}
 }

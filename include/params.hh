@@ -22,7 +22,7 @@
 #define NUM_OF_SOURCES 100 //this defines the number of runs
 #define NUM_OF_VOXELS 784 //this defines the number of voxels - redundant
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
-#define NUM_OF_THREADS 35
+#define NUM_OF_THREADS 20
 #define NUM_OF_MATERIALS 100 // all materials are quantized to 100 materials with different densities
 
 class params
