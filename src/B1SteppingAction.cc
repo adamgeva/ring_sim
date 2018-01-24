@@ -17,8 +17,7 @@
 B1SteppingAction::B1SteppingAction()
 :G4UserSteppingAction()
 {
-	params parameters;
-	if (parameters.Myparams.G4navigatorVerbos==0){
+	if (VERBOSE_G4NAVIGATOR==0){
 		//suppressing navigator msgs
 		G4TransportationManager::GetTransportationManager()->GetNavigatorForTracking()->SetPushVerbosity(0);
 	}

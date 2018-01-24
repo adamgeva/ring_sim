@@ -10,6 +10,7 @@
 #include "B1TrackInformation.hh"
 #include "globalFunctions.hh"
 #include "G4RunManager.hh"
+#include "G4SystemOfUnits.hh"
 
 extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
@@ -17,7 +18,6 @@ extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 : G4PSEnergyDeposit(name)
 {
-	params parameters;
 	fscorerType =  type;
 	if (type==0){ //randomly pick the 0 scorer
 		G4int threadID = G4Threading::G4GetThreadId();
@@ -39,8 +39,6 @@ B1EnergyDeposit::~B1EnergyDeposit()
 }
 
 G4int B1EnergyDeposit::GetIndex(G4Step* step){
-	params parameters;
-
 	G4StepPoint* preStepPoint = step->GetPreStepPoint();
 	//entering the detector
 
@@ -49,13 +47,11 @@ G4int B1EnergyDeposit::GetIndex(G4Step* step){
 	G4int ReplicaNum1 = touchable->GetReplicaNumber(1);
 	//G4int ReplicaNum2 = touchable->GetReplicaNumber(2);
 //10 is the number of bins
-	return (ReplicaNum0 + ReplicaNum1*parameters.MyparamsGeometry.numberOfRows);
+	return (ReplicaNum0 + ReplicaNum1*NUM_OF_ROWS);
 
 }
 
 G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable){
-	params parameters;
-
 	//test: getting information from tracks
 	G4Track* track = aStep->GetTrack();
 //	G4double trackWeight = track->GetWeight();
@@ -82,7 +78,7 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	//a photon hits the detector, potoelectric absorption and the an emittion of a new photon (ID 1 for example) then this photon undergoes Rayl in the phantom and arrives at the detector with weight 1.
 	//TODO: check if correct!
 	//not recording the main photons - only the virtuals
-	if ((parameters.Myparams.onOffBiasing==1) && (track->GetParentID()==0)) {
+	if ((BIASING==1) && (track->GetParentID()==0)) {
 		result = FALSE;
 	}
 	//G4cout << "TrackId = " << track->GetTrackID() << " number of total interactions = " << totalNumOfInteractions << G4endl;

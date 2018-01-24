@@ -11,6 +11,8 @@
 #include "G4TrackStatus.hh"
 #include "params.hh"
 #include <math.h>
+#include "G4SystemOfUnits.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 B1BOptnRaylSplitting::B1BOptnRaylSplitting(G4String name)
@@ -47,7 +49,6 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
                         G4bool&                                         )
 {
 
-  params parameters;
 
   //fetch track data and split factor
   B1BOptrFSTrackData* AuxTrackData = (B1BOptrFSTrackData*)(track->GetAuxiliaryTrackInformation(fFSModelID));
@@ -134,8 +135,8 @@ ApplyFinalStateBiasing( const G4BiasingProcessInterface* callingProcess,
 		  gammaTrack->SetPolarization(actualParticleChange->GetProposedPolarization());
 
 		  //check if directed towards to detector
-		  G4bool out = outOfRing (gammaTrack->GetPosition(), actualParticleChange->GetProposedMomentumDirection(), parameters.MyparamsGeometry.detectorY ,
-				  parameters.MyparamsGeometry.detectorY*(-1), parameters.MyparamsGeometry.radius);
+		  G4bool out = outOfRing (gammaTrack->GetPosition(), actualParticleChange->GetProposedMomentumDirection(), DETECTOR_Y*mm ,
+				  DETECTOR_Y*mm*(-1), RADIUS*cm);
 		  if (!out) //directed at the detector
 		  {
 			  B1BOptrFSTrackData* SecondaryAuxTrackData = new B1BOptrFSTrackData(AuxTrackData->GetOptr());

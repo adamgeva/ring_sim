@@ -30,9 +30,8 @@ B1BOptrFS::B1BOptrFS(G4String particleName, G4String name)
     fInitialTrackWeight(-1.0),
     fSetup(true)
 {
-  params parameters;
-  fSplittingFactorNp = parameters.Bias.splittingFactorNp;
-  fSplittingFactorNs = parameters.Bias.splittingFactorNs;
+  fSplittingFactorNp = SPLITTING_FACTOR_NP;
+  fSplittingFactorNs = SPLITTING_FACTOR_NS;
   //fSharedForceInteractionOperation = new G4BOptnForceCommonTruncatedExp("SharedForceInteraction");
   fComptSplittingOperation = new B1BOptnComptSplitting("ComptSplitting");
   fRaylSplittingOperation  = new B1BOptnRaylSplitting("RaylSplitting");

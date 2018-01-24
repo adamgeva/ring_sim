@@ -27,7 +27,6 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
   fEnvelopeBox(0)
 {
 	//writing to file the chosen source
-	params parameters;
 	fAllSources = 0;
 
 	srand (time(NULL));
@@ -39,7 +38,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 	outputChosenSource << IntToString(frunIDRand) << "\n";
 	outputChosenSource.close();
 
-	G4String fname = parameters.MyparamsGeometry.fixed_source_file;
+	G4String fname = FILE_FIXED_SOURCE;
 	std::ifstream fin(fname.c_str(), std::ios_base::in);
 	if( !fin.is_open() ) {
 	   G4Exception("Can't read change_sources_file",
@@ -51,12 +50,12 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 
   //calculations for file export
   //calculating angle between two detectors - same calculation is done in detector construction
-  G4double detectorAngleDiff = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
+  G4double detectorAngleDiff = 2*atan((DETECTOR_X*mm)/RADIUS*cm);
   G4int numOfItr = (2*M_PI)/detectorAngleDiff;
   //correct for numeric errors - gap is spread
   detectorAngleDiff = (2*M_PI)/numOfItr;
   //beta is the angle coverage (cone) of the source
-  G4double beta = 2*parameters.MyparamsGun.MaxTheta;
+  G4double beta = 2*MAX_THETA;
   // sourceAngleDiff is the angle between every source
   G4double sourceAngleDiff = 2*M_PI/NUM_OF_SOURCES;
 
@@ -68,13 +67,13 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 
   //writing sources locations to file
   std::ofstream outputSources;
-  std::string fileName = parameters.MyparamsGeometry.sourcesPos_file;
+  std::string fileName = FILE_SOURCE_POS;
   outputSources.open(fileName.c_str());
   outputSources << "Sources Location" << "\n";
 
   //writing source to detectors to file
   std::ofstream sourceToDet;
-  std::string fileName_sToD = parameters.MyparamsGeometry.sourceToDet_file;
+  std::string fileName_sToD = FILE_SOURCE_TO_DET;
   sourceToDet.open(fileName_sToD.c_str());
   sourceToDet << "Active detectors for every source" << "\n";
 
@@ -82,11 +81,11 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
   for (G4int i=0; i<NUM_OF_SOURCES; i++){
 	  fParticleGun[i]  = new G4ParticleGun(n_particle);
 	  fParticleGun[i]->SetParticleDefinition(particle);
-	  fParticleGun[i]->SetParticleEnergy(parameters.MyparamsGun.particleEnergy);
+	  fParticleGun[i]->SetParticleEnergy(PARTICLE_ENERGY*keV);
 	  //setting positions for all sources
 	  G4double alpha = sourceAngleDiff*i;
-	  G4double x0 = parameters.MyparamsGeometry.radius*(std::cos(alpha+M_PI));
-	  G4double y0 = parameters.MyparamsGeometry.radius*(std::sin(alpha+M_PI));
+	  G4double x0 = (RADIUS*cm)*(std::cos(alpha+M_PI));
+	  G4double y0 = (RADIUS*cm)*(std::sin(alpha+M_PI));
 	  G4double z0 = 0;
 	  fParticleGun[i]->SetParticlePosition(G4ThreeVector(x0,y0,z0));
 
@@ -148,7 +147,6 @@ B1PrimaryGeneratorAction::~B1PrimaryGeneratorAction()
 
 void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-	params parameters;
 	G4int runID;
 	if (fAllSources == 0){
 		runID = frunIDRand;
@@ -158,14 +156,14 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		runID = G4RunManager::GetRunManager()->GetNonConstCurrentRun()->GetRunID();
 	}
 
-	//G4double MinTheta = parameters.MyparamsGun.MinTheta;
-	G4double MaxTheta = parameters.MyparamsGun.MaxTheta;
+	//G4double MinTheta = MIN_THETA;
+	G4double MaxTheta = MAX_THETA;
 //	G4double MinTheta = M_PI/2  ;
 //	G4double MaxTheta = M_PI/2 ;
 //	G4double MinPhi = -M_PI/8;
 //	G4double MaxPhi = M_PI/8;
-	G4double MinPhi = parameters.MyparamsGun.MinPhi;
-	G4double MaxPhi = parameters.MyparamsGun.MaxPhi;
+	G4double MinPhi = MIN_PHI;
+	G4double MaxPhi = MAX_PHI;
 
 
 	//phi

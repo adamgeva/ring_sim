@@ -4,6 +4,7 @@
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4VSensitiveDetector.hh"
+#include "G4SystemOfUnits.hh"
 
 #include "G4MultiFunctionalDetector.hh"
 #include "G4VPrimitiveScorer.hh"
@@ -69,10 +70,9 @@ B1DetectorConstruction::~B1DetectorConstruction()
 
 G4VPhysicalVolume* B1DetectorConstruction::Construct()
 {  
-	params parameters;
 
 	//set tolerance
-	G4GeometryManager::GetInstance()->SetWorldMaximumExtent(2.*parameters.MyparamsGeometry.worldXY);
+	G4GeometryManager::GetInstance()->SetWorldMaximumExtent(2.*WORLD_XY*cm);
 	std::cout << "GetSurfaceTolerance() = " << G4GeometryTolerance::GetInstance()->GetSurfaceTolerance()/mm << std::endl;
 	std::cout << "GetAngularTolerance() = " << G4GeometryTolerance::GetInstance()->GetAngularTolerance()/mm << std::endl;
 	std::cout << "GetRadialTolerance() = " << G4GeometryTolerance::GetInstance()->GetRadialTolerance()/mm << std::endl;
@@ -85,8 +85,8 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
 	// World
 	// sizes are half size
-	G4double world_sizeXY = parameters.MyparamsGeometry.worldXY;
-	G4double world_sizeZ  = parameters.MyparamsGeometry.worldZ;
+	G4double world_sizeXY = WORLD_XY*cm;
+	G4double world_sizeZ  = WORLD_Z*cm;
 	G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
 	G4Box* worldS = new G4Box("World",world_sizeXY, world_sizeXY, world_sizeZ);
@@ -95,13 +95,13 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
 	// detector - specs
 	G4Material* detectorMat = nist->FindOrBuildMaterial("G4_CESIUM_IODIDE");
-	G4double detector_sizeX = parameters.MyparamsGeometry.detectorX;
-	G4double detector_sizeY = parameters.MyparamsGeometry.detectorY;
-	G4double detector_sizeZ = parameters.MyparamsGeometry.detectorZ;
-	G4double radius = parameters.MyparamsGeometry.radius + parameters.MyparamsGeometry.detectorZ;
+	G4double detector_sizeX = DETECTOR_X*mm;
+	G4double detector_sizeY = DETECTOR_Y*mm;
+	G4double detector_sizeZ = DETECTOR_Z*mm;
+	G4double radius = RADIUS*cm + DETECTOR_Z*mm;
 
 	//vars used for pos calculations
-	G4double r = parameters.MyparamsGeometry.radius;
+	G4double r = RADIUS*cm;
 	G4double beta = atan(detector_sizeX/r);
 	G4double beta_tag = atan(detector_sizeX/(2*r));
 	G4double R = sqrt(pow(r,2)+pow(detector_sizeX,2));
@@ -112,18 +112,18 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4LogicalVolume* detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
 
 	//calculating angle between every detector
-	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
+	G4double alpha = 2*atan((DETECTOR_X*mm)/(RADIUS*cm));
 
 	G4int numOfItr = (2*M_PI)/alpha;
 	//correct for numeric errors - gap is spread
 	alpha = (2*M_PI)/numOfItr;
 	//initial location
-	//G4int X = parameters.MyparamsGeometry.detectorY + parameters.MyparamsGeometry.shift;
+	//G4int X = DETECTOR_Y*mm + SHIFT*cm;
 	G4cout << "numOfItr" << numOfItr <<G4endl;
 
 	//writing detector locations to file
 	std::ofstream outputDet;
-	std::string fileName = parameters.MyparamsGeometry.detectorsPos_file;
+	std::string fileName = FILE_DET_POS;
 	outputDet.open(fileName.c_str());
 	outputDet << "Detectors Location" << "\n";
 
@@ -136,7 +136,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 		rotD->rotateX(-M_PI/2);
 		//rotD->rotateY(-M_PI/2+theta);
 		rotD->rotateY(M_PI/2-theta);
-		if (parameters.MyparamsGeometry.buildDetectors == 1){
+		if (BUILD_DETECTORS == 1){
 			new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
 		}
 		//writing 5 pos for every detector - one detector in every line of the file
@@ -156,9 +156,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	outputDet.close();
 
 	//Pixel
-	G4Box* detectorPixelS = new G4Box("detectorCell",detector_sizeX, detector_sizeY/parameters.MyparamsGeometry.numberOfRows, detector_sizeZ);
+	G4Box* detectorPixelS = new G4Box("detectorCell",detector_sizeX, detector_sizeY/NUM_OF_ROWS, detector_sizeZ);
 	detectorPixelLV = new G4LogicalVolume(detectorPixelS, detectorMat,"detectorPixel");
-	new G4PVReplica("detectorPixelP",detectorPixelLV,detectorLV,kYAxis,parameters.MyparamsGeometry.numberOfRows,2*detector_sizeY/parameters.MyparamsGeometry.numberOfRows);
+	new G4PVReplica("detectorPixelP",detectorPixelLV,detectorLV,kYAxis,NUM_OF_ROWS,2*detector_sizeY/NUM_OF_ROWS);
 
 
 
@@ -175,7 +175,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	fVisAttributes.push_back(visAttributes);
 
 	//building phantom
-	if (parameters.MyparamsGeometry.buildPhantom==1){
+	if (BUILD_PHANTOM == 1){
 		//initialize materials
 		InitialisationOfMaterials();
 		ReadPhantomData();
@@ -187,9 +187,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
   // Set additional contraints on the track, with G4UserSpecialCuts
   //
-   G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = parameters.MyparamsGun.particleEnergy + 5*keV;
+   G4double maxStep=DBL_MAX, maxLength = DBL_MAX, maxTime = DBL_MAX, minEkin = PARTICLE_ENERGY*keV + 5*keV;
    detectorPixelLV->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
-//   if (parameters.MyparamsGeometry.buildPhantom==1){
+//   if (BUILD_PHANTOM == 1){
 //	   fvoxel_logic->SetUserLimits(new G4UserLimits(maxStep,maxLength,maxTime,minEkin));
 //   }
 
@@ -208,16 +208,14 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 
 void B1DetectorConstruction::ConstructPhantomContainer()
 {
-	params parameters;
-
   //---- Extract number of voxels and voxel dimensions
-  fNVoxelX = parameters.MyparamsGeometry.numberOfVoxelsX;
-  fNVoxelY = parameters.MyparamsGeometry.numberOfVoxelsY;
-  fNVoxelZ = parameters.MyparamsGeometry.numberOfZSlices;
+  fNVoxelX = NUM_OF_VOXELS_X;
+  fNVoxelY = NUM_OF_VOXELS_Y;
+  fNVoxelZ = NUM_OF_Z_SLICES;
 
-  fVoxelHalfDimX = parameters.MyparamsGeometry.voxelHalfX;
-  fVoxelHalfDimY = parameters.MyparamsGeometry.voxelHalfY;
-  fVoxelHalfDimZ = parameters.MyparamsGeometry.voxelHalfZ;
+  fVoxelHalfDimX = VOXEL_HALF_X*cm;
+  fVoxelHalfDimY = VOXEL_HALF_Y*cm;
+  fVoxelHalfDimZ = VOXEL_HALF_Z*cm;
 
 
   //----- Define the volume that contains all the voxels
@@ -251,8 +249,6 @@ void B1DetectorConstruction::InitialisationOfMaterials()
     G4double z, a, density;
     G4String name, symbol;
     G4int numberofElements;
-    params parameters;
-
     G4Element* elH = new G4Element( name = "Hydrogen",
                                    symbol = "H",
                                    z = 1.0, a = 1.008  * g/mole );
@@ -336,7 +332,7 @@ void B1DetectorConstruction::InitialisationOfMaterials()
                                     z = 82, a = 207.2 * g/mole );
 
 //*******************************************************************************************************************************************************
-	G4String fname = parameters.MyparamsGeometry.materials_file;
+	G4String fname = FILE_MATERIALS;
 	std::ifstream fin(fname.c_str(), std::ios_base::in);
 	if( !fin.is_open() ) {
 	   G4Exception("Can't read materials_file",
@@ -404,12 +400,10 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 
 void B1DetectorConstruction::ReadPhantomData()
 {
-    params parameters;
-
     // initiallize fMateIDs
     fMateIDs = new size_t[NUM_OF_VOXELS];
 
-    G4String fname = parameters.MyparamsGeometry.voxels_to_materials_file;
+    G4String fname = FILE_VOXEL_TO_MATERIALS;
 	std::ifstream fin(fname.c_str(), std::ios_base::in);
 	if( !fin.is_open() ) {
 	   G4Exception("Can't read voxels_to_materials_file",
@@ -445,8 +439,6 @@ void B1DetectorConstruction::ReadPhantomData()
 
 void B1DetectorConstruction::ConstructSDandField()
 {
-	params parameters;
-
   // -- Fetch volume for biasing:
  // G4LogicalVolume* logicTest = G4LogicalVolumeStore::GetInstance()->GetVolume("phantomContainer");
   //G4LogicalVolume* logicWorld = G4LogicalVolumeStore::GetInstance()->GetVolume("World");
@@ -480,7 +472,7 @@ void B1DetectorConstruction::ConstructSDandField()
 	//detector1 - SD
 	//detector2 - Scorer
 	//creating my sensitive detector and adding it to the SD manager - the data will be saved in histograms only if record hist is on
-	if (parameters.Myparams.recordHist==1){
+	if (RECORD_HIST == 1){
 		G4String SDname;
 		G4VSensitiveDetector* detector1 = new myDetectorSD(SDname="/detector1");
 		SDman->AddNewDetector(detector1);

@@ -3,6 +3,9 @@
 #include "B1ActionInitialization.hh"
 #include "params.hh"
 #include "globalFunctions.hh"
+#include "G4SystemOfUnits.hh"
+
+
 
 //TODO: how to control G4MULTITHREADED in a generic way???
 #ifdef MULTI
@@ -20,6 +23,8 @@
 #include "G4EmPenelopePhysics.hh"
 
 #include "B1ExtraPhysics.hh"
+#include "B1EnergyDeposit.hh"
+
 
 #include "G4Run.hh"
 
@@ -54,7 +59,6 @@ B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 int main(int argc,char** argv)
 {
-	params parameters;
 	// Detect interactive mode (if no arguments) and define UI session
 	G4UIExecutive* ui = 0;
 	if ( argc == 1 ) {
@@ -77,7 +81,7 @@ int main(int argc,char** argv)
 	// Construct the default run manager
 	#ifdef MULTI
 		  G4MTRunManager* runManager = new G4MTRunManager;
-		  runManager->SetNumberOfThreads(parameters.Myparams.numberOfThreads);
+		  runManager->SetNumberOfThreads(NUM_OF_THREADS);
 		  std::cout << "numOfThreads: " << runManager-> GetNumberOfThreads() << std::endl;
 	#else
 		  G4RunManager* runManager = new G4RunManager;
@@ -87,7 +91,7 @@ int main(int argc,char** argv)
 
 	// Activate UI-command base scorer
 	G4ScoringManager * scManager = G4ScoringManager::GetScoringManager();
-	scManager->SetVerboseLevel(parameters.Myparams.scoringVerbose);
+	scManager->SetVerboseLevel(VERBOSE_SCORING);
 
 	// Set mandatory initialization classes
 	// Detector construction
@@ -97,12 +101,14 @@ int main(int argc,char** argv)
 
 	// Physics list
 	G4VModularPhysicsList* physicsList;
-	if (parameters.Bias.phantomProductionCuts == true){
+	if (PHANTOM_PRODUCTION_CUTS == 1){
 		physicsList = new B1ModularPhysicsList("myList");
 	}
 	else{
 		G4PhysListFactory factory;
 		physicsList = factory.GetReferencePhysList("FTFP_BERT_EMV");
+		//physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
+
 		//FTFP_BERT_PEN
 		//G4VModularPhysicsList* physicsList = new QBBC;
 	}
@@ -111,7 +117,7 @@ int main(int argc,char** argv)
 
 	//biasing
 	G4GenericBiasingPhysics* biasingPhysics = new G4GenericBiasingPhysics();
-	  if ( parameters.Myparams.onOffBiasing == 1 )
+	  if ( BIASING == 1 )
 	    {
 	      //TODO:fix
 		  biasingPhysics->Bias("gamma");
@@ -135,9 +141,9 @@ int main(int argc,char** argv)
 	      G4cout << "      ************************************************* " << G4endl;
 	    }
 
-	physicsList->SetVerboseLevel(parameters.Myparams.physicsListVerbose);
+	physicsList->SetVerboseLevel(VERBOSE_PHYSICS_LIST);
 
-	if (parameters.Bias.detectorSpecialCuts==true) {
+	if (DETECTOR_SPECIAL_CUTS == 1) {
 	physicsList->RegisterPhysics(new B1ExtraPhysics());
 	}
 	runManager->SetUserInitialization(physicsList);
@@ -151,14 +157,14 @@ int main(int argc,char** argv)
 	G4VisManager* visManager = new G4VisExecutive;
 	// G4VisExecutive can take a verbosity argument - see /vis/verbose guidance.
 	// G4VisManager* visManager = new G4VisExecutive("Quiet");
-	visManager->SetVerboseLevel(parameters.Myparams.visVerbose);
+	visManager->SetVerboseLevel(VERBOSE_VIS);
 	visManager->Initialize();
 
 	// Get the pointer to the User Interface manager
 	G4UImanager* UImanager = G4UImanager::GetUIpointer();
-	 UImanager->ApplyCommand("/run/verbose " + IntToString(parameters.Myparams.runVerbose));
-	 UImanager->ApplyCommand("/event/verbose " + IntToString(parameters.Myparams.eventVerbose));
-	 UImanager->ApplyCommand("/tracking/verbose " + IntToString(parameters.Myparams.trackVerbose));
+	 UImanager->ApplyCommand("/run/verbose " + IntToString(VERBOSE_RUN));
+	 UImanager->ApplyCommand("/event/verbose " + IntToString(VERBOSE_EVENT));
+	 UImanager->ApplyCommand("/tracking/verbose " + IntToString(VERBOSE_TRACK));
 
 
 	// Process macro or start UI session
@@ -178,7 +184,7 @@ int main(int argc,char** argv)
 
 	//******************************************************************
 	//print elements cross section
-	if (parameters.Myparams.printElementsXS==true){
+	if (PRINT_ELEMENTS_XS == 1){
 		printXSPerAtom(new G4Element("Hydrogen","H",1.0,1.008 * g/mole));
 		printXSPerAtom(new G4Element("Helium","He",2.0,4.0026 * g/mole ));
 		printXSPerAtom(new G4Element( "Lithium","Li",3.0, 6.941  * g/mole ));
@@ -221,7 +227,6 @@ int main(int argc,char** argv)
 
 
 void printXSPerAtom(G4Element* el){
-	params parameters;
 	G4EmCalculator emCalculator;
 	std::string elementName = el->GetName();
 	G4int elementZ = el->GetZ();
@@ -230,7 +235,7 @@ void printXSPerAtom(G4Element* el){
 	std::string fileName =  "../run_outputs/ElementsXS/" + IntToString(elementZ) + ".csv";
 	outputElementFile.open(fileName.c_str());
 
-	G4double highE = parameters.MyparamsGun.particleEnergy + 3*keV; //3 is buffer
+	G4double highE = PARTICLE_ENERGY*keV + 3*keV; //3 is buffer
 	G4double DeltaEnergy = 0.1*keV; //delta Energy
 	G4double Energy = DeltaEnergy;
 

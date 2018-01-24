@@ -7,14 +7,9 @@
 
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
-#include "G4SystemOfUnits.hh"
-#include "G4String.hh"
-#include "G4Types.hh"
-#include <math.h>
-#include "B1EnergyDeposit.hh"
 
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
@@ -22,96 +17,67 @@
 #define NUM_OF_SOURCES 100 //this defines the number of runs
 #define NUM_OF_VOXELS 784 //this defines the number of voxels - redundant
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
-#define NUM_OF_THREADS 35
+#define NUM_OF_THREADS 30
 #define NUM_OF_MATERIALS 100 // all materials are quantized to 100 materials with different densities
 
-class params
-{
-public:
-	struct Myparams{
-		//todo: fix
-		G4int numberOfThreads = NUM_OF_THREADS;
-		G4int scoringVerbose = 0;
-		G4int physicsListVerbose = 0;
-		G4int analysisManagerVerbose = 0;
-		G4int visVerbose = 0;
-		int runVerbose = 0;
-		int eventVerbose = 0;
-		int trackVerbose = 0;
-		//set to 0 to suppress navigator msgs
-		int G4navigatorVerbos = 0;
-		G4int onOffBiasing = 0; //set to 1 for on biasing
-		G4int recordHist = 0; //when 0 - no histograms will be recorded in the simulation
-		G4bool printElementsXS = false;
-		G4int numberOfElements = NUM_OF_ELEMENTS;//27 //equal to the number of elements we print at the end of exampleB1
-		G4int* RunId; //donot change
-	}Myparams;
+// verbose
+#define VERBOSE_SCORING 0
+#define VERBOSE_PHYSICS_LIST 0
+#define VERBOSE_ANALYSIS_MANAGER 0
+#define VERBOSE_VIS 0
+#define VERBOSE_RUN 1
+#define VERBOSE_EVENT 1
+#define VERBOSE_TRACK 0
+#define VERBOSE_G4NAVIGATOR 0
 
-	struct MyparamsGun{
-		G4double particleEnergy = 60*keV; //keV
-		G4int detectorCoverage = 1;
-		G4double MinTheta = 0 ;
-		G4double MaxTheta = M_PI/6;
-		//G4double MaxTheta = 0;
-		G4double MinPhi = 0;
-//		G4double MaxPhi = 2*M_PI;
-		G4double MaxPhi = 0;
-	}MyparamsGun;
+#define BIASING 0 //set to 1 for on biasing
+#define SPLITTING_FACTOR_NP 70
+#define SPLITTING_FACTOR_NS 70
 
-	struct Bias{
-		//G4int ComptSplittingFactor = 10;
-		G4int splittingFactorNp = 70;
-		G4int splittingFactorNs = 70;
-		G4bool detectorSpecialCuts = true;
-		G4bool phantomProductionCuts = false;
-		G4bool killElectrons = false;
+#define DETECTOR_SPECIAL_CUTS 1
+#define PHANTOM_PRODUCTION_CUTS 0
+#define KILL_ELECTRONS 0
 
-	}Bias;
+#define RECORD_HIST 0 //when 0 - no histograms will be recorded in the simulation
+#define PRINT_ELEMENTS_XS 0
 
+//Particle Gun
+#define PARTICLE_ENERGY 60 //KeV
+#define MIN_THETA 0
+#define MAX_THETA (M_PI / 6)
+#define MIN_PHI 0
+#define MAX_PHI 0
 
-	struct MyparamsGeometry{
-		//flags to build phantom and detectors
-		G4int buildDetectors = 1;
-		G4int buildPhantom = 1;
-		G4double worldXY = 210*cm; //half sizes
-		G4double worldZ = 210*cm;
-		G4double waterBox = 5*cm;
-		G4double phantomXY = 0.1*worldXY;
-		G4double phantomZ = 0.1*worldZ;
-		G4double boneX = 0.02*worldXY;
-		G4double boneY = 0.1*worldZ;
-		G4double boneZ = 0.02*worldXY;
-		G4double detectorX = 15*mm; //half size
-		G4double detectorY = 30*mm; //2mm * numberOfRows
-		//G4double detectorY = 2*mm; //2mm * numberOfRows
-		G4double detectorZ = 0.8*mm; //detector depth
-		G4double radius = 45*cm;
-		G4double shift = 1*cm; //shift of each ring
-		G4int numberOfRows = 1;
-		//G4int numberOfRows = 1;
-		G4int numberOfDetectors = 5;
-		//XCAT
-		//TODO: add in an external meta file
-		G4int numberOfZSlices = 1;
-		G4int numberOfVoxelsX = 28;
-		G4int numberOfVoxelsY = 28;
-		G4int numberOfPixelsPerSlice = numberOfVoxelsX*numberOfVoxelsY;
-		//TODO: check that these sizes are correct
-		G4double voxelHalfX = 0.45*cm;
-		G4double voxelHalfY = 0.45*cm;
-		G4double voxelHalfZ = 4.5*cm;
+//Geometry
+#define BUILD_DETECTORS 1
+#define BUILD_PHANTOM 1
+#define WORLD_XY 210 //cm half size
+#define WORLD_Z 210 //cm half size
+#define WATER_BOX 5 //cm
+#define PHANTOM_XY (0.1 * WORLD_XY)
+#define PHANTOM_Z (0.1 * WORLD_Z)
+#define DETECTOR_X 15 //mm half size
+#define DETECTOR_Y 30 //mm half size. 2mm * numberOfRows
+#define DETECTOR_Z 0.8 //mm half size. detector depth
+#define RADIUS 45 //cm
+#define SHIFT 1 //cm
+#define NUM_OF_ROWS 1
 
-		std::string materials_file = "../run_inputs/materials.txt";
-		std::string voxels_to_materials_file = "../run_inputs/voxels_to_materials.txt";
-		std::string fixed_source_file = "../run_inputs/all_sources.txt";
-		std::string sourceToDet_file = "../run_outputs_geom/sourceToDet.csv";
-		std::string sourcesPos_file = "../run_outputs_geom/sourcesPos.csv";
-		std::string detectorsPos_file = "../run_outputs_geom/detectorsPos.csv";
+//XCAT
+#define NUM_OF_Z_SLICES 1
+#define NUM_OF_VOXELS_X 28
+#define NUM_OF_VOXELS_Y 28
+#define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
+#define VOXEL_HALF_X 0.45 //cm
+#define VOXEL_HALF_Y 0.45 //cm
+#define VOXEL_HALF_Z 4.5 //cm
 
-
-	}MyparamsGeometry;
-
-};
+#define FILE_MATERIALS "../run_inputs/materials.txt"
+#define FILE_VOXEL_TO_MATERIALS "../run_inputs/voxels_to_materials.txt"
+#define FILE_FIXED_SOURCE "../run_inputs/all_sources.txt"
+#define FILE_SOURCE_TO_DET "../run_outputs_geom/sourceToDet.csv"
+#define FILE_SOURCE_POS "../run_outputs_geom/sourcesPos.csv"
+#define FILE_DET_POS "../run_outputs_geom/detectorsPos.csv"
 
 
 #endif /* PARAMS_HH_ */

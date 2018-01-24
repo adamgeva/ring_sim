@@ -51,14 +51,13 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 
 void B1RunAction::EndOfRunAction(const G4Run* aRun)
 {
-	params parameters;
 
 	//write EnergyDepositFile
 	fMyEnergyDeposit->writeFile();
 
 	const B1Run* theRun = (const B1Run*)aRun;
 	//writing to CSV file the cylinder response
-	G4double alpha = 2*atan(parameters.MyparamsGeometry.detectorX/parameters.MyparamsGeometry.radius);
+	G4double alpha = 2*atan((DETECTOR_X*mm)/(RADIUS*cm));
 	G4int numOfItr = (2*M_PI)/alpha; //numOfItr holds the number of columns
 
 	G4int runID = theRun->GetRunID();
@@ -72,15 +71,15 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 			//write response
 			for (int i=0;i<numOfItr;i++)
 			  {
-				  for (int j=0; j<parameters.MyparamsGeometry.numberOfRows;j++)
+				  for (int j=0; j<NUM_OF_ROWS;j++)
 				  {
-					  G4double* eDep = (theRun->fMapSum[k])[i*parameters.MyparamsGeometry.numberOfRows +j];
+					  G4double* eDep = (theRun->fMapSum[k])[i*NUM_OF_ROWS +j];
 					  if (eDep==0){
 						  output<<"0,";
 					  }
 					  else {
 						  output<< *eDep << ",";
-						  //G4cout <<"response: "<< i*parameters.MyparamsGeometry.numberOfRows +j<< " : "<< *eDep <<G4endl;
+						  //G4cout <<"response: "<< i*NUMBER_OF_ROWS +j<< " : "<< *eDep <<G4endl;
 					  }
 				  }
 				  output<<"\n";

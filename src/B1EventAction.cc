@@ -29,9 +29,8 @@ B1EventAction::~B1EventAction()
 
 void B1EventAction::BeginOfEventAction(const G4Event*)
 {
-	params parameters;
 	//detector 1 is created only for recording histograms
-	if (parameters.Myparams.recordHist==1){
+	if (RECORD_HIST == 1){
 		if (fdetectorHCID==-1) {
 		  G4SDManager* sdManager = G4SDManager::GetSDMpointer();
 		  //get the hits collection of our detector in this event
@@ -44,8 +43,7 @@ void B1EventAction::BeginOfEventAction(const G4Event*)
 
 void B1EventAction::EndOfEventAction(const G4Event* event)
 {
-	params parameters;
-	if(parameters.Myparams.recordHist==1){
+	if(RECORD_HIST == 1){
 		// Step 1: Get the hits collection of this event
 		G4HCofThisEvent* hce = event->GetHCofThisEvent();
 		if (!hce)

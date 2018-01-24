@@ -23,13 +23,12 @@ void B1ActionInitialization::BuildForMaster() const
 
 void B1ActionInitialization::Build() const
 {
-  params parameters;
   SetUserAction(new B1PrimaryGeneratorAction);
   SetUserAction(new B1RunAction);
   //SetUserAction(new B1EventAction);
   SetUserAction(new B1SteppingAction);
   SetUserAction(new B1TrackingAction);
-  if (parameters.Bias.killElectrons == true) {
+  if (KILL_ELECTRONS == 1) {
 	  SetUserAction(new B1StackingAction);
   }
 }  
