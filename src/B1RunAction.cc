@@ -65,7 +65,12 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 	if(IsMaster()) {
 		std::ofstream output;
 		for (G4int k=0; k<NUM_OF_SCORERS; k++){
-			std::string fileName = "../run_outputs/I/run_" + IntToString(runID) + "outputEnergyDep_" + IntToString(k) + ".csv";
+			std::string fileName;
+			if (GT_MODE == 1){
+				fileName = std::string(OUTPUT_DIR) + "/I_test_LIV/run_" + IntToString(runID) + "outputEnergyDep_" + IntToString(k) + ".csv";
+			} else {
+				fileName = std::string(OUTPUT_DIR) + "/I/run_" + IntToString(runID) + "outputEnergyDep_" + IntToString(k) + ".csv";
+			}
 			output.open(fileName.c_str());
 			output << "OutPut Energy Deposit - source location, parameters" << "\n";
 			//write response

@@ -50,7 +50,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 
   //calculations for file export
   //calculating angle between two detectors - same calculation is done in detector construction
-  G4double detectorAngleDiff = 2*atan((DETECTOR_X*mm)/RADIUS*cm);
+  G4double detectorAngleDiff = 2*atan((DETECTOR_X*mm)/(RADIUS*cm));
   G4int numOfItr = (2*M_PI)/detectorAngleDiff;
   //correct for numeric errors - gap is spread
   detectorAngleDiff = (2*M_PI)/numOfItr;

@@ -106,13 +106,14 @@ int main(int argc,char** argv)
 	}
 	else{
 		G4PhysListFactory factory;
-		physicsList = factory.GetReferencePhysList("FTFP_BERT_EMV");
-		//physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
-
-		//FTFP_BERT_PEN
-		//G4VModularPhysicsList* physicsList = new QBBC;
+		if (GT_MODE == 1){
+			physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
+		} else{
+			physicsList = factory.GetReferencePhysList("FTFP_BERT_EMV");
+		}
+			//FTFP_BERT_PEN
+			//G4VModularPhysicsList* physicsList = new QBBC;
 	}
-
 	//physicsList->SetCutsForRegion(10*km,"waterRegion");
 
 	//biasing
