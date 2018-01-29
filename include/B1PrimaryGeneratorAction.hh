@@ -6,6 +6,12 @@
 #include "globals.hh"
 #include "params.hh"
 
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <map>
+#include <random>
+
 class G4ParticleGun;
 class G4Event;
 class G4Box;
@@ -25,13 +31,22 @@ class B1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
   
     // method to access particle gun
     const G4ParticleGun* GetParticleGun(G4int gunNumber) const { return fParticleGun[gunNumber]; }
-
+    void readSpectrum();
+    G4int getEnergyInd();
   
   private:
     G4ParticleGun*  fParticleGun[NUM_OF_SOURCES]; // pointer a to G4 gun class
     G4Box* fEnvelopeBox;
     G4int frunIDRand;
     G4int fAllSources;
+	//G4int fspect_test[NUM_OF_SPECTRUM_BINS]; // testing the output spectrum
+	//std::ofstream foutput_spect; // file for writing sample spectrum
+
+	// create the distribution
+    std::vector<int> fweights;
+	std::default_random_engine fgenerator;
+
+
 };
 
 

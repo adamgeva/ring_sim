@@ -6,16 +6,18 @@
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
 #define NUM_OF_SOURCES 100 //this defines the number of runs
+#define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
 #define NUM_OF_VOXELS 784 //this defines the number of voxels - redundant
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
 #define NUM_OF_THREADS 30
 #define NUM_OF_MATERIALS 100 // all materials are quantized to 100 materials with different densities
+#define NUM_OF_PHOTONS 100000 // equal to mac file
 // verbose
 #define VERBOSE_SCORING 0
 #define VERBOSE_PHYSICS_LIST 0
 #define VERBOSE_ANALYSIS_MANAGER 0
 #define VERBOSE_VIS 0
-#define VERBOSE_RUN 0
+#define VERBOSE_RUN 1
 #define VERBOSE_EVENT 0
 #define VERBOSE_TRACK 0
 #define VERBOSE_G4NAVIGATOR 0
@@ -26,9 +28,9 @@
 #define PHANTOM_PRODUCTION_CUTS 0
 #define KILL_ELECTRONS 0
 #define RECORD_HIST 0 //when 0 - no histograms will be recorded in the simulation
-#define PRINT_ELEMENTS_XS 0
+#define PRINT_ELEMENTS_XS 1
 //Particle Gun
-#define PARTICLE_ENERGY 60 //KeV
+#define PARTICLE_ENERGY 150 //KeV
 #define MIN_THETA 0
 #define MAX_THETA 0.5236 
 #define MIN_PHI 0
@@ -56,6 +58,7 @@
 #define VOXEL_HALF_X 0.45 //cm
 #define VOXEL_HALF_Y 0.45 //cm
 #define VOXEL_HALF_Z 4.5 //cm
+#define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"
 #define FILE_VOXEL_TO_MATERIALS "../run_inputs/voxels_to_materials.txt"
 #define FILE_FIXED_SOURCE "../run_inputs/all_sources.txt"

@@ -17,15 +17,30 @@
 #include <iostream>
 #include <cmath>
 #include <time.h>
+#include <math.h>
 #include <string>
 #include <sstream>
 #include <fstream>
+
+
+
+
+
 
 
 B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),
   fEnvelopeBox(0)
 {
+	readSpectrum();
+	//initialize fenergyFlag
+//	for (int l =0; l < NUM_OF_SPECTRUM_BINS; l ++){
+//		fspect_test[l] = 0;
+//	}
+//
+//	std::string fileName_spect = std::string(OUTPUT_DIR) + "/spectrum_output.csv";
+//	foutput_spect.open(fileName_spect.c_str());
+
 	//writing to file the chosen source
 	fAllSources = 0;
 
@@ -47,6 +62,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 					G4String("File not found " + fname ).c_str());
 	  }
 	fin >> fAllSources;
+
 
   //calculations for file export
   //calculating angle between two detectors - same calculation is done in detector construction
@@ -141,9 +157,39 @@ B1PrimaryGeneratorAction::~B1PrimaryGeneratorAction()
 	for (G4int i=0; i<NUM_OF_SOURCES; i++){
 		delete fParticleGun[i];
 	}
+//	for (G4int h=0; h<NUM_OF_SPECTRUM_BINS; h++){
+//		foutput_spect << fspect_test[h];
+//		foutput_spect << ",";
+//	}
+//	foutput_spect.close();
 
 }
 
+void B1PrimaryGeneratorAction::readSpectrum(){
+	G4String fname = FILE_SPECTRUM;
+	G4double spectrum_dist[NUM_OF_SPECTRUM_BINS]; //distribution of energy for every source
+	std::ifstream fin(fname.c_str(), std::ios_base::in);
+	G4double num_of_photons = 0;
+	if( !fin.is_open() ) {
+	   G4Exception("Can't read spectrum_file",
+					"",
+					FatalErrorInArgument,
+					G4String("File not found " + fname ).c_str());
+	}
+    // Setup the weights (in this case linearly weighted)
+	for (int i = 0; i<NUM_OF_SPECTRUM_BINS; i ++){
+		if( fin.eof() ) break;
+		fin >> num_of_photons;
+		//std::cout << "i= " << i << " spect = " <<  num_of_photons << std::endl;
+		spectrum_dist[i] = ceil(num_of_photons*NUM_OF_PHOTONS);
+        fweights.push_back(spectrum_dist[i]);
+	}
+//	G4int sum = 0;
+//	for (int k = 0; k<NUM_OF_SPECTRUM_BINS; k ++){
+//		std::cout << "i= " << k << " spect = " <<  fspectrum_dist[k][0] << std::endl;
+//		sum = sum + fspectrum_dist[k][0];
+//	}
+}
 
 void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
@@ -187,6 +233,8 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4double pz = sintheta * sinphi;
 
 
+	G4double energyP;
+	G4int energyBin;
 
 	//if switching sources is applied
 	if (ALT_SOURCES==1){
@@ -197,11 +245,28 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		G4double pxT = px*std::cos(angleTransform) - py*std::sin(angleTransform);
 		G4double pyT = px*std::sin(angleTransform) + py*std::cos(angleTransform);
 		fParticleGun[runID]->SetParticleMomentumDirection(G4ThreeVector(pxT,pyT,pz));
+		energyBin = getEnergyInd();
+		energyP = energyBin*keV;
+		fParticleGun[runID]->SetParticleEnergy(energyP);
 		fParticleGun[runID]->GeneratePrimaryVertex(anEvent);
 	}
 	else {
 		fParticleGun[0]->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
+		energyBin = getEnergyInd();
+		energyP = energyBin*keV;
+		fParticleGun[0]->SetParticleEnergy(energyP);
 		fParticleGun[0]->GeneratePrimaryVertex(anEvent);
 	}
+
+	//
+	//fspect_test[energyBin] = fspect_test[energyBin] + 1; // testing
 }
+
+G4int B1PrimaryGeneratorAction::getEnergyInd(){
+	//todo - maybe we can declare discrete_distribution globally to avoid initialization
+	std::discrete_distribution<G4int> distribution(fweights.begin(), fweights.end());
+	G4int bin = distribution(fgenerator);
+	return bin;
+}
+
 
