@@ -37,7 +37,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 //	for (int l =0; l < NUM_OF_SPECTRUM_BINS; l ++){
 //		fspect_test[l] = 0;
 //	}
-//
+
 //	std::string fileName_spect = std::string(OUTPUT_DIR) + "/spectrum_output.csv";
 //	foutput_spect.open(fileName_spect.c_str());
 
@@ -259,7 +259,7 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	}
 
 	//
-	//fspect_test[energyBin] = fspect_test[energyBin] + 1; // testing
+//	fspect_test[energyBin] = fspect_test[energyBin] + 1; // testing
 }
 
 G4int B1PrimaryGeneratorAction::getEnergyInd(){

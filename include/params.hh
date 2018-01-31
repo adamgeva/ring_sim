@@ -28,7 +28,7 @@
 #define PHANTOM_PRODUCTION_CUTS 0
 #define KILL_ELECTRONS 0
 #define RECORD_HIST 0 //when 0 - no histograms will be recorded in the simulation
-#define PRINT_ELEMENTS_XS 1
+#define PRINT_ELEMENTS_XS 0
 //Particle Gun
 #define PARTICLE_ENERGY 150 //KeV
 #define MIN_THETA 0

@@ -39,8 +39,8 @@ class B1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     G4Box* fEnvelopeBox;
     G4int frunIDRand;
     G4int fAllSources;
-	//G4int fspect_test[NUM_OF_SPECTRUM_BINS]; // testing the output spectrum
-	//std::ofstream foutput_spect; // file for writing sample spectrum
+//	G4int fspect_test[NUM_OF_SPECTRUM_BINS]; // testing the output spectrum
+//	std::ofstream foutput_spect; // file for writing sample spectrum
 
 	// create the distribution
     std::vector<int> fweights;
