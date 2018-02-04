@@ -41,6 +41,8 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 
 
 	G4String startPhysicalName = startTouchable->GetVolume()->GetName();
+	//todo: maybe we need to change the depth
+	G4Material* voxel_mat = startTouchable->GetVolume()->GetLogicalVolume()->GetMaterial();
 
 	G4VUserTrackInformation* info = theTrack->GetUserInformation();
 	B1TrackInformation* theInfo = (B1TrackInformation*)info;
@@ -59,7 +61,7 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 		//G4cout<<"We have Rayl with prePhysical : " << startPhysicalName << G4endl;
 		theInfo->AddRayl();
 	}
-
+	currSegmant.Mat = voxel_mat;
 	currSegmant.incidentEnergy = startPoint->GetKineticEnergy();
 	currSegmant.scatteredEnergy = endPoint->GetKineticEnergy();
 	G4double Len = sqrt(pow((endPoint->GetPosition().x() - startPoint->GetPosition().x()),2) +

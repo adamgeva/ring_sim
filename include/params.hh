@@ -1,7 +1,7 @@
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
@@ -12,6 +12,7 @@
 #define NUM_OF_THREADS 30
 #define NUM_OF_MATERIALS 100 // all materials are quantized to 100 materials with different densities
 #define NUM_OF_PHOTONS 100000 // equal to mac file
+#define NUM_OF_DETECTORS 94
 // verbose
 #define VERBOSE_SCORING 0
 #define VERBOSE_PHYSICS_LIST 0

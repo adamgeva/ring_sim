@@ -24,6 +24,7 @@ struct segment {
 	G4double scatteredEnergy;
 	//G4double thetaScatter;
 	G4int voxel;
+	G4Material* Mat;
 	G4String endingProcess;
 };
 

@@ -5,6 +5,9 @@
  *      Author: adamgeva
  */
 #include "G4PSEnergyDeposit.hh"
+#include "B1TrackInformation.hh"
+#include "params.hh"
+
 #ifndef B1ENERGYDEPOSIT_HH_
 #define B1ENERGYDEPOSIT_HH_
 
@@ -19,6 +22,12 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
 
     void openFile(G4int threadNum, G4int runNum);
     void writeFile();
+    // grad calculation methods
+    G4double getTotalMicXS(G4Element* el, G4double Energy);
+    G4double getComptonMicDifferentialXS(G4Element* el, G4double E0 , G4double E1);
+    G4double getComptonMacDifferentialXS(G4Material* mat, G4double E0 , G4double E1);
+    //update the complete gradient table with current segment contribution
+    void updateGradTable(segment seg, G4double final_energy, G4int detIndex);
 
   protected: // with description
     virtual G4bool ProcessHits(G4Step*,G4TouchableHistory*);
@@ -30,6 +39,9 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     //scorer type: 0=no_scatter, 1=include_single_scatter, 2=include_multi_scatter, 3=include_single_scatter_compt, 4=include_single_scatter_Rayl
     G4int fscorerType;
     std::ofstream outputPathsFile;
+
+    // gradient array - built per thread and holds the current gradient of all replicas (detector elements) w.r.t voxels and elements.
+    G4double Sm_hat[NUM_OF_VOXELS][NUM_OF_ELEMENTS][NUM_OF_DETECTORS] = {};
  };
 
 
