@@ -1,7 +1,7 @@
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
@@ -39,6 +39,7 @@
 //Geometry
 #define BUILD_DETECTORS 1
 #define BUILD_PHANTOM 1
+#define CALC_GRADIENT 1
 #define WORLD_XY 210 //cm half size
 #define WORLD_Z 210 //cm half size
 #define WATER_BOX 5 //cm

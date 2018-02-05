@@ -54,6 +54,12 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 
 	//write EnergyDepositFile
 	fMyEnergyDeposit->writeFile();
+	//write gradient table
+	if (CALC_GRADIENT == 1){
+		G4int threadID = G4Threading::G4GetThreadId();
+		G4int runID = aRun->GetRunID();
+		fMyEnergyDeposit->writeGradient(threadID,runID);
+	}
 
 	const B1Run* theRun = (const B1Run*)aRun;
 	//writing to CSV file the cylinder response

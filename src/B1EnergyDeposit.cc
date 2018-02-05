@@ -112,7 +112,7 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	// this scorer is in charge of writing the path file, could be any scorer.
 	if(fscorerType==0){
 		//energy deposited in the detector - equals to the final photon energy???
-		G4double edep = aStep->GetTotalEnergyDeposit();
+		G4double edep = aStep->GetTotalEnergyDeposit()/keV;
 		//G4double final_energy = track->GetTotalEnergy();
 		//G4double final_energy_kinetic = track->GetKineticEnergy();
 		//holda the gradient of current photon segment, in the current voxel w.r.t all elements in that voxel
@@ -123,7 +123,9 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	   	while (!theInfo->fpathLogList.empty()){
 	   		segment seg = theInfo->fpathLogList.front();
 	   		theInfo->fpathLogList.pop_front();
-	   		updateGradTable(seg,edep,detIndex);
+	   		if (CALC_GRADIENT == 1){
+	   			updateGradTable(seg,edep,detIndex);
+	   		}
 	   		//TODO: needs to be generalized - maybe there will be another process once!
    			outputPathsFile << seg.voxel << "," << 0 << "," << seg.incidentEnergy/keV << "," << seg.pathLen << ",";
    			//calc da_di_dvox - gradient of the attenuation w.r.t all the elements in the voxel
@@ -161,6 +163,31 @@ void B1EnergyDeposit::writeFile() {
 		//G4cout << "closing file: " <<G4endl;
 		outputPathsFile.close();
 	}
+}
+
+void B1EnergyDeposit::writeGradient(G4int threadNum,G4int runNum){
+	//writing gradient table to file
+	std::string fileName =  std::string(OUTPUT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "gradient.csv";
+	std::ofstream outputPathsFile_grad;
+	outputPathsFile_grad.open(fileName.c_str());
+	for (G4int element = 0; element < NUM_OF_ELEMENTS; element ++){
+		for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
+			for (G4int det = 0; det < NUM_OF_DETECTORS; det ++){
+				outputPathsFile_grad << Sm_hat[voxel][element][det] << ',';
+			}
+			outputPathsFile_grad << '\n';
+		}
+	}
+	outputPathsFile_grad.close();
+
+	//write P array:
+	fileName =  std::string(OUTPUT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "P.csv";
+	std::ofstream outputPathsFile_P;
+	outputPathsFile_P.open(fileName.c_str());
+	for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
+		outputPathsFile_P <<  P[voxel] << ',';
+	}
+	outputPathsFile_P.close();
 }
 
 // methods for grad calculations
@@ -208,9 +235,15 @@ G4double B1EnergyDeposit::getComptonMacDifferentialXS(G4Material* mat, G4double 
 void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int detIndex){
 	//calc da_di_dvox - gradient of the attenuation w.r.t all the elements in the voxel
 	G4int curr_voxel = seg.voxel;
+	//we dont calculate the gradient of the air voxel
+	if (curr_voxel == 0){
+		return;
+	}
+	//update P array:
+	P[curr_voxel]++;
 	G4double curr_energy = seg.incidentEnergy/keV;
 	G4double curr_len = seg.pathLen;
-	G4double curr_density = seg.Mat->GetDensity();
+	G4double curr_density = seg.Mat->GetDensity()/(g/cm3);
 	//vector of elements in current material/voxel
 	const G4ElementVector* curr_element_vector = seg.Mat->GetElementVector();
 	const G4double* curr_frac_vector = seg.Mat->GetFractionVector();
@@ -238,6 +271,7 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 				G4double frac_i = curr_frac_vector[i];
 				G4double N_by_A = n_i / (curr_density * frac_i);
 				G4Element* el_i =  (*curr_element_vector)[i];
+				std::string el_name = el_i->GetName();
 				G4double da_di_dvox = -1 * curr_len * N_by_A * getTotalMicXS(el_i,curr_energy);
 				//update gradient:
 				Sm_hat[curr_voxel][i][detIndex] = Sm_hat[curr_voxel][i][detIndex] + final_energy * (da_di_dvox);
