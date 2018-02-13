@@ -44,16 +44,20 @@ G4Run* B1RunAction::GenerateRun()
 
 void B1RunAction::BeginOfRunAction(const G4Run* run)
 {
-	G4int threadID = G4Threading::G4GetThreadId();
-	G4int runID = run->GetRunID();
-	fMyEnergyDeposit->openFile(threadID,runID);
+	if (PRINT_PATHS == 1){
+		G4int threadID = G4Threading::G4GetThreadId();
+		G4int runID = run->GetRunID();
+		fMyEnergyDeposit->openFile(threadID,runID);
+	}
 }
 
 void B1RunAction::EndOfRunAction(const G4Run* aRun)
 {
 
-	//write EnergyDepositFile
-	fMyEnergyDeposit->writeFile();
+	if (PRINT_PATHS == 1){
+		//write EnergyDepositFile
+		fMyEnergyDeposit->writeFile();
+	}
 	//write gradient table
 	if (CALC_GRADIENT == 1){
 		G4int threadID = G4Threading::G4GetThreadId();

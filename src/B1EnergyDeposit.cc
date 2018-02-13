@@ -126,18 +126,22 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	   		if (CALC_GRADIENT == 1){
 	   			updateGradTable(seg,edep,detIndex);
 	   		}
-	   		//TODO: needs to be generalized - maybe there will be another process once!
-   			outputPathsFile << seg.voxel << "," << 0 << "," << seg.incidentEnergy/keV << "," << seg.pathLen << ",";
-   			//calc da_di_dvox - gradient of the attenuation w.r.t all the elements in the voxel
-   			//iterate over all participating elements and calc micXS
-   			//calc obj.ci = ((params.avogadro).*density)./(params.Ai);
+	   		if(PRINT_PATHS == 1){
+				//TODO: needs to be generalized - maybe there will be another process once!
+				outputPathsFile << seg.voxel << "," << 0 << "," << seg.incidentEnergy/keV << "," << seg.pathLen << ",";
+				//calc da_di_dvox - gradient of the attenuation w.r.t all the elements in the voxel
+				//iterate over all participating elements and calc micXS
+				//calc obj.ci = ((params.avogadro).*density)./(params.Ai);
 
-	   		G4String enddd = seg.endingProcess;
-	   		if (seg.endingProcess == "compt"){
-	   			outputPathsFile << seg.voxel << "," << 1 << "," << seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ","; //<< seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ",";
+				G4String enddd = seg.endingProcess;
+				if (seg.endingProcess == "compt"){
+					outputPathsFile << seg.voxel << "," << 1 << "," << seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ","; //<< seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ",";
+				}
 	   		}
 	   	}
-	   	outputPathsFile << detIndex << "," << -100 << "\n";
+	   	if(PRINT_PATHS == 1){
+	   		outputPathsFile << detIndex << "," << -100 << "\n";
+	   	}
 	}
 
 	return result;
@@ -167,7 +171,7 @@ void B1EnergyDeposit::writeFile() {
 
 void B1EnergyDeposit::writeGradient(G4int threadNum,G4int runNum){
 	//writing gradient table to file
-	std::string fileName =  std::string(OUTPUT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "gradient.csv";
+	std::string fileName =  std::string(GRADIENT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "gradient.csv";
 	std::ofstream outputPathsFile_grad;
 	outputPathsFile_grad.open(fileName.c_str());
 	for (G4int element = 0; element < NUM_OF_ELEMENTS; element ++){
@@ -181,7 +185,7 @@ void B1EnergyDeposit::writeGradient(G4int threadNum,G4int runNum){
 	outputPathsFile_grad.close();
 
 	//write P array:
-	fileName =  std::string(OUTPUT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "P.csv";
+	fileName =  std::string(GRADIENT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "P.csv";
 	std::ofstream outputPathsFile_P;
 	outputPathsFile_P.open(fileName.c_str());
 	for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
@@ -196,8 +200,8 @@ G4double B1EnergyDeposit::getTotalMicXS(G4Element* el, G4double Energy){
 	G4EmCalculator emCalculator;
 	G4double comptXS;
 	G4double photXS;
-	photXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","phot",el,0);
-	comptXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","compt",el,0);
+	photXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","phot",el,0)/cm2;
+	comptXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","compt",el,0)/cm2;
 	return photXS + comptXS;
 }
 
@@ -227,16 +231,17 @@ G4double B1EnergyDeposit::getComptonMacDifferentialXS(G4Material* mat, G4double 
 	//calc dsigma macroscopic:
 	G4double dsigmaMac = 0;
 	for (G4int i=0 ; i<nElements ; i++) {
-		dsigmaMac = dsigmaMac + curr_num_of_atoms[i] * getComptonMicDifferentialXS((*curr_element_vector)[i], E0 , E1);
+		dsigmaMac = dsigmaMac + curr_num_of_atoms[i]/(1/cm3) * getComptonMicDifferentialXS((*curr_element_vector)[i], E0 , E1);
 	}
 	return dsigmaMac;
 }
 
 void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int detIndex){
 	//calc da_di_dvox - gradient of the attenuation w.r.t all the elements in the voxel
-	G4int curr_voxel = seg.voxel;
+	// - 1 to have the absolute voxel number in the phantom grid
+	G4int curr_voxel = seg.voxel - 1;
 	//we dont calculate the gradient of the air voxel
-	if (curr_voxel == 0){
+	if (curr_voxel == -1){
 		return;
 	}
 	//update P array:
@@ -256,23 +261,24 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 		G4double dsigmaMac = getComptonMacDifferentialXS(seg.Mat,seg.incidentEnergy/keV,seg.scatteredEnergy/keV);
 		// iterate over elements and calc attenuation factor and scatter:
 		for (G4int i=0 ; i<nElements ; i++) {
-				G4double n_i = curr_num_of_atoms[i];
+				G4double n_i = curr_num_of_atoms[i]/(1/cm3);
 				G4double frac_i = curr_frac_vector[i];
 				G4double N_by_A = n_i / (curr_density * frac_i);
 				G4Element* el_i =  (*curr_element_vector)[i];
 				G4double dsigma_di_dvox = N_by_A * getComptonMicDifferentialXS(el_i,seg.incidentEnergy/keV,seg.scatteredEnergy/keV) * (1/dsigmaMac);
-				G4double da_di_dvox = -1 * curr_len * N_by_A * getTotalMicXS(el_i,curr_energy);
+				G4double da_di_dvox = -1 * curr_len * N_by_A * getTotalMicXS(el_i,curr_energy*keV);
 				//update gradient:
 				Sm_hat[curr_voxel][i][detIndex] = Sm_hat[curr_voxel][i][detIndex] + final_energy * (da_di_dvox + dsigma_di_dvox);
 		}
 	} else { //no compton at the end
 		for (G4int i=0 ; i<nElements ; i++) {
-				G4double n_i = curr_num_of_atoms[i];
+				G4double n_i = curr_num_of_atoms[i]/(1/cm3);
 				G4double frac_i = curr_frac_vector[i];
 				G4double N_by_A = n_i / (curr_density * frac_i);
 				G4Element* el_i =  (*curr_element_vector)[i];
 				std::string el_name = el_i->GetName();
-				G4double da_di_dvox = -1 * curr_len * N_by_A * getTotalMicXS(el_i,curr_energy);
+				//G4double micmic = getTotalMicXS(el_i,curr_energy*keV);
+				G4double da_di_dvox = -1 * curr_len * N_by_A * getTotalMicXS(el_i,curr_energy*keV);
 				//update gradient:
 				Sm_hat[curr_voxel][i][detIndex] = Sm_hat[curr_voxel][i][detIndex] + final_energy * (da_di_dvox);
 		}
