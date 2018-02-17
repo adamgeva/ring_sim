@@ -24,6 +24,8 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     void writeGradient(G4int threadNum, G4int runNum);
 
     void writeFile();
+    void ResetArrays();
+
     // grad calculation methods
     G4double getTotalMicXS(G4Element* el, G4double Energy);
     G4double getComptonMicDifferentialXS(G4Element* el, G4double E0 , G4double E1);

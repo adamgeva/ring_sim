@@ -74,9 +74,9 @@ int main(int argc,char** argv)
 	// Choose the Random engine
 	CLHEP::RanecuEngine* eng = new CLHEP::RanecuEngine;
 	std::time_t result = std::time(nullptr);
-	//eng->setSeed(result);
-	eng->setIndex(8);
-	eng->setSeed(8);
+	eng->setSeed(result);
+	//eng->setIndex(8);
+	//eng->setSeed(8);
 	G4Random::setTheEngine(eng);
 
 	// Construct the default run manager

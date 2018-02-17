@@ -5,13 +5,13 @@
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
-#define NUM_OF_SOURCES 2 //this defines the number of runs
+#define NUM_OF_SOURCES 100 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
-#define NUM_OF_VOXELS 4 //this defines the number of voxels - redundant
+#define NUM_OF_VOXELS 784 //this defines the number of voxels - redundant
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
-#define NUM_OF_THREADS 1
+#define NUM_OF_THREADS 30
 #define NUM_OF_MATERIALS 100 // all materials are quantized to 100 materials with different densities
-#define NUM_OF_PHOTONS 10000 // equal to mac file
+#define NUM_OF_PHOTONS 100000 // equal to mac file
 #define NUM_OF_DETECTORS 94
 // verbose
 #define VERBOSE_SCORING 0
@@ -55,11 +55,11 @@
 #define GT_MODE 0
 //XCAT
 #define NUM_OF_Z_SLICES 1
-#define NUM_OF_VOXELS_X 2 
-#define NUM_OF_VOXELS_Y 2 
+#define NUM_OF_VOXELS_X 28 
+#define NUM_OF_VOXELS_Y 28 
 #define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
-#define VOXEL_HALF_X 4.5 //cm
-#define VOXEL_HALF_Y 4.5 //cm
+#define VOXEL_HALF_X 0.45 //cm
+#define VOXEL_HALF_Y 0.45 //cm
 #define VOXEL_HALF_Z 4.5 //cm
 #define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"

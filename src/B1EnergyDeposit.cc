@@ -169,6 +169,17 @@ void B1EnergyDeposit::writeFile() {
 	}
 }
 
+void B1EnergyDeposit::ResetArrays() {
+	for (int i=0; i<NUM_OF_VOXELS; i++){
+		P[i] = 0;
+		for (int j=0; j<NUM_OF_ELEMENTS; j++){
+			for (int k =0; k<NUM_OF_DETECTORS; k++){
+				Sm_hat[i][j][k] = 0;
+			}
+		}
+	}
+}
+
 void B1EnergyDeposit::writeGradient(G4int threadNum,G4int runNum){
 	//writing gradient table to file
 	std::string fileName =  std::string(GRADIENT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "gradient.csv";
@@ -178,6 +189,8 @@ void B1EnergyDeposit::writeGradient(G4int threadNum,G4int runNum){
 		for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
 			for (G4int det = 0; det < NUM_OF_DETECTORS; det ++){
 				outputPathsFile_grad << Sm_hat[voxel][element][det] << ',';
+				//reset array:
+				Sm_hat[voxel][element][det] = 0;
 			}
 			outputPathsFile_grad << '\n';
 		}
@@ -190,8 +203,13 @@ void B1EnergyDeposit::writeGradient(G4int threadNum,G4int runNum){
 	outputPathsFile_P.open(fileName.c_str());
 	for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
 		outputPathsFile_P <<  P[voxel] << ',';
+		//reset array:
+		P[voxel] = 0;
 	}
 	outputPathsFile_P.close();
+
+	// reset arrays after writing files
+	//ResetArrays();
 }
 
 // methods for grad calculations
