@@ -7,6 +7,7 @@
 #include "G4PSEnergyDeposit.hh"
 #include "B1TrackInformation.hh"
 #include "params.hh"
+#include "B1Accumulable.hh"
 
 #ifndef B1ENERGYDEPOSIT_HH_
 #define B1ENERGYDEPOSIT_HH_
@@ -21,10 +22,8 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     virtual G4int GetIndex(G4Step* step);
 
     void openFile(G4int threadNum, G4int runNum);
-    void writeGradient(G4int threadNum, G4int runNum);
-
     void writeFile();
-    void ResetArrays();
+
 
     // grad calculation methods
     G4double getTotalMicXS(G4Element* el, G4double Energy);
@@ -44,9 +43,7 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     G4int fscorerType;
     std::ofstream outputPathsFile;
 
-    // gradient array - built per thread and holds the current gradient of all replicas (detector elements) w.r.t voxels and elements.
-    G4double Sm_hat[NUM_OF_VOXELS][NUM_OF_ELEMENTS][NUM_OF_DETECTORS] = {};
-    G4double P[NUM_OF_VOXELS] = {};
+    B1Accumulable* fGradAccum;
 
  };
 

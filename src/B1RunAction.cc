@@ -4,7 +4,8 @@
 #include "B1RunAction.hh"
 #include "Analysis.hh"
 #include "B1Run.hh"
-
+#include "G4AccumulableManager.hh"
+#include "G4Accumulable.hh"
 #include "G4UnitsTable.hh"
 #include "G4SystemOfUnits.hh"
 #include <string>
@@ -16,17 +17,19 @@ extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 
 B1RunAction::B1RunAction()
- : G4UserRunAction()
+ : G4UserRunAction(),
+   fGradientAccumulable("grad_accum")
 {
 	fMyEnergyDeposit = 0;
+	// Register accumulable to the accumulable manager
+	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
+	accumulableManager->RegisterAccumulable(&fGradientAccumulable);
 }
 B1RunAction::~B1RunAction()
 {}
 
 G4Run* B1RunAction::GenerateRun()
 {
-
-
 	G4int Ind;
 	G4int threadID = G4Threading::G4GetThreadId();
 	if (threadID ==-1){
@@ -49,6 +52,11 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 		G4int runID = run->GetRunID();
 		fMyEnergyDeposit->openFile(threadID,runID);
 	}
+
+	// reset accumulables to their initial values
+	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
+	accumulableManager->Reset();
+
 }
 
 void B1RunAction::EndOfRunAction(const G4Run* aRun)
@@ -58,11 +66,19 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 		//write EnergyDepositFile
 		fMyEnergyDeposit->writeFile();
 	}
+
+	// Merge accumulables
+	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
+	accumulableManager->Merge();
+
+
 	//write gradient table
 	if (CALC_GRADIENT == 1){
 		G4int threadID = G4Threading::G4GetThreadId();
 		G4int runID = aRun->GetRunID();
-		fMyEnergyDeposit->writeGradient(threadID,runID);
+		if(IsMaster()) {
+			fGradientAccumulable.writeGradientAndP(runID);
+		}
 	}
 
 	const B1Run* theRun = (const B1Run*)aRun;

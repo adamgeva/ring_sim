@@ -34,7 +34,6 @@
 #include "G4VisExecutive.hh"
 #include "G4UIExecutive.hh"
 #include "Randomize.hh"
-#include <iostream>
 
 //calculate MFP
 #include "G4EmCalculator.hh"

@@ -4,6 +4,9 @@
 #include "G4UserRunAction.hh"
 #include "globals.hh"
 #include "B1EnergyDeposit.hh"
+#include "G4Accumulable.hh"
+#include "B1Accumulable.hh"
+
 
 class G4Run;
 
@@ -22,6 +25,8 @@ class B1RunAction : public G4UserRunAction
 
   private:
     B1EnergyDeposit* fMyEnergyDeposit;
+    // G4Accumulable<G4double> fTestAccum = G4Accumulable<G4double>("hey",0.0);
+    B1Accumulable fGradientAccumulable;
 };
 
 

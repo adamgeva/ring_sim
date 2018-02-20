@@ -11,13 +11,16 @@
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4EmCalculator.hh"
+#include "G4AccumulableManager.hh"
+#include "B1Accumulable.hh"
+
 
 extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 
 B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 //per thread
-: G4PSEnergyDeposit(name)
+: G4PSEnergyDeposit(name), fGradAccum(NULL)
 {
 	fscorerType =  type;
 	if (type==0){ //randomly pick the 0 scorer
@@ -30,10 +33,10 @@ B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 			detectorsArray[threadID+1] = this;
 		}
 
+		// Get accumulable from the accumulable manager
+		G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
+		fGradAccum = (B1Accumulable*)accumulableManager->GetAccumulable(0);
 	}
-	//initialize gradient to zero
-	//Sm_hat[NUM_OF_VOXELS][NUM_OF_ELEMENTS][NUM_OF_DETECTORS] = {};
-
 }
 
 B1EnergyDeposit::~B1EnergyDeposit()
@@ -169,48 +172,7 @@ void B1EnergyDeposit::writeFile() {
 	}
 }
 
-void B1EnergyDeposit::ResetArrays() {
-	for (int i=0; i<NUM_OF_VOXELS; i++){
-		P[i] = 0;
-		for (int j=0; j<NUM_OF_ELEMENTS; j++){
-			for (int k =0; k<NUM_OF_DETECTORS; k++){
-				Sm_hat[i][j][k] = 0;
-			}
-		}
-	}
-}
 
-void B1EnergyDeposit::writeGradient(G4int threadNum,G4int runNum){
-	//writing gradient table to file
-	std::string fileName =  std::string(GRADIENT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "gradient.csv";
-	std::ofstream outputPathsFile_grad;
-	outputPathsFile_grad.open(fileName.c_str());
-	for (G4int element = 0; element < NUM_OF_ELEMENTS; element ++){
-		for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
-			for (G4int det = 0; det < NUM_OF_DETECTORS; det ++){
-				outputPathsFile_grad << Sm_hat[voxel][element][det] << ',';
-				//reset array:
-				Sm_hat[voxel][element][det] = 0;
-			}
-			outputPathsFile_grad << '\n';
-		}
-	}
-	outputPathsFile_grad.close();
-
-	//write P array:
-	fileName =  std::string(GRADIENT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "P.csv";
-	std::ofstream outputPathsFile_P;
-	outputPathsFile_P.open(fileName.c_str());
-	for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
-		outputPathsFile_P <<  P[voxel] << ',';
-		//reset array:
-		P[voxel] = 0;
-	}
-	outputPathsFile_P.close();
-
-	// reset arrays after writing files
-	//ResetArrays();
-}
 
 // methods for grad calculations
 G4double B1EnergyDeposit::getTotalMicXS(G4Element* el, G4double Energy){
@@ -263,7 +225,7 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 		return;
 	}
 	//update P array:
-	P[curr_voxel]++;
+	fGradAccum->updateP(curr_voxel);
 	G4double curr_energy = seg.incidentEnergy/keV;
 	G4double curr_len = seg.pathLen;
 	G4double curr_density = seg.Mat->GetDensity()/(g/cm3);
@@ -286,7 +248,7 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 				G4double dsigma_di_dvox = N_by_A * getComptonMicDifferentialXS(el_i,seg.incidentEnergy/keV,seg.scatteredEnergy/keV) * (1/dsigmaMac);
 				G4double da_di_dvox = -1 * curr_len * N_by_A * getTotalMicXS(el_i,curr_energy*keV);
 				//update gradient:
-				Sm_hat[curr_voxel][i][detIndex] = Sm_hat[curr_voxel][i][detIndex] + final_energy * (da_di_dvox + dsigma_di_dvox);
+				fGradAccum->updateSm_hat(curr_voxel,i,detIndex,final_energy * (da_di_dvox + dsigma_di_dvox));
 		}
 	} else { //no compton at the end
 		for (G4int i=0 ; i<nElements ; i++) {
@@ -298,7 +260,8 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 				//G4double micmic = getTotalMicXS(el_i,curr_energy*keV);
 				G4double da_di_dvox = -1 * curr_len * N_by_A * getTotalMicXS(el_i,curr_energy*keV);
 				//update gradient:
-				Sm_hat[curr_voxel][i][detIndex] = Sm_hat[curr_voxel][i][detIndex] + final_energy * (da_di_dvox);
+				fGradAccum->updateSm_hat(curr_voxel,i,detIndex,final_energy * (da_di_dvox));
+
 		}
 	}
 }
