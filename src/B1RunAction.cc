@@ -46,13 +46,16 @@ G4Run* B1RunAction::GenerateRun()
 
 void B1RunAction::BeginOfRunAction(const G4Run* run)
 {
+	G4int runID = run->GetRunID();
+
 	if (PRINT_PATHS == 1){
 		G4int threadID = G4Threading::G4GetThreadId();
-		G4int runID = run->GetRunID();
 		fMyEnergyDeposit->openFile(threadID,runID);
 	}
+
 	//rotate phantom
-	fdetectorConstruction->setContainerRotation(M_PI/5);
+	G4double angle = M_PI/90; //2 degrees
+	fdetectorConstruction->setContainerRotation(angle * runID);
 	// reset accumulables to their initial values
 	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
 	accumulableManager->Reset();

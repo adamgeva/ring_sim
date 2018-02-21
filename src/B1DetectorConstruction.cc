@@ -208,7 +208,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 void B1DetectorConstruction::setContainerRotation(G4double delta){
 	//sets the rotation of the phantom
 	G4RotationMatrix* rot = new G4RotationMatrix();
-	rot->rotateX(delta);
+	rot->rotateZ(delta);
 	fContainer_phys->SetRotation(rot);
 	G4RunManager::GetRunManager()->GeometryHasBeenModified();
 	return;
