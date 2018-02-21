@@ -1,7 +1,7 @@
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
@@ -47,11 +47,14 @@
 #define PHANTOM_XY (0.1 * WORLD_XY)
 #define PHANTOM_Z (0.1 * WORLD_Z)
 #define DETECTOR_X 15 //mm half size
-#define DETECTOR_Y 30 //mm half size. 2mm * numberOfRows
+#define DETECTOR_Y (12.5 * NUM_OF_DET_ROWS) //mm half size. 2mm * numberOfRows
 #define DETECTOR_Z 0.8 //mm half size. detector depth
-#define NUM_OF_DET_COLS 10
+#define NUM_OF_DET_COLS 20
 #define NUM_OF_DET_ROWS 10
-#define RADIUS 45 //cm
+#define CENTER_TO_DET 267.38 //mm
+#define SOURCE_TO_CENTER 605.27 //mm
+#define RADIUS 605.27 //mm
+
 #define SHIFT 1 //cm
 #define GT_MODE 0
 //XCAT
@@ -59,8 +62,8 @@
 #define NUM_OF_VOXELS_X 28 
 #define NUM_OF_VOXELS_Y 28 
 #define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
-#define VOXEL_HALF_X 0.45 //cm
-#define VOXEL_HALF_Y 0.45 //cm
+#define VOXEL_HALF_X 0.4 //cm
+#define VOXEL_HALF_Y 0.4 //cm
 #define VOXEL_HALF_Z 4.5 //cm
 #define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"

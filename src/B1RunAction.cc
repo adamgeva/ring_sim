@@ -86,8 +86,7 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 
 	const B1Run* theRun = (const B1Run*)aRun;
 	//writing to CSV file the cylinder response
-	G4double alpha = 2*atan((DETECTOR_X*mm)/(RADIUS*cm));
-	G4int numOfItr = (2*M_PI)/alpha; //numOfItr holds the number of columns
+	G4int numOfItr = NUM_OF_DET_COLS; //numOfItr holds the number of columns
 
 	G4int runID = theRun->GetRunID();
 

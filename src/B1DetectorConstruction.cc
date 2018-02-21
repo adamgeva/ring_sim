@@ -98,7 +98,7 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4double detector_sizeX = DETECTOR_X*mm;
 	G4double detector_sizeY = DETECTOR_Y*mm;
 	G4double detector_sizeZ = DETECTOR_Z*mm;
-	G4double radius = RADIUS*cm + DETECTOR_Z*mm;
+	G4double dist = CENTER_TO_DET*mm + DETECTOR_Z*mm;
 
 	// detector1
 	G4Box* detectorS = new G4Box("detector",detector_sizeX, detector_sizeY, detector_sizeZ);
@@ -108,12 +108,15 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4cout << "numOfItr" << numOfItr <<G4endl;
 	for (G4int i=0;i<numOfItr;i++)
 	{
-		G4double y_shift = i*detector_sizeX;
-		//G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), -X +j*2*X, sin(theta)*(radius));
-		G4ThreeVector detectorPosUpdated = G4ThreeVector(radius,y_shift,0);
+		G4RotationMatrix* rotD = new G4RotationMatrix();
+		rotD->rotateX(-M_PI/2);
+		rotD->rotateY(M_PI/2);
+		G4double y_shift = -detector_sizeX*(NUM_OF_DET_COLS -1 ) + 2*i*detector_sizeX;
+		//G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(dist), -X +j*2*X, sin(theta)*(dist));
+		G4ThreeVector detectorPosUpdated = G4ThreeVector(dist,y_shift,0);
 
 		if (BUILD_DETECTORS == 1){
-			new G4PVPlacement(0,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
+			new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
 		}
 	}
 

@@ -30,12 +30,12 @@ class B1PrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     virtual void GeneratePrimaries(G4Event*);         
   
     // method to access particle gun
-    const G4ParticleGun* GetParticleGun(G4int gunNumber) const { return fParticleGun[gunNumber]; }
+    const G4ParticleGun* GetParticleGun() const { return fParticleGun; }
     void readSpectrum();
     G4int getEnergyInd();
   
   private:
-    G4ParticleGun*  fParticleGun[NUM_OF_SOURCES]; // pointer a to G4 gun class
+    G4ParticleGun*  fParticleGun; // pointer a to G4 gun class
     G4Box* fEnvelopeBox;
     G4int frunIDRand;
     G4int fAllSources;
