@@ -105,9 +105,9 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 			//write response
 			for (int i=0;i<numOfItr;i++)
 			  {
-				  for (int j=0; j<NUM_OF_ROWS;j++)
+				  for (int j=0; j<NUM_OF_DET_ROWS;j++)
 				  {
-					  G4double* eDep = (theRun->fMapSum[k])[i*NUM_OF_ROWS +j];
+					  G4double* eDep = (theRun->fMapSum[k])[i*NUM_OF_DET_ROWS +j];
 					  if (eDep==0){
 						  output<<"0,";
 					  }

@@ -49,9 +49,10 @@
 #define DETECTOR_X 15 //mm half size
 #define DETECTOR_Y 30 //mm half size. 2mm * numberOfRows
 #define DETECTOR_Z 0.8 //mm half size. detector depth
+#define NUM_OF_DET_COLS 10
+#define NUM_OF_DET_ROWS 10
 #define RADIUS 45 //cm
 #define SHIFT 1 //cm
-#define NUM_OF_ROWS 1
 #define GT_MODE 0
 //XCAT
 #define NUM_OF_Z_SLICES 1

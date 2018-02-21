@@ -52,7 +52,7 @@ G4int B1EnergyDeposit::GetIndex(G4Step* step){
 	G4int ReplicaNum1 = touchable->GetReplicaNumber(1);
 	//G4int ReplicaNum2 = touchable->GetReplicaNumber(2);
 	//10 is the number of bins
-	return (ReplicaNum0 + ReplicaNum1*NUM_OF_ROWS);
+	return (ReplicaNum0 + ReplicaNum1*NUM_OF_DET_ROWS);
 
 }
 

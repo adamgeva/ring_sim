@@ -100,66 +100,27 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4double detector_sizeZ = DETECTOR_Z*mm;
 	G4double radius = RADIUS*cm + DETECTOR_Z*mm;
 
-	//vars used for pos calculations
-	G4double r = RADIUS*cm;
-	G4double beta = atan(detector_sizeX/r);
-	G4double beta_tag = atan(detector_sizeX/(2*r));
-	G4double R = sqrt(pow(r,2)+pow(detector_sizeX,2));
-	G4double R_tag = sqrt(pow(r,2)+pow(detector_sizeX/2,2));
-
 	// detector1
 	G4Box* detectorS = new G4Box("detector",detector_sizeX, detector_sizeY, detector_sizeZ);
 	G4LogicalVolume* detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
 
-	//calculating angle between every detector
-	G4double alpha = 2*atan((DETECTOR_X*mm)/(RADIUS*cm));
-
-	G4int numOfItr = (2*M_PI)/alpha;
-	//correct for numeric errors - gap is spread
-	alpha = (2*M_PI)/numOfItr;
-	//initial location
-	//G4int X = DETECTOR_Y*mm + SHIFT*cm;
+	G4int numOfItr = NUM_OF_DET_COLS;
 	G4cout << "numOfItr" << numOfItr <<G4endl;
-
-	//writing detector locations to file
-	std::ofstream outputDet;
-	std::string fileName = FILE_DET_POS;
-	outputDet.open(fileName.c_str());
-	outputDet << "Detectors Location" << "\n";
-
 	for (G4int i=0;i<numOfItr;i++)
 	{
-		G4double theta = i*alpha;
+		G4double y_shift = i*detector_sizeX;
 		//G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius), -X +j*2*X, sin(theta)*(radius));
-		G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(radius),sin(theta)*(radius),0);
-		G4RotationMatrix* rotD = new G4RotationMatrix();
-		rotD->rotateX(-M_PI/2);
-		//rotD->rotateY(-M_PI/2+theta);
-		rotD->rotateY(M_PI/2-theta);
+		G4ThreeVector detectorPosUpdated = G4ThreeVector(radius,y_shift,0);
+
 		if (BUILD_DETECTORS == 1){
-			new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
+			new G4PVPlacement(0,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
 		}
-		//writing 5 pos for every detector - one detector in every line of the file
-		G4double x1 = R*cos(theta-beta);
-		G4double y1 = R*sin(theta-beta);
-		G4double x2 = R_tag*cos(theta-beta_tag);
-		G4double y2 = R_tag*sin(theta-beta_tag);
-		G4double x3 = r*cos(theta);
-		G4double y3 = r*sin(theta);
-		G4double x4 = R_tag*cos(theta+beta_tag);
-		G4double y4 = R_tag*sin(theta+beta_tag);
-		G4double x5 = R*cos(theta+beta);
-		G4double y5 = R*sin(theta+beta);
-		outputDet<<x1/m<<","<<y1/m<<","<<x2/m<<","<<y2/m<<","<<x3/m<<","<<y3/m<<","<<x4/m<<","<<y4/m<<","<<x5/m<<","<<y5/m<<"\n";
 	}
 
-	outputDet.close();
-
 	//Pixel
-	G4Box* detectorPixelS = new G4Box("detectorCell",detector_sizeX, detector_sizeY/NUM_OF_ROWS, detector_sizeZ);
+	G4Box* detectorPixelS = new G4Box("detectorCell",detector_sizeX, detector_sizeY/NUM_OF_DET_ROWS, detector_sizeZ);
 	detectorPixelLV = new G4LogicalVolume(detectorPixelS, detectorMat,"detectorPixel");
-	new G4PVReplica("detectorPixelP",detectorPixelLV,detectorLV,kYAxis,NUM_OF_ROWS,2*detector_sizeY/NUM_OF_ROWS);
-
+	new G4PVReplica("detectorPixelP",detectorPixelLV,detectorLV,kYAxis,NUM_OF_DET_ROWS,2*detector_sizeY/NUM_OF_DET_ROWS);
 
 
 	//world
