@@ -151,7 +151,7 @@ int main(int argc,char** argv)
 
 
 	// User action initialization
-	runManager->SetUserInitialization(new B1ActionInitialization());
+	runManager->SetUserInitialization(new B1ActionInitialization(theGeometry));
 
 
 		// Initialize visualization

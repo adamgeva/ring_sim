@@ -16,9 +16,9 @@
 extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 
-B1RunAction::B1RunAction()
+B1RunAction::B1RunAction(B1DetectorConstruction* detectorConstruction)
  : G4UserRunAction(),
-   fGradientAccumulable("grad_accum")
+   fGradientAccumulable("grad_accum"),fdetectorConstruction(detectorConstruction)
 {
 	fMyEnergyDeposit = 0;
 	// Register accumulable to the accumulable manager
@@ -40,7 +40,6 @@ G4Run* B1RunAction::GenerateRun()
 		Ind = threadID+1;
 	}
 	fMyEnergyDeposit = detectorsArray[Ind];
-
 	return new B1Run;
 
 }
@@ -52,7 +51,8 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 		G4int runID = run->GetRunID();
 		fMyEnergyDeposit->openFile(threadID,runID);
 	}
-
+	//rotate phantom
+	fdetectorConstruction->setContainerRotation(M_PI/5);
 	// reset accumulables to their initial values
 	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
 	accumulableManager->Reset();

@@ -6,8 +6,8 @@
 #include "B1TrackingAction.hh"
 #include "B1StackingAction.hh"
 
-B1ActionInitialization::B1ActionInitialization()
- : G4VUserActionInitialization()
+B1ActionInitialization::B1ActionInitialization(B1DetectorConstruction* geometry)
+ : G4VUserActionInitialization(),fdet(geometry)
 {}
 
 
@@ -17,14 +17,14 @@ B1ActionInitialization::~B1ActionInitialization()
 
 void B1ActionInitialization::BuildForMaster() const
 {
-	SetUserAction(new B1RunAction);
+	SetUserAction(new B1RunAction(fdet));
 }
 
 
 void B1ActionInitialization::Build() const
 {
   SetUserAction(new B1PrimaryGeneratorAction);
-  SetUserAction(new B1RunAction);
+  SetUserAction(new B1RunAction(fdet));
   //SetUserAction(new B1EventAction);
   SetUserAction(new B1SteppingAction);
   SetUserAction(new B1TrackingAction);

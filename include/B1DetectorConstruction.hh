@@ -31,6 +31,8 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 
     virtual void ConstructSDandField();
     
+    void setContainerRotation(G4double delta);
+
   protected:
     // create the original materials
     void ReadPhantomData();

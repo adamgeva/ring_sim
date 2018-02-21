@@ -205,6 +205,14 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	return worldPHS;
 }
 
+void B1DetectorConstruction::setContainerRotation(G4double delta){
+	//sets the rotation of the phantom
+	G4RotationMatrix* rot = new G4RotationMatrix();
+	rot->rotateX(delta);
+	fContainer_phys->SetRotation(rot);
+	G4RunManager::GetRunManager()->GeometryHasBeenModified();
+	return;
+}
 
 void B1DetectorConstruction::ConstructPhantomContainer()
 {
