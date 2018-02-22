@@ -24,10 +24,6 @@
 
 
 
-
-
-
-
 B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 : G4VUserPrimaryGeneratorAction(),
   fEnvelopeBox(0)
@@ -148,7 +144,7 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4int runID;
 	runID = frunIDRand;
 
-	//G4double MinTheta = MIN_THETA;
+	G4double MinTheta = MIN_THETA;
 	G4double MaxTheta = MAX_THETA;
 //	G4double MinTheta = M_PI/2  ;
 //	G4double MaxTheta = M_PI/2 ;
@@ -162,14 +158,14 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4double rndm1 = G4UniformRand();
 	G4double phi = MinPhi + rndm1 * (MaxPhi - MinPhi);
 	//cos,sin theta - used for cone beam
-//	G4double rndm = G4UniformRand();
-//	G4double costheta = std::cos(MinTheta) - rndm * (std::cos(MinTheta) - std::cos(MaxTheta));
-//	G4double sintheta = std::sqrt(1. - costheta*costheta);
-	//cos,sin theta - used for fan beam
 	G4double rndm = G4UniformRand();
-	G4double theta = -MaxTheta + rndm*(2*MaxTheta);
-	G4double costheta = std::cos(theta);
-	G4double sintheta = std::sin(theta);
+	G4double costheta = std::cos(MinTheta) - rndm * (std::cos(MinTheta) - std::cos(MaxTheta));
+	G4double sintheta = std::sqrt(1. - costheta*costheta);
+	//cos,sin theta - used for fan beam
+	//G4double rndm = G4UniformRand();
+	//G4double theta = -MaxTheta + rndm*(2*MaxTheta);
+	//G4double costheta = std::cos(theta);
+	//G4double sintheta = std::sin(theta);
 	//cos,sin phi
 	G4double cosphi = std::cos(phi);
 	G4double sinphi = std::sin(phi);
@@ -184,7 +180,9 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
 	energyBin = getEnergyInd();
 	energyP = energyBin*keV;
-	fParticleGun->SetParticleEnergy(energyP);
+	//fParticleGun->SetParticleEnergy(energyP);
+	fParticleGun->SetParticleEnergy(60*keV);
+
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 	
 

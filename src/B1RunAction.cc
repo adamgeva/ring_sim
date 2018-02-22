@@ -54,8 +54,10 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 	}
 
 	//rotate phantom
-	G4double angle = M_PI/90; //2 degrees
-	fdetectorConstruction->setContainerRotation(angle * runID);
+	if (BUILD_PHANTOM == 1){
+		G4double angle = M_PI/90; //2 degrees
+		fdetectorConstruction->setContainerRotation(angle * runID);
+	}
 	// reset accumulables to their initial values
 	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
 	accumulableManager->Reset();
@@ -77,7 +79,7 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 
 	//write gradient table
 	if (CALC_GRADIENT == 1){
-		G4int threadID = G4Threading::G4GetThreadId();
+		//G4int threadID = G4Threading::G4GetThreadId();
 		G4int runID = aRun->GetRunID();
 		if(IsMaster()) {
 			fGradientAccumulable.writeGradientAndP(runID);

@@ -1,7 +1,7 @@
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
@@ -34,37 +34,37 @@
 //Particle Gun
 #define PARTICLE_ENERGY 150 //KeV
 #define MIN_THETA 0
-#define MAX_THETA 0.5236 
+#define MAX_THETA M_PI/14
 #define MIN_PHI 0
-#define MAX_PHI 0
+#define MAX_PHI (2 * M_PI)
 //Geometry
 #define BUILD_DETECTORS 1
 #define BUILD_PHANTOM 1
-#define CALC_GRADIENT 1
+#define CALC_GRADIENT 0
 #define WORLD_XY 210 //cm half size
 #define WORLD_Z 210 //cm half size
 #define WATER_BOX 5 //cm
 #define PHANTOM_XY (0.1 * WORLD_XY)
 #define PHANTOM_Z (0.1 * WORLD_Z)
-#define DETECTOR_X 15 //mm half size
-#define DETECTOR_Y (12.5 * NUM_OF_DET_ROWS) //mm half size. 2mm * numberOfRows
+#define DETECTOR_X (0.278/2) //mm half size
+#define DETECTOR_Y (0.278/2 * NUM_OF_DET_ROWS) //mm half size. 2mm * numberOfRows
 #define DETECTOR_Z 0.8 //mm half size. detector depth
-#define NUM_OF_DET_COLS 20
-#define NUM_OF_DET_ROWS 10
+#define NUM_OF_DET_COLS 1088
+#define NUM_OF_DET_ROWS 896
 #define CENTER_TO_DET 267.38 //mm
 #define SOURCE_TO_CENTER 605.27 //mm
 #define RADIUS 605.27 //mm
 
 #define SHIFT 1 //cm
-#define GT_MODE 0
+#define GT_MODE 1
 //XCAT
 #define NUM_OF_Z_SLICES 1
 #define NUM_OF_VOXELS_X 28 
 #define NUM_OF_VOXELS_Y 28 
 #define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
-#define VOXEL_HALF_X 0.4 //cm
-#define VOXEL_HALF_Y 0.4 //cm
-#define VOXEL_HALF_Z 4.5 //cm
+#define VOXEL_HALF_X 0.4114 //cm
+#define VOXEL_HALF_Y 0.4114 //cm
+#define VOXEL_HALF_Z 9 //cm
 #define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"
 #define FILE_VOXEL_TO_MATERIALS "../run_inputs/voxels_to_materials.txt"
