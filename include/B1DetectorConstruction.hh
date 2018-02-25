@@ -6,6 +6,8 @@
 #include "globals.hh"
 #include "G4Box.hh"
 #include "params.hh"
+#include "G4PhysicalConstants.hh"
+#include "G4SystemOfUnits.hh"
 class G4Material;
 
 #include <vector>
@@ -18,6 +20,13 @@ class G4LogicalVolume;
 struct materialIDs {
   G4int mat1ID;
   G4int mat2ID;
+};
+
+struct matInfo
+{
+  G4double fSumdens;
+  G4int fNvoxels;
+  G4int fId;
 };
 
 // Detector construction class to define materials and geometry.
@@ -36,12 +45,19 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
   protected:
     // create the original materials
     void ReadPhantomData();
+    void ReadPhantomDataCT();
+
+    void InitialisationOfMaterialsCT();
     void InitialisationOfMaterials();
+
+    void ReadVoxelDensities( std::ifstream& fin );
 
     void ConstructPhantomContainer();
     virtual void ConstructPhantom() = 0;
 	// construct the phantom volumes.
 	//  This method should be implemented for each of the derived classes
+
+    G4Material* BuildMaterialWithChangingDensity(const G4Material* origMate, float density, G4String newMateName );
 
   protected:
     G4LogicalVolume* fvoxel_logic;
@@ -50,16 +66,18 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
    	G4VPhysicalVolume* fContainer_phys;
 
    	std::vector<G4Material*> fMaterials;
-   	G4Material* fBaseMaterials[NUM_OF_MATERIALS];
    	size_t* fMateIDs; // index of material of each voxel - this array is in the size of the number of voxels
 
    	G4int fNVoxelX, fNVoxelY, fNVoxelZ;
 	G4double fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ;
-//	G4double fMinX,fMinY,fMinZ; // minimum extension of voxels (position of wall)
-//	G4double fMaxX,fMaxY,fMaxZ; // maximum extension of voxels (position of wall)
+	G4double fMinX,fMinY,fMinZ; // minimum extension of voxels (position of wall)
+	G4double fMaxX,fMaxY,fMaxZ; // maximum extension of voxels (position of wall)
+    std::map<G4int,G4Material*> thePhantomMaterialsOriginal;
+     // map numberOfMaterial to G4Material. They are the list of materials as built from .geom file
 
-	//TODO: what is this used for?
-	std::map<G4int,G4Material*> thePhantomMaterialsOriginal;
+
+   	//G4Material* fBaseMaterials[NUM_OF_MATERIALS];
+	std::map<G4int,G4Material*> fBaseMaterials;
 	// map numberOfMaterial to G4Material. They are the list of materials as built from .geom file
 
   private:

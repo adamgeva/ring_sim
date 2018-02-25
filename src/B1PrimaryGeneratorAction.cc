@@ -181,7 +181,7 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	energyBin = getEnergyInd();
 	energyP = energyBin*keV;
 	//fParticleGun->SetParticleEnergy(energyP);
-	fParticleGun->SetParticleEnergy(60*keV);
+	fParticleGun->SetParticleEnergy(25*keV);
 
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 	

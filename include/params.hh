@@ -1,16 +1,15 @@
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
 //comment for a single threaded mode
-#define MULTI 1
+//#define MULTI 1
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
 #define NUM_OF_SOURCES 100 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
-#define NUM_OF_VOXELS 784 //this defines the number of voxels - redundant
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
 #define NUM_OF_THREADS 30
-#define NUM_OF_MATERIALS 100 // all materials are quantized to 100 materials with different densities
+#define NUM_OF_MATERIALS 9 // all materials are quantized to 100 materials with different densities
 #define NUM_OF_PHOTONS 100000 // equal to mac file
 #define NUM_OF_DETECTORS 94
 // verbose
@@ -40,6 +39,7 @@
 //Geometry
 #define BUILD_DETECTORS 1
 #define BUILD_PHANTOM 1
+#define CT_PHANTOM 1 //build phantom using linear reconstruction
 #define CALC_GRADIENT 0
 #define WORLD_XY 210 //cm half size
 #define WORLD_Z 210 //cm half size
@@ -58,16 +58,23 @@
 #define SHIFT 1 //cm
 #define GT_MODE 1
 //XCAT
-#define NUM_OF_Z_SLICES 1
-#define NUM_OF_VOXELS_X 28 
-#define NUM_OF_VOXELS_Y 28 
+#define NUM_OF_Z_SLICES 10
+#define NUM_OF_VOXELS_X 512
+#define NUM_OF_VOXELS_Y 512
 #define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
-#define VOXEL_HALF_X 0.4114 //cm
-#define VOXEL_HALF_Y 0.4114 //cm
-#define VOXEL_HALF_Z 9 //cm
+#define NUM_OF_VOXELS (NUM_OF_PIXELS_SLICE * NUM_OF_Z_SLICES) //this defines the number of voxels - redundant
+#define VOXEL_HALF_X (0.045/2) //cm
+#define VOXEL_HALF_Y (0.045/2) //cm
+#define VOXEL_HALF_Z (0.045/2) //cm
 #define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"
+
 #define FILE_VOXEL_TO_MATERIALS "../run_inputs/voxels_to_materials.txt"
+#define FILE_VOXEL_TO_MATERIALS_ID "../run_inputs/voxels_to_materials_id.txt"
+#define FILE_VOXEL_TO_MATERIALS_HEAD "../run_inputs/head.dat"
+#define FILE_VOXEL_TO_MATERIALS_TEST "../run_inputs/test9.dat"
+#define FILE_VOXEL_TO_MATERIALS_DENS "../run_inputs/voxels_to_materials_dens.txt"
+
 #define FILE_FIXED_SOURCE "../run_inputs/all_sources.txt"
 #define FILE_SOURCE_TO_DET "../run_outputs_geom/sourceToDet.csv"
 #define FILE_SOURCE_POS "../run_outputs_geom/sourcesPos.csv"

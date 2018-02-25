@@ -141,8 +141,14 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	//building phantom
 	if (BUILD_PHANTOM == 1){
 		//initialize materials
-		InitialisationOfMaterials();
-		ReadPhantomData();
+		if(CT_PHANTOM){
+			//InitialisationOfMaterialsCT();
+			ReadPhantomDataCT();
+
+		} else{
+			InitialisationOfMaterials();
+			ReadPhantomData();
+		}
 		ConstructPhantomContainer();
 		ConstructPhantom();
 	}
@@ -212,6 +218,28 @@ void B1DetectorConstruction::ConstructPhantomContainer()
                       1);              // Copy number
 
   //fContainer_logic->SetVisAttributes(new G4VisAttributes(G4Colour(1.,0.,0.)));
+}
+
+void B1DetectorConstruction::InitialisationOfMaterialsCT(){
+	//initialization based on the materials from DICOM example
+	G4String MaterialName[NUM_OF_MATERIALS] = {
+			"G4_AIR",
+			"G4_LUNG_ICRP",
+			"G4_ADIPOSE_TISSUE_ICRP",
+			"G4_WATER",
+			"G4_MUSCLE_WITH_SUCROSE",
+			"G4_B-100_BONE",
+			"G4_BONE_COMPACT_ICRU",
+			"G4_BONE_CORTICAL_ICRP",
+			"G4_Fe"
+	};
+	//const G4MaterialTable* matTab = G4Material::GetMaterialTable();
+	//iterate over the base materials
+	for (G4int i = 0; i<NUM_OF_MATERIALS; i++){
+		G4Material* material = 0;
+		material = G4NistManager::Instance()->FindOrBuildMaterial(MaterialName[i]);
+		fBaseMaterials[i] = material;
+	}
 }
 
 
@@ -373,7 +401,7 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 void B1DetectorConstruction::ReadPhantomData()
 {
     // initiallize fMateIDs
-    fMateIDs = new size_t[NUM_OF_VOXELS];
+	fMateIDs = new size_t[NUM_OF_VOXELS];
 
     G4String fname = FILE_VOXEL_TO_MATERIALS;
 	std::ifstream fin(fname.c_str(), std::ios_base::in);
@@ -384,29 +412,235 @@ void B1DetectorConstruction::ReadPhantomData()
 					G4String("File not found " + fname ).c_str());
 	}
 
-    G4int voxel;
     G4double index;
     G4double newRho;
 	G4Material* newMaterial;
 	G4String baseMaterialName;
 	G4String newMaterialName;
 
-	for (voxel = 0; voxel<NUM_OF_VOXELS; voxel ++){
-		if( fin.eof() ) break;
+	for( G4int iz = 0; iz < NUM_OF_Z_SLICES; iz++ ) {
+		for( G4int iy = 0; iy < NUM_OF_VOXELS_Y; iy++ ) {
+			for( G4int ix = 0; ix < NUM_OF_VOXELS_X; ix++ ) {
+				if( fin.eof() ) break;
+				G4int voxel = ix + (iy)*NUM_OF_VOXELS_X + (iz)*NUM_OF_VOXELS_X*NUM_OF_VOXELS_Y;
+				fin >> index;
+				fin >> newRho;
+				baseMaterialName = fBaseMaterials[G4int(index)]->GetName();
+				//const G4double* fracs = fBaseMaterials[G4int(index)]->GetFractionVector();
+				//std::cout << "voxel number: " << voxel << " rho: " << newRho << " atom1 fraction: " << fracs[0] << " atom 2 fraction: " << fracs[1] << "\n";
+				newMaterialName = "voxelMat" + IntToString(voxel);
+				newMaterial = G4NistManager::Instance()->
+				  BuildMaterialWithNewDensity(newMaterialName,baseMaterialName,newRho*g/cm3);
 
-		fin >> index;
-		fin >> newRho;
-
-		baseMaterialName = fBaseMaterials[G4int(index)]->GetName();
-		//const G4double* fracs = fBaseMaterials[G4int(index)]->GetFractionVector();
-		//std::cout << "voxel number: " << voxel << " rho: " << newRho << " atom1 fraction: " << fracs[0] << " atom 2 fraction: " << fracs[1] << "\n";
-		newMaterialName = "voxelMat" + IntToString(voxel);
-		newMaterial = G4NistManager::Instance()->
-		  BuildMaterialWithNewDensity(newMaterialName,baseMaterialName,newRho*g/cm3);
-
-		fMaterials.push_back(newMaterial);
-		fMateIDs[voxel] = voxel;
+				fMaterials.push_back(newMaterial);
+				fMateIDs[voxel] = voxel;
+			}
+		}
 	}
+}
+
+
+void B1DetectorConstruction::ReadPhantomDataCT()
+{
+  G4String fileName = FILE_VOXEL_TO_MATERIALS_TEST;
+
+  std::ifstream fin(fileName);
+  std::vector<G4String> wl;
+  G4int nMaterials;
+  fin >> nMaterials;
+  G4String mateName;
+  G4int nmate;
+  for( G4int ii = 0; ii < nMaterials; ii++ ){
+    fin >> nmate;
+    fin >> mateName;
+    if( mateName[0] == '"' && mateName[mateName.length()-1] == '"' ) {
+      mateName = mateName.substr(1,mateName.length()-2);
+    }
+    G4cout << "GmReadPhantomG4Geometry::ReadPhantomData reading nmate " << ii << " = " << nmate
+           << " mate " << mateName << G4endl;
+    if( ii != nmate ) G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
+                                  "Wrong argument",
+                                  FatalErrorInArgument,
+                      "Material number should be in increasing order: wrong material number ");
+
+    G4Material* mate = 0;
+    const G4MaterialTable* matTab = G4Material::GetMaterialTable();
+    std::vector<G4Material*>::const_iterator matite;
+    for( matite = matTab->begin(); matite != matTab->end(); ++matite ) {
+      if( (*matite)->GetName() == mateName ) {
+        mate = *matite;
+      }
+    }
+    if( mate == 0 ) {
+      mate = G4NistManager::Instance()->FindOrBuildMaterial(mateName);
+    }
+    if( !mate ) G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
+                            "Wrong argument",
+                            FatalErrorInArgument,
+                            ("Material not found" + mateName).c_str());
+    thePhantomMaterialsOriginal[nmate] = mate;
+  }
+
+  fin >> fNVoxelX >> fNVoxelY >> fNVoxelZ;
+  G4cout << "GmReadPhantomG4Geometry::ReadPhantomData fNVoxel X/Y/Z " << fNVoxelX << " "
+         << fNVoxelY << " " << fNVoxelZ << G4endl;
+  fin >> fMinX >> fMaxX;
+  fin >> fMinY >> fMaxY;
+  fin >> fMinZ >> fMaxZ;
+  fVoxelHalfDimX = (fMaxX-fMinX)/fNVoxelX/2.;
+  fVoxelHalfDimY = (fMaxY-fMinY)/fNVoxelY/2.;
+  fVoxelHalfDimZ = (fMaxZ-fMinZ)/fNVoxelZ/2.;
+
+  //fin.close();
+
+  //G4String fileName2 = FILE_VOXEL_TO_MATERIALS_TEST;
+
+  //std::ifstream fin2(fileName2);
+
+  fMateIDs = new size_t[fNVoxelX*fNVoxelY*fNVoxelZ];
+  for( G4int iz = 0; iz < fNVoxelZ; iz++ ) {
+    for( G4int iy = 0; iy < fNVoxelY; iy++ ) {
+      for( G4int ix = 0; ix < fNVoxelX; ix++ ) {
+        G4int mateID;
+        fin >> mateID;
+        G4int nnew = ix + (iy)*fNVoxelX + (iz)*fNVoxelX*fNVoxelY;
+        if( mateID < 0 || mateID >= nMaterials ) {
+          G4Exception("GmReadPhantomG4Geometry::ReadPhantomData",
+                      "Wrong index in phantom file",
+                      FatalException,
+                      G4String("It should be between 0 and "
+                               + G4UIcommand::ConvertToString(nMaterials-1)
+                               + ", while it is "
+                               + G4UIcommand::ConvertToString(mateID)).c_str());
+        }
+        fMateIDs[nnew] = mateID;
+      }
+    }
+  }
+
+  ReadVoxelDensities( fin );
+
+  fin.close();
+
+
+}
+
+
+void B1DetectorConstruction::ReadVoxelDensities( std::ifstream& fin )
+{
+	G4String stemp;
+	  std::map<G4int, std::pair<G4double,G4double> > densiMinMax;
+	  std::map<G4int, std::pair<G4double,G4double> >::iterator mpite;
+	  for( size_t ii = 0; ii < thePhantomMaterialsOriginal.size(); ii++ ){
+	    densiMinMax[ii] = std::pair<G4double,G4double>(DBL_MAX,-DBL_MAX);
+	  }
+
+	  char* part = getenv( "DICOM_CHANGE_MATERIAL_DENSITY" );
+	  G4double densityDiff = -1.;
+	  if( part ) densityDiff = G4UIcommand::ConvertToDouble(part);
+
+	  std::map<G4int,G4double> densityDiffs;
+	  for( size_t ii = 0; ii < thePhantomMaterialsOriginal.size(); ii++ ){
+	    densityDiffs[ii] = densityDiff; //currently all materials with same step
+	  }
+	  //  densityDiffs[0] = 0.0001; //air
+
+	  //--- Calculate the average material density for each material/density bin
+	  std::map< std::pair<G4Material*,G4int>, matInfo* > newMateDens;
+
+	  //---- Read the material densities
+	  G4double dens;
+	  for( G4int iz = 0; iz < fNVoxelZ; iz++ ) {
+	    for( G4int iy = 0; iy < fNVoxelY; iy++ ) {
+	      for( G4int ix = 0; ix < fNVoxelX; ix++ ) {
+	        fin >> dens;
+	        //        G4cout << ix << " " << iy << " " << iz << " density " << dens << G4endl;
+	        G4int copyNo = ix + (iy)*fNVoxelX + (iz)*fNVoxelX*fNVoxelY;
+
+	        if( densityDiff != -1. ) continue;
+
+	        //--- store the minimum and maximum density for each material (just for printing)
+	        mpite = densiMinMax.find( fMateIDs[copyNo] );
+	        if( dens < (*mpite).second.first ) (*mpite).second.first = dens;
+	        if( dens > (*mpite).second.second ) (*mpite).second.second = dens;
+	        //--- Get material from original list of material in file
+	        int mateID = fMateIDs[copyNo];
+	        std::map<G4int,G4Material*>::const_iterator imite =
+	         thePhantomMaterialsOriginal.find(mateID);
+	        //        G4cout << copyNo << " mateID " << mateID << G4endl;
+	        //--- Check if density is equal to the original material density
+	        if( std::fabs(dens - (*imite).second->GetDensity()/CLHEP::g*CLHEP::cm3 ) < 1.e-9 ) continue;
+
+	        //--- Build material name with thePhantomMaterialsOriginal name + density
+	        //        float densityBin = densityDiffs[mateID] * (G4int(dens/densityDiffs[mateID])+0.5);
+	        G4int densityBin = (G4int(dens/densityDiffs[mateID]));
+
+	        G4String mateName = (*imite).second->GetName()+G4UIcommand::ConvertToString(densityBin);
+	        //--- Look if it is the first voxel with this material/densityBin
+	        std::pair<G4Material*,G4int> matdens((*imite).second, densityBin );
+
+	        std::map< std::pair<G4Material*,G4int>, matInfo* >::iterator mppite =
+	         newMateDens.find( matdens );
+	        if( mppite != newMateDens.end() ){
+	          matInfo* mi = (*mppite).second;
+	          mi->fSumdens += dens;
+	          mi->fNvoxels++;
+	          fMateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->fId;
+	        } else {
+	          matInfo* mi = new matInfo;
+	          mi->fSumdens = dens;
+	          mi->fNvoxels = 1;
+	          mi->fId = newMateDens.size()+1;
+	          newMateDens[matdens] = mi;
+	          fMateIDs[copyNo] = thePhantomMaterialsOriginal.size()-1 + mi->fId;
+	        }
+	      }
+	    }
+	  }
+
+	  if( densityDiff != -1. ) {
+	    for( mpite = densiMinMax.begin(); mpite != densiMinMax.end(); mpite++ ){
+
+	    }
+	  }
+
+	  //----- Build the list of phantom materials that go to Parameterisation
+	  //--- Add original materials
+	  std::map<G4int,G4Material*>::const_iterator mimite;
+	  for( mimite = thePhantomMaterialsOriginal.begin(); mimite != thePhantomMaterialsOriginal.end();
+	   mimite++ ){
+	    fMaterials.push_back( (*mimite).second );
+	  }
+	  //
+	  //---- Build and add new materials
+	  G4int sDens = newMateDens.size();
+	std::map< std::pair<G4Material*,G4int>, matInfo* >::iterator mppite;
+	  for( mppite= newMateDens.begin(); mppite != newMateDens.end(); mppite++ ){
+	    G4double averdens = (*mppite).second->fSumdens/(*mppite).second->fNvoxels;
+	    G4double saverdens = G4int(1000.001*averdens)/1000.;
+
+	      G4String mateName = ((*mppite).first).first->GetName() + "_"
+	       + G4UIcommand::ConvertToString(saverdens);
+	    fMaterials.push_back( BuildMaterialWithChangingDensity(
+	     (*mppite).first.first, averdens, mateName ) );
+	  }
+}
+
+G4Material* B1DetectorConstruction::BuildMaterialWithChangingDensity(
+           const G4Material* origMate, float density, G4String newMateName )
+{
+  //----- Copy original material, but with new density
+  G4int nelem = origMate->GetNumberOfElements();
+  G4Material* mate = new G4Material( newMateName, density*g/cm3, nelem,
+                                     kStateUndefined, STP_Temperature );
+
+  for( G4int ii = 0; ii < nelem; ii++ ){
+    G4double frac = origMate->GetFractionVector()[ii];
+    G4Element* elem = const_cast<G4Element*>(origMate->GetElement(ii));
+    mate->AddElement( elem, frac );
+  }
+
+  return mate;
 }
 
 void B1DetectorConstruction::ConstructSDandField()
