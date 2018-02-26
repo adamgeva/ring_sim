@@ -1,7 +1,7 @@
 #ifndef PARAMS_HH_
 #define PARAMS_HH_
 //comment for a single threaded mode
-//#define MULTI 1
+#define MULTI 1
 #define NUM_OF_SCORERS 5
 //ALT_SOURCES 1: all NUM_OF_SOURCES will be used, ALT_SOURCES 0: only 1 source is used
 #define ALT_SOURCES 1
@@ -9,8 +9,8 @@
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
 #define NUM_OF_THREADS 30
-#define NUM_OF_MATERIALS 9 // all materials are quantized to 100 materials with different densities
-#define NUM_OF_PHOTONS 100000 // equal to mac file
+#define NUM_OF_BASE_MATERIALS 9 // all materials are quantized to 100 materials with different densities
+#define NUM_OF_PHOTONS 10000000 // equal to mac file
 #define NUM_OF_DETECTORS 94
 // verbose
 #define VERBOSE_SCORING 0
@@ -58,7 +58,7 @@
 #define SHIFT 1 //cm
 #define GT_MODE 1
 //XCAT
-#define NUM_OF_Z_SLICES 10
+#define NUM_OF_Z_SLICES 400
 #define NUM_OF_VOXELS_X 512
 #define NUM_OF_VOXELS_Y 512
 #define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
@@ -72,13 +72,13 @@
 #define FILE_VOXEL_TO_MATERIALS "../run_inputs/voxels_to_materials.txt"
 #define FILE_VOXEL_TO_MATERIALS_ID "../run_inputs/voxels_to_materials_id.txt"
 #define FILE_VOXEL_TO_MATERIALS_HEAD "../run_inputs/head.dat"
-#define FILE_VOXEL_TO_MATERIALS_TEST "../run_inputs/test9.dat"
+#define FILE_VOXEL_TO_MATERIALS_TEST "../run_inputs/phantom/"
 #define FILE_VOXEL_TO_MATERIALS_DENS "../run_inputs/voxels_to_materials_dens.txt"
 
 #define FILE_FIXED_SOURCE "../run_inputs/all_sources.txt"
-#define FILE_SOURCE_TO_DET "../run_outputs_geom/sourceToDet.csv"
-#define FILE_SOURCE_POS "../run_outputs_geom/sourcesPos.csv"
-#define FILE_DET_POS "../run_outputs_geom/detectorsPos.csv"
-#define OUTPUT_DIR "../run_outputs"
-#define GRADIENT_DIR "../run_outputs_grad"
+#define FILE_SOURCE_TO_DET "../run_outputs_geom_d/sourceToDet.csv"
+#define FILE_SOURCE_POS "../run_outputs_geom_d/sourcesPos.csv"
+#define FILE_DET_POS "../run_outputs_geom_d/detectorsPos.csv"
+#define OUTPUT_DIR "../run_outputs_d"
+#define GRADIENT_DIR "../run_outputs_grad_d"
 #endif /* PARAMS_HH_ */

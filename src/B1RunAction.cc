@@ -17,13 +17,13 @@ extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 
 B1RunAction::B1RunAction(B1DetectorConstruction* detectorConstruction)
- : G4UserRunAction(),
-   fGradientAccumulable("grad_accum"),fdetectorConstruction(detectorConstruction)
+ : G4UserRunAction()
+   //fGradientAccumulable("grad_accum"),fdetectorConstruction(detectorConstruction)
 {
 	fMyEnergyDeposit = 0;
 	// Register accumulable to the accumulable manager
-	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-	accumulableManager->RegisterAccumulable(&fGradientAccumulable);
+	//G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
+	//accumulableManager->RegisterAccumulable(&fGradientAccumulable);
 }
 B1RunAction::~B1RunAction()
 {}
@@ -55,12 +55,12 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 
 	//rotate phantom
 	if (BUILD_PHANTOM == 1){
-		G4double angle = M_PI/90; //2 degrees
-		fdetectorConstruction->setContainerRotation(angle * runID);
+		//G4double angle = M_PI/90; //2 degrees
+		//fdetectorConstruction->setContainerRotation(angle * runID);
 	}
 	// reset accumulables to their initial values
-	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-	accumulableManager->Reset();
+	//G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
+	//accumulableManager->Reset();
 
 }
 
@@ -73,8 +73,8 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 	}
 
 	// Merge accumulables
-	G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-	accumulableManager->Merge();
+	//G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
+	//accumulableManager->Merge();
 
 
 	//write gradient table
@@ -82,7 +82,7 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 		//G4int threadID = G4Threading::G4GetThreadId();
 		G4int runID = aRun->GetRunID();
 		if(IsMaster()) {
-			fGradientAccumulable.writeGradientAndP(runID);
+			//fGradientAccumulable.writeGradientAndP(runID);
 		}
 	}
 

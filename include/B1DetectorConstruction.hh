@@ -50,7 +50,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
     void InitialisationOfMaterialsCT();
     void InitialisationOfMaterials();
 
-    void ReadVoxelDensities( std::ifstream& fin );
+    void ReadVoxelDensities();
 
     void ConstructPhantomContainer();
     virtual void ConstructPhantom() = 0;

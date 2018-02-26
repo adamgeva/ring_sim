@@ -25,7 +25,8 @@ class B1RunAction : public G4UserRunAction
 
   private:
     B1EnergyDeposit* fMyEnergyDeposit;
-    B1Accumulable fGradientAccumulable;
+    //TODO: accumulable need to change to map
+    //B1Accumulable fGradientAccumulable;
     B1DetectorConstruction* fdetectorConstruction;
 
 };
