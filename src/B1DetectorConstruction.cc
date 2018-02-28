@@ -1,17 +1,13 @@
-#include "params.hh"
 #include "B1DetectorConstruction.hh"
 #include "myDetectorSD.hh"
 #include "G4RunManager.hh"
 #include "G4NistManager.hh"
 #include "G4VSensitiveDetector.hh"
-#include "G4SystemOfUnits.hh"
-
 #include "G4MultiFunctionalDetector.hh"
 #include "G4VPrimitiveScorer.hh"
 #include "G4PSEnergyDeposit.hh"
 
 #include "G4SDManager.hh"
-#include "G4Box.hh"
 #include "G4Tubs.hh"
 #include "G4LogicalVolume.hh"
 #include "G4PVPlacement.hh"
@@ -28,6 +24,7 @@
 #include "G4LogicalVolumeStore.hh"
 #include "B1BOptrMultiParticleChangeCrossSection.hh"
 #include "B1BOptrFS.hh"
+#include "B1BOptrFD.hh" //Forced Detection
 
 
 #include "G4BOptrForceCollision.hh"
@@ -42,7 +39,6 @@
 
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
-
   fvoxel_logic(0),
   fContainer_solid(0),
   fContainer_logic(0),
@@ -54,6 +50,12 @@ B1DetectorConstruction::B1DetectorConstruction()
   fVoxelHalfDimX(0),
   fVoxelHalfDimY(0),
   fVoxelHalfDimZ(0),
+  fMinX(0),
+  fMinY(0),
+  fMinZ(0), // minimum extension of voxels (position of wall)
+  fMaxX(0),
+  fMaxY(0),
+  fMaxZ(0),
   worldLV(),
   detectorPixelLV(0),
   fVisAttributes()
@@ -186,8 +188,6 @@ void B1DetectorConstruction::setContainerRotation(G4double delta){
 
 void B1DetectorConstruction::ConstructPhantomContainer()
 {
-
-
 
   //----- Define the volume that contains all the voxels
   fContainer_solid = new G4Box("phantomContainer",fNVoxelX*fVoxelHalfDimX,
@@ -569,7 +569,7 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	  //
 	  //---- Build and add new materials
 
-	  G4int sDens = newMateDens.size();
+	  //G4int sDens = newMateDens.size();
 	std::map< std::pair<G4Material*,G4int>, matInfo* >::iterator mppite;
 	  for( mppite= newMateDens.begin(); mppite != newMateDens.end(); mppite++ ){
 	    G4double averdens = (*mppite).second->fSumdens/(*mppite).second->fNvoxels;
@@ -617,13 +617,13 @@ void B1DetectorConstruction::ConstructSDandField()
 //   ----------------------------------------------
 //   -- operator creation and attachment to volume:
 //   ----------------------------------------------
-//  B1BOptrFS* FSOptr =  new B1BOptrFS("gamma","FSOperator");
-//  FSOptr->AttachTo(logicTest);
-//  //FSOptr->AttachTo(logicWorld);
-//  //comptLEOptr->AttachTo(logicTestBone);
-//  G4cout << " Attaching biasing operator " << FSOptr->GetName()
-//         << " to logical volume " << logicTest->GetName()
-//         << G4endl;
+  B1BOptrFD* FDOptr =  new B1BOptrFD("gamma","FDOperator");
+  FDOptr->AttachTo(fvoxel_logic); //maybe should be attache to fcontainer?
+  //FSOptr->AttachTo(logicWorld);
+  //comptLEOptr->AttachTo(logicTestBone);
+  G4cout << " Attaching biasing operator " << FDOptr->GetName()
+         << " to logical volume " << fvoxel_logic->GetName()
+         << G4endl;
 
 //  G4BOptrForceCollision* OptrForceCollision =  new G4BOptrForceCollision("gamma","forceCollision");
 //  OptrForceCollision->AttachTo(logicTest);

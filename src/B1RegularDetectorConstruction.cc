@@ -114,7 +114,6 @@ void B1RegularDetectorConstruction::ConstructPhantom()
   // if axis is set as kUndefined instead of kXAxis, GEANT4 will 
   //  do an smart voxel optimisation 
   // (not needed if G4RegularNavigation is used)
-
   //----- Set this physical volume as having a regular structure of type 1, 
   // so that G4RegularNavigation is used
   phantom_phys->SetRegularStructureId(1); // if not set, G4VoxelNavigation

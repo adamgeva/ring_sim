@@ -74,9 +74,6 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 	G4double fMaxX,fMaxY,fMaxZ; // maximum extension of voxels (position of wall)
     std::map<G4int,G4Material*> thePhantomMaterialsOriginal;
      // map numberOfMaterial to G4Material. They are the list of materials as built from .geom file
-
-
-   	//G4Material* fBaseMaterials[NUM_OF_MATERIALS];
 	std::map<G4int,G4Material*> fBaseMaterials;
 	// map numberOfMaterial to G4Material. They are the list of materials as built from .geom file
 

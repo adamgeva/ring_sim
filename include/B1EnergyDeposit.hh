@@ -8,6 +8,8 @@
 #include "B1TrackInformation.hh"
 #include "params.hh"
 #include "B1Accumulable.hh"
+#include "G4AccumulableManager.hh"
+
 
 #ifndef B1ENERGYDEPOSIT_HH_
 #define B1ENERGYDEPOSIT_HH_
@@ -20,10 +22,6 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     virtual ~B1EnergyDeposit();
 
     virtual G4int GetIndex(G4Step* step);
-
-    void openFile(G4int threadNum, G4int runNum);
-    void writeFile();
-
 
     // grad calculation methods
     G4double getTotalMicXS(G4Element* el, G4double Energy);
@@ -42,7 +40,7 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     //scorer type: 0=no_scatter, 1=include_single_scatter, 2=include_multi_scatter, 3=include_single_scatter_compt, 4=include_single_scatter_Rayl
     G4int fscorerType;
     std::ofstream outputPathsFile;
-
+    // holds the gradient
     B1Accumulable* fGradAccum;
 
  };

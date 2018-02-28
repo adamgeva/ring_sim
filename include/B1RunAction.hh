@@ -8,6 +8,14 @@
 #include "B1Accumulable.hh"
 #include "B1DetectorConstruction.hh"
 
+
+#include "params.hh"
+#include "globalFunctions.hh"
+#include "B1Run.hh"
+#include "G4AccumulableManager.hh"
+#include "G4UnitsTable.hh"
+#include "G4SystemOfUnits.hh"
+
 class G4Run;
 
 // Run action class
@@ -24,7 +32,6 @@ class B1RunAction : public G4UserRunAction
     //virtual void   EndOfRunAction();
 
   private:
-    B1EnergyDeposit* fMyEnergyDeposit;
     //TODO: accumulable need to change to map
     //B1Accumulable fGradientAccumulable;
     B1DetectorConstruction* fdetectorConstruction;

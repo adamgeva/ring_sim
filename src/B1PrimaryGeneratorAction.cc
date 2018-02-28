@@ -38,6 +38,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 //	foutput_spect.open(fileName_spect.c_str());
 
 	//writing to file the chosen source
+	/*
 	fAllSources = 0;
 
 	srand (time(NULL));
@@ -59,7 +60,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 	  }
 	fin >> fAllSources;
 
-
+*/
   //calculations for file export
 
   G4int n_particle = 1;
@@ -69,6 +70,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
   G4ParticleDefinition* particle = particleTable->FindParticle(particleName="gamma");
   //TODO: need to fix prints
   //writing sources locations to file
+  /*
   std::ofstream outputSources;
   std::string fileName = FILE_SOURCE_POS;
   outputSources.open(fileName.c_str());
@@ -79,7 +81,7 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
   std::string fileName_sToD = FILE_SOURCE_TO_DET;
   sourceToDet.open(fileName_sToD.c_str());
   sourceToDet << "Active detectors for every source" << "\n";
-
+*/
   //place gun
   fParticleGun  = new G4ParticleGun(n_particle);
   fParticleGun->SetParticleDefinition(particle);
@@ -89,13 +91,14 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
   G4double y0 = 0;
   G4double z0 = 0;
   fParticleGun->SetParticlePosition(G4ThreeVector(x0,y0,z0));
-
+/*
   //write location to file
   outputSources << x0/m << "," << y0/m << "," << z0/m << "\n";
 
 	  
   outputSources.close();
   sourceToDet.close();
+  */
 }
 
 
@@ -104,12 +107,6 @@ B1PrimaryGeneratorAction::B1PrimaryGeneratorAction()
 B1PrimaryGeneratorAction::~B1PrimaryGeneratorAction()
 {
 	delete fParticleGun;
-	
-//	for (G4int h=0; h<NUM_OF_SPECTRUM_BINS; h++){
-//		foutput_spect << fspect_test[h];
-//		foutput_spect << ",";
-//	}
-//	foutput_spect.close();
 
 }
 
@@ -141,9 +138,6 @@ void B1PrimaryGeneratorAction::readSpectrum(){
 
 void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
-	G4int runID;
-	runID = frunIDRand;
-
 	G4double MinTheta = MIN_THETA;
 	G4double MaxTheta = MAX_THETA;
 //	G4double MinTheta = M_PI/2  ;

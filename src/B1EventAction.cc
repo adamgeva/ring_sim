@@ -2,7 +2,6 @@
 #include "params.hh"
 #include "B1EventAction.hh"
 #include "detectorHit.hh"
-#include "Analysis.hh"
 
 #include "G4Event.hh"
 #include "G4RunManager.hh"

@@ -10,7 +10,7 @@
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
 #define NUM_OF_THREADS 30
 #define NUM_OF_BASE_MATERIALS 9 // all materials are quantized to 100 materials with different densities
-#define NUM_OF_PHOTONS 10000000 // equal to mac file
+#define NUM_OF_PHOTONS 100000000 // equal to mac file
 #define NUM_OF_DETECTORS 94
 // verbose
 #define VERBOSE_SCORING 0
@@ -27,7 +27,7 @@
 #define SPLITTING_FACTOR_NS 70
 #define DETECTOR_SPECIAL_CUTS 1
 #define PHANTOM_PRODUCTION_CUTS 0
-#define KILL_ELECTRONS 0
+#define KILL_ELECTRONS 1
 #define RECORD_HIST 0 //when 0 - no histograms will be recorded in the simulation
 #define PRINT_ELEMENTS_XS 0
 //Particle Gun
@@ -40,7 +40,7 @@
 #define BUILD_DETECTORS 1
 #define BUILD_PHANTOM 1
 #define CT_PHANTOM 1 //build phantom using linear reconstruction
-#define CALC_GRADIENT 0
+#define CALC_GRADIENT 1
 #define WORLD_XY 210 //cm half size
 #define WORLD_Z 210 //cm half size
 #define WATER_BOX 5 //cm
@@ -56,7 +56,7 @@
 #define RADIUS 605.27 //mm
 
 #define SHIFT 1 //cm
-#define GT_MODE 1
+#define GT_MODE 0
 //XCAT
 #define NUM_OF_Z_SLICES 400
 #define NUM_OF_VOXELS_X 512
@@ -76,9 +76,9 @@
 #define FILE_VOXEL_TO_MATERIALS_DENS "../run_inputs/voxels_to_materials_dens.txt"
 
 #define FILE_FIXED_SOURCE "../run_inputs/all_sources.txt"
-#define FILE_SOURCE_TO_DET "../run_outputs_geom_d/sourceToDet.csv"
-#define FILE_SOURCE_POS "../run_outputs_geom_d/sourcesPos.csv"
-#define FILE_DET_POS "../run_outputs_geom_d/detectorsPos.csv"
-#define OUTPUT_DIR "../run_outputs_d"
-#define GRADIENT_DIR "../run_outputs_grad_d"
+#define FILE_SOURCE_TO_DET "../run_outputs_geom/sourceToDet.csv"
+#define FILE_SOURCE_POS "../run_outputs_geom/sourcesPos.csv"
+#define FILE_DET_POS "../run_outputs_geom/detectorsPos.csv"
+#define OUTPUT_DIR "../run_outputs"
+#define GRADIENT_DIR "../run_outputs_grad"
 #endif /* PARAMS_HH_ */

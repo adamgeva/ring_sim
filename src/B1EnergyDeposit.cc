@@ -6,16 +6,10 @@
  */
 
 #include "B1EnergyDeposit.hh"
-#include "params.hh"
 #include "globalFunctions.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4EmCalculator.hh"
-#include "G4AccumulableManager.hh"
-#include "B1Accumulable.hh"
-
-
-extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 
 B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
@@ -24,15 +18,6 @@ B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 {
 	fscorerType =  type;
 	if (type==0){ //randomly pick the 0 scorer
-		G4int threadID = G4Threading::G4GetThreadId();
-		if (threadID==-1) { //single threaded mode
-			detectorsArray[0] = this;
-		}
-		else
-		{
-			detectorsArray[threadID+1] = this;
-		}
-
 		// Get accumulable from the accumulable manager
 		G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
 		fGradAccum = (B1Accumulable*)accumulableManager->GetAccumulable(0);
@@ -60,7 +45,6 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	//test: getting information from tracks
 	G4Track* track = aStep->GetTrack();
 //	G4double trackWeight = track->GetWeight();
-
 
 	//G4cout << "We have a hit, Weight: " << track->GetWeight() << G4endl;
 //	G4String creatorProcessName = track->GetCreatorModelName();
@@ -112,16 +96,14 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 			result = FALSE;
 		}
 	}
+
 	// this scorer is in charge of writing the path file, could be any scorer.
 	if(fscorerType==0){
 		//energy deposited in the detector - equals to the final photon energy???
 		G4double edep = aStep->GetTotalEnergyDeposit()/keV;
-		//G4double final_energy = track->GetTotalEnergy();
-		//G4double final_energy_kinetic = track->GetKineticEnergy();
-		//holda the gradient of current photon segment, in the current voxel w.r.t all elements in that voxel
-//	    G4StepPoint* preStepPoint = aStep->GetPreStepPoint();
-//    	G4TouchableHistory* touchable2 = (G4TouchableHistory*)(preStepPoint->GetTouchable());
-//		G4int ReplicaNum1 = touchable2->GetReplicaNumber(1);
+
+		//calc gradient:
+
 		G4int detIndex = GetIndex(aStep);
 	   	while (!theInfo->fpathLogList.empty()){
 	   		segment seg = theInfo->fpathLogList.front();
@@ -129,21 +111,6 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	   		if (CALC_GRADIENT == 1){
 	   			updateGradTable(seg,edep,detIndex);
 	   		}
-	   		if(PRINT_PATHS == 1){
-				//TODO: needs to be generalized - maybe there will be another process once!
-				outputPathsFile << seg.voxel << "," << 0 << "," << seg.incidentEnergy/keV << "," << seg.pathLen << ",";
-				//calc da_di_dvox - gradient of the attenuation w.r.t all the elements in the voxel
-				//iterate over all participating elements and calc micXS
-				//calc obj.ci = ((params.avogadro).*density)./(params.Ai);
-
-				G4String enddd = seg.endingProcess;
-				if (seg.endingProcess == "compt"){
-					outputPathsFile << seg.voxel << "," << 1 << "," << seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ","; //<< seg.incidentEnergy/keV << "," << seg.scatteredEnergy/keV << ",";
-				}
-	   		}
-	   	}
-	   	if(PRINT_PATHS == 1){
-	   		outputPathsFile << detIndex << "," << -100 << "\n";
 	   	}
 	}
 
@@ -158,20 +125,6 @@ G4bool B1EnergyDeposit::recordInteraction (G4Step* aStep,G4TouchableHistory* tou
 		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
 	}
 }
-
-void B1EnergyDeposit::openFile(G4int threadNum,G4int runNum){
-		std::string fileName =  std::string(OUTPUT_DIR) + "/" + IntToString(runNum) + "run" + IntToString(threadNum) + "paths.csv";
-		outputPathsFile.open(fileName.c_str());
-		//G4cout << "created file: " << fileName <<G4endl;
-}
-
-void B1EnergyDeposit::writeFile() {
-	if (fscorerType==0){ // safty only
-		//G4cout << "closing file: " <<G4endl;
-		outputPathsFile.close();
-	}
-}
-
 
 
 // methods for grad calculations

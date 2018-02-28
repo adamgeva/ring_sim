@@ -12,6 +12,7 @@
 #include "globals.hh"
 #include "params.hh"
 #include "globalFunctions.hh"
+#include "GradientKey.hh"
 #include <map>
 
 class B1Accumulable : public G4VAccumulable
@@ -25,12 +26,16 @@ class B1Accumulable : public G4VAccumulable
 	void updateSm_hat(G4int voxel, G4int element, G4int detector, G4double value);
 	void writeGradientAndP(G4int runNum);
 	virtual void Merge(const G4VAccumulable& other);
-	virtual void Reset();
+//	virtual void Reset();
 
 	private:
     // gradient array - built per thread and holds the current gradient of all replicas (detector elements) w.r.t voxels and elements.
-    G4double fSm_hat[NUM_OF_VOXELS][NUM_OF_ELEMENTS][NUM_OF_DETECTORS] = {};
-    G4double fP[NUM_OF_VOXELS] = {};
+    //G4double fSm_hat[NUM_OF_VOXELS][NUM_OF_ELEMENTS][NUM_OF_DETECTORS] = {};
+	std::map<GradientKey,G4double> fSm_hat;
+
+    //G4double fP[NUM_OF_VOXELS] = {};
+	std::map<G4int,G4double> fP;
+
 
 };
 

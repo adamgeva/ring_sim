@@ -1,13 +1,6 @@
 
-#include "params.hh"
-#include "globalFunctions.hh"
 #include "B1RunAction.hh"
-#include "Analysis.hh"
-#include "B1Run.hh"
-#include "G4AccumulableManager.hh"
-#include "G4Accumulable.hh"
-#include "G4UnitsTable.hh"
-#include "G4SystemOfUnits.hh"
+
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -17,10 +10,9 @@ extern B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 
 B1RunAction::B1RunAction(B1DetectorConstruction* detectorConstruction)
- : G4UserRunAction()
+ : G4UserRunAction(),fdetectorConstruction(detectorConstruction)
    //fGradientAccumulable("grad_accum"),fdetectorConstruction(detectorConstruction)
 {
-	fMyEnergyDeposit = 0;
 	// Register accumulable to the accumulable manager
 	//G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
 	//accumulableManager->RegisterAccumulable(&fGradientAccumulable);
@@ -30,16 +22,6 @@ B1RunAction::~B1RunAction()
 
 G4Run* B1RunAction::GenerateRun()
 {
-	G4int Ind;
-	G4int threadID = G4Threading::G4GetThreadId();
-	if (threadID ==-1){
-		Ind = 0;
-	}
-	else
-	{
-		Ind = threadID+1;
-	}
-	fMyEnergyDeposit = detectorsArray[Ind];
 	return new B1Run;
 
 }
@@ -47,11 +29,6 @@ G4Run* B1RunAction::GenerateRun()
 void B1RunAction::BeginOfRunAction(const G4Run* run)
 {
 	G4int runID = run->GetRunID();
-
-	if (PRINT_PATHS == 1){
-		G4int threadID = G4Threading::G4GetThreadId();
-		fMyEnergyDeposit->openFile(threadID,runID);
-	}
 
 	//rotate phantom
 	if (BUILD_PHANTOM == 1){
@@ -66,11 +43,6 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 
 void B1RunAction::EndOfRunAction(const G4Run* aRun)
 {
-
-	if (PRINT_PATHS == 1){
-		//write EnergyDepositFile
-		fMyEnergyDeposit->writeFile();
-	}
 
 	// Merge accumulables
 	//G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
