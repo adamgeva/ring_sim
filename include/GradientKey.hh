@@ -17,11 +17,11 @@ public:
 
 	bool operator< (const GradientKey& GradientKeyObj) const
 	{
-		if(GradientKeyObj.element < this->element) return true;
-		else if (GradientKeyObj.element > this->element) return false;
+		if(GradientKeyObj.voxel > this->voxel) return true;
+		else if (GradientKeyObj.voxel < this->voxel) return false;
 		else { //equal element
-			if(GradientKeyObj.voxel < this->voxel) return true;
-			else if (GradientKeyObj.voxel > this->voxel) return false;
+			if(GradientKeyObj.element > this->element) return true;
+			else if (GradientKeyObj.element < this->element) return false;
 			else { //equal voxel
 				return false;
 			}

@@ -91,7 +91,9 @@ void B1Accumulable::writeGradientAndP(G4int runNum){
 
 	for (std::map<GradientKey,G4double>::iterator it=fSm_hat.begin(); it!=fSm_hat.end(); ++it){
 		//writes (key,value)
-		outputPathsFile_grad << it->first.Getvoxel() << ',' << it->first.Getelement() << ',' << it->second << '\n';
+		outputPathsFile_grad << it->second;
+		++it;
+		outputPathsFile_grad << ',' << it->second << '\n';
 	}
 
 	outputPathsFile_grad.close();

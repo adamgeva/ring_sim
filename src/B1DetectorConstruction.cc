@@ -303,6 +303,8 @@ void B1DetectorConstruction::InitialisationOfMaterialsCT_basic()
 		G4double* fracs = new G4double[numOfEl];
 		// read density
 		//fin >> density;
+		//if (mat==0) {density=1;}
+		//else {density = 0.000000000000000001;}
 		material = new G4Material( name = MaterialName[mat],
 											   1*g/cm3,
 											   numberofElements = 2);
@@ -459,7 +461,7 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 		// read density
 
 		material = new G4Material( name = MaterialName[mat],
-											   density = 1*g/cm3,
+											   density = density*g/cm3,
 											   numberofElements = 2);
 		std::cout << "material number: " << mat << " rho: " << 1 << " fractions: ";
 		// read fractions
@@ -609,6 +611,7 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	  }
 	  //  densityDiffs[0] = 0.0001; //air
 
+
 	  //--- Calculate the average material density for each material/density bin
 	  std::map< std::pair<G4Material*,G4int>, matInfo* > newMateDens;
 
@@ -682,8 +685,30 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	  //
 	  //---- Build and add new materials
 
-	  //G4int sDens = newMateDens.size();
-	std::map< std::pair<G4Material*,G4int>, matInfo* >::iterator mppite;
+	  //G4int sDens = newMateDens.sisze();
+	  std::map< G4int, std::pair<G4Material*,G4int> > sorted_map_mat;
+	  std::map< std::pair<G4Material*,G4int>, matInfo* >::iterator mppite;
+
+	  for( mppite= newMateDens.begin(); mppite != newMateDens.end(); mppite++ ){
+		  G4int idd = (*mppite).second->fId;
+		  sorted_map_mat[idd] = (*mppite).first;
+	  }
+
+	  std::map< G4int, std::pair<G4Material*,G4int> >::iterator iterator_sorted;
+	  for( iterator_sorted= sorted_map_mat.begin(); iterator_sorted != sorted_map_mat.end(); iterator_sorted++ ){
+		  std::pair<G4Material*,G4int> key = (*iterator_sorted).second;
+		  mppite = newMateDens.find( key );
+
+		  G4double averdens = (*mppite).second->fSumdens/(*mppite).second->fNvoxels;
+		  G4double saverdens = G4int(1000.001*averdens)/1000.;
+
+		  G4String mateName = ((*mppite).first).first->GetName() + "_"
+		      + G4UIcommand::ConvertToString(saverdens);
+		  fMaterials.push_back( BuildMaterialWithChangingDensity(
+		      (*mppite).first.first, averdens, mateName ) );
+	  }
+
+/*
 	  for( mppite= newMateDens.begin(); mppite != newMateDens.end(); mppite++ ){
 	    G4double averdens = (*mppite).second->fSumdens/(*mppite).second->fNvoxels;
 	    G4double saverdens = G4int(1000.001*averdens)/1000.;
@@ -693,7 +718,7 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	    fMaterials.push_back( BuildMaterialWithChangingDensity(
 	     (*mppite).first.first, averdens, mateName ) );
 	  }
-
+*/
 }
 
 G4Material* B1DetectorConstruction::BuildMaterialWithChangingDensity(

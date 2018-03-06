@@ -48,7 +48,9 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 
 		for (int row=0; row<NUM_OF_DET_ROWS; row++){
 		  for (int col=0; col<NUM_OF_DET_COLS; col++) {
-			  fin >> farr_error[row * NUM_OF_DET_COLS + col];
+			  G4double err;
+			  fin >> err;
+			  farr_error[row * NUM_OF_DET_COLS + col] = err;
 		  }
 		}
 		fin.close();
