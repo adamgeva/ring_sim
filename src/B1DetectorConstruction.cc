@@ -106,6 +106,10 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	G4Box* detectorS = new G4Box("detector",detector_sizeX, detector_sizeY, detector_sizeZ);
 	G4LogicalVolume* detectorLV = new G4LogicalVolume(detectorS, detectorMat,"detector");
 
+	//constant shifting
+	G4double offset_u = OFFSET_U*mm;
+	G4double offset_v = OFFSET_V*mm;
+
 	G4int numOfItr = NUM_OF_DET_COLS;
 	G4cout << "numOfItr" << numOfItr <<G4endl;
 	for (G4int i=0;i<numOfItr;i++)
@@ -113,9 +117,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 		G4RotationMatrix* rotD = new G4RotationMatrix();
 		rotD->rotateX(-M_PI/2);
 		rotD->rotateY(M_PI/2);
-		G4double y_shift = -detector_sizeX*(NUM_OF_DET_COLS -1 ) + 2*i*detector_sizeX;
+		G4double y_shift = -detector_sizeX*(NUM_OF_DET_COLS -1 ) + 2*i*detector_sizeX + offset_u;
 		//G4ThreeVector detectorPosUpdated = G4ThreeVector(cos(theta)*(dist), -X +j*2*X, sin(theta)*(dist));
-		G4ThreeVector detectorPosUpdated = G4ThreeVector(dist,y_shift,0);
+		G4ThreeVector detectorPosUpdated = G4ThreeVector(dist,y_shift,offset_v);
 
 		if (BUILD_DETECTORS == 1){
 			new G4PVPlacement(rotD,detectorPosUpdated,detectorLV,"detector",worldLV,false,i,checkOverlaps);
@@ -144,7 +148,9 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 	if (BUILD_PHANTOM == 1){
 		//initialize materials
 		if(CT_PHANTOM){
-			InitialisationOfMaterialsCT();
+			//InitialisationOfMaterialsCT();
+			//basic and wrond representation of GT materials
+			InitialisationOfMaterialsCT_basic();
 			ReadPhantomDataCT();
 
 		} else{
@@ -228,13 +234,120 @@ void B1DetectorConstruction::InitialisationOfMaterialsCT(){
 	};
 	//const G4MaterialTable* matTab = G4Material::GetMaterialTable();
 	//iterate over the base materials
+
+	//TODO: delete later
+	std::ofstream output;
+	std::string fileName = std::string(OUTPUT_DIR) + "/Dicom_base_materials.csv";
+	output.open(fileName.c_str());
+
 	for (G4int i = 0; i<NUM_OF_BASE_MATERIALS; i++){
 		G4Material* material = 0;
 		material = G4NistManager::Instance()->FindOrBuildMaterial(MaterialName[i]);
 		thePhantomMaterialsOriginal[i] = material;
+
+
+		const G4ElementVector* curr_element_vector = material->GetElementVector();
+		const G4double* curr_frac_vector = material->GetFractionVector();
+		G4int nElements = material->GetNumberOfElements();
+		output << material->GetDensity()/(g/cm3) << ',';
+		for (G4int el=0 ; el<nElements ; el++) {
+			G4Element* el_i =  (*curr_element_vector)[el];
+			G4String n = el_i->GetName();
+			G4double ZZ = el_i->GetZ();
+			G4double frac = curr_frac_vector[el];
+			output << ZZ << ',' << frac << ',';
+		}
+		output << '\n';
+
 	}
+	output.close();
+
 }
 
+void B1DetectorConstruction::InitialisationOfMaterialsCT_basic()
+{
+    // Creating elements :
+    G4double z, a, density;
+    G4String name, symbol;
+    G4int numberofElements;
+
+    G4Element* elO = new G4Element( name = "Oxygen",
+                                   symbol = "O",
+                                   z = 8.0, a = 16.00  * g/mole );
+
+    G4Element* elCa = new G4Element( name="Calcium",
+                                    symbol = "Ca",
+                                    z = 20.0, a = 40.078* g/mole );
+
+
+//*******************************************************************************************************************************************************
+	//G4String fname = FILE_MATERIALS_GT_BASIC;
+    G4String fname = FILE_MATERIALS;
+	std::ifstream fin(fname.c_str(), std::ios_base::in);
+	if( !fin.is_open() ) {
+	   G4Exception("Can't read materials_file",
+					"",
+					FatalErrorInArgument,
+					G4String("File not found " + fname ).c_str());
+	  }
+	//pointers to materials
+	G4Material* material;
+	G4String MaterialName[NUM_OF_BASE_MATERIALS];
+	//iterate over the base materials
+	G4int mat = 0;
+	G4int numOfEl = NUM_OF_ELEMENTS;
+	for (mat = 0; mat<NUM_OF_BASE_MATERIALS; mat ++){
+		if( fin.eof() ) break;
+		// material - place in an array
+		MaterialName[mat] = "mat" + IntToString(mat);
+		G4double* fracs = new G4double[numOfEl];
+		// read density
+		//fin >> density;
+		material = new G4Material( name = MaterialName[mat],
+											   1*g/cm3,
+											   numberofElements = 2);
+		std::cout << "material number: " << mat << " rho: " << density << " fractions: ";
+		// read fractions
+		for (G4int i=0; i<numOfEl; i++){
+			fin >> fracs[i];
+			std::cout << fracs[i] << ",";
+		}
+		std::cout << "." << std::endl;
+
+		//adding elements according to fractions
+//		material[voxel]->AddElement(elH,fracs[0]);
+//		material[voxel]->AddElement(elHe,fracs[1]);
+//		material[voxel]->AddElement(elLi,fracs[2]);
+//		material[voxel]->AddElement(elBe,fracs[3]);
+//		material[voxel]->AddElement(elB,fracs[4]);
+//		material[voxel]->AddElement(elC,fracs[5]);
+//		material[voxel]->AddElement(elN,fracs[6]);
+		material->AddElement(elO,fracs[2]);
+//		material[voxel]->AddElement(elF,fracs[8]);
+//		material[voxel]->AddElement(elNe,fracs[9]);
+//		material[voxel]->AddElement(elNa,fracs[10]);
+//		material[voxel]->AddElement(elMg,fracs[11]);
+//		material[voxel]->AddElement(elAl,fracs[12]);
+//		material[voxel]->AddElement(elP,fracs[13]);
+//		material[voxel]->AddElement(elS,fracs[14]);
+//		material[voxel]->AddElement(elCl,fracs[15]);
+//		material[voxel]->AddElement(elAr,fracs[16]);
+//		material[voxel]->AddElement(elK,fracs[17]);
+		material->AddElement(elCa,fracs[4]);
+//		material[voxel]->AddElement(elSc,fracs[19]);
+//		material[voxel]->AddElement(elTi,fracs[20]);
+//		material[voxel]->AddElement(elV,fracs[21]);
+//		material[voxel]->AddElement(elCr,fracs[22]);
+//		material[voxel]->AddElement(elMn,fracs[23]);
+//		material[voxel]->AddElement(elFe,fracs[24]);
+//		material[voxel]->AddElement(elI,fracs[25]);
+//		material[voxel]->AddElement(elPb,fracs[26]);
+
+		//add material to fMaterials
+		thePhantomMaterialsOriginal[mat] = material;
+		delete fracs;
+	}
+}
 
 void B1DetectorConstruction::InitialisationOfMaterials()
 {
@@ -441,14 +554,14 @@ void B1DetectorConstruction::ReadPhantomDataCT()
   fNVoxelY = NUM_OF_VOXELS_Y;
   fNVoxelZ = NUM_OF_Z_SLICES;
 
-  fVoxelHalfDimX = VOXEL_HALF_X*cm;
-  fVoxelHalfDimY = VOXEL_HALF_Y*cm;
-  fVoxelHalfDimZ = VOXEL_HALF_Z*cm;
+  fVoxelHalfDimX = VOXEL_HALF_X*mm;
+  fVoxelHalfDimY = VOXEL_HALF_Y*mm;
+  fVoxelHalfDimZ = VOXEL_HALF_Z*mm;
 
   fMateIDs = new size_t[fNVoxelX*fNVoxelY*fNVoxelZ];
   for( G4int iz = 0; iz < fNVoxelZ; iz++ ) {
 	  //FILE_VOXEL_TO_MATERIALS_TEST
-    G4String fileName_id = (G4String)FILE_VOXEL_TO_MATERIALS_TEST + "id" + IntToString(iz) + ".dat";
+    G4String fileName_id = (G4String)FILE_VOXEL_TO_MATERIALS_Y + "id" + IntToString(iz) + ".dat";
     std::ifstream fin_id(fileName_id);
     std::cout << "reading file: " << fileName_id << std::endl;
     for( G4int iy = 0; iy < fNVoxelY; iy++ ) {
@@ -486,9 +599,9 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	    densiMinMax[ii] = std::pair<G4double,G4double>(DBL_MAX,-DBL_MAX);
 	  }
 
-	  char* part = getenv( "DICOM_CHANGE_MATERIAL_DENSITY" );
+	  //char* part = getenv( "DICOM_CHANGE_MATERIAL_DENSITY" );
 	  G4double densityDiff = -1.;
-	  if( part ) densityDiff = G4UIcommand::ConvertToDouble(part);
+	  //if( part ) densityDiff = G4UIcommand::ConvertToDouble(part);
 
 	  std::map<G4int,G4double> densityDiffs;
 	  for( size_t ii = 0; ii < thePhantomMaterialsOriginal.size(); ii++ ){
@@ -502,7 +615,7 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	  //---- Read the material densities
 	  G4double dens;
 	  for( G4int iz = 0; iz < fNVoxelZ; iz++ ) {
-		G4String fileName_dens = (G4String)FILE_VOXEL_TO_MATERIALS_TEST + "dens" + IntToString(iz) + ".dat";
+		G4String fileName_dens = (G4String)FILE_VOXEL_TO_MATERIALS_Y + "dens" + IntToString(iz) + ".dat";
 		std::ifstream fin_dens(fileName_dens);
 		std::cout << "reading file: " << fileName_dens << std::endl;
 	    for( G4int iy = 0; iy < fNVoxelY; iy++ ) {
@@ -617,14 +730,15 @@ void B1DetectorConstruction::ConstructSDandField()
 //   ----------------------------------------------
 //   -- operator creation and attachment to volume:
 //   ----------------------------------------------
-  B1BOptrFD* FDOptr =  new B1BOptrFD("gamma","FDOperator");
-  FDOptr->AttachTo(fvoxel_logic); //maybe should be attache to fcontainer?
-  //FSOptr->AttachTo(logicWorld);
-  //comptLEOptr->AttachTo(logicTestBone);
-  G4cout << " Attaching biasing operator " << FDOptr->GetName()
-         << " to logical volume " << fvoxel_logic->GetName()
-         << G4endl;
-
+if (BUILD_PHANTOM==1){
+	  B1BOptrFD* FDOptr =  new B1BOptrFD("gamma","FDOperator");
+	  FDOptr->AttachTo(fvoxel_logic); //maybe should be attache to fcontainer?
+	  //FSOptr->AttachTo(logicWorld);
+	  //comptLEOptr->AttachTo(logicTestBone);
+	  G4cout << " Attaching biasing operator " << FDOptr->GetName()
+			 << " to logical volume " << fvoxel_logic->GetName()
+			 << G4endl;
+}
 //  G4BOptrForceCollision* OptrForceCollision =  new G4BOptrForceCollision("gamma","forceCollision");
 //  OptrForceCollision->AttachTo(logicTest);
 //  //OptrForceCollision->AttachTo(logicTestBone);

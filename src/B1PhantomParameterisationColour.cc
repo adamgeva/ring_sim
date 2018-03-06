@@ -5,14 +5,19 @@
 #include "G4Material.hh"
 #include "G4VPhysicalVolume.hh"
 #include "G4LogicalVolume.hh"
+#include "params.hh"
 
 B1PhantomParameterisationColour::B1PhantomParameterisationColour()
 : G4PhantomParameterisation()
 {
 
     //ReadColourData();
-
-    SetSkipEqualMaterials(true);
+	if (CALC_GRADIENT == 1){
+		SetSkipEqualMaterials(false);
+	}
+	else {
+		SetSkipEqualMaterials(true);
+	}
 }
 
 B1PhantomParameterisationColour::~B1PhantomParameterisationColour()

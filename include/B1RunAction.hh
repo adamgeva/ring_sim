@@ -32,10 +32,10 @@ class B1RunAction : public G4UserRunAction
     //virtual void   EndOfRunAction();
 
   private:
-    //TODO: accumulable need to change to map
-    //B1Accumulable fGradientAccumulable;
-    B1DetectorConstruction* fdetectorConstruction;
+    B1Accumulable fGradientAccumulable;
 
+    B1DetectorConstruction* fdetectorConstruction;
+    G4double* farr_error;
 };
 
 

@@ -20,7 +20,7 @@
 
 
 B1Accumulable::B1Accumulable(const G4String& name):
-G4VAccumulable(name)
+G4VAccumulable(name),ferror_arr(0)
 {}
 
 B1Accumulable:: ~B1Accumulable() {}
@@ -31,25 +31,25 @@ void B1Accumulable::updateP(G4int voxel_ind){
 }
 
 void B1Accumulable::updateSm_hat(G4int voxel, G4int element, G4int detector, G4double value){
+	G4double error = ferror_arr[detector];
 	//update gradient
-	//fSm_hat[voxel][element][detector] = fSm_hat[voxel][element][detector] + value;
-	GradientKey curr_key = GradientKey(voxel,element,detector);
-	fSm_hat[curr_key] = fSm_hat[curr_key] + value;
+	//fSm_hat[voxel][element] = fSm_hat[voxel][element] + value * error;
+	GradientKey curr_key = GradientKey(voxel,element);
+	fSm_hat[curr_key] = fSm_hat[curr_key] + value * error;
 }
 
 void B1Accumulable::Merge(const G4VAccumulable& other){
 	const B1Accumulable& otherAccumulable
 	= static_cast<const B1Accumulable&>(other);
-
-//	//iterate and accumulate
-//	for (int i=0; i<NUM_OF_VOXELS; i++){
-//		fP[i] += otherAccumulable.fP[i];
-//		for (int j=0; j<NUM_OF_ELEMENTS; j++){
-//			for (int k =0; k<NUM_OF_DETECTORS; k++){
-//				fSm_hat[i][j][k] += otherAccumulable.fSm_hat[i][j][k];
-//			}
-//		}
-//	}
+/*
+	//iterate and accumulate
+	for (int i=0; i<NUM_OF_VOXELS; i++){
+		fP[i] += otherAccumulable.fP[i];
+		for (int j=0; j<NUM_OF_ELEMENTS; j++){
+			fSm_hat[i][j] += otherAccumulable.fSm_hat[i][j];
+		}
+	}
+*/
 	//accumulate fP:
 
 	for (std::map<G4int,G4double>::const_iterator it=otherAccumulable.fP.begin(); it!=otherAccumulable.fP.end(); ++it)
@@ -61,54 +61,56 @@ void B1Accumulable::Merge(const G4VAccumulable& other){
 	}
 }
 
-/*
+
 void B1Accumulable::Reset(){
 	//iterate and reset arrays
-	for (int i=0; i<NUM_OF_VOXELS; i++){
-		fP[i] = 0;
-		for (int j=0; j<NUM_OF_ELEMENTS; j++){
-			for (int k =0; k<NUM_OF_DETECTORS; k++){
-				fSm_hat[i][j][k] = 0;
-			}
-		}
-	}
+//	for (int i=0; i<NUM_OF_VOXELS; i++){
+//		fP[i] = 0;
+//		for (int j=0; j<NUM_OF_ELEMENTS; j++){
+//			fSm_hat[i][j] = 0;
+//		}
+//	}
+	fSm_hat.clear();
+	fP.clear();
+	ferror_arr=NULL; // run action is in charge of deleting
 }
-*/
+
 
 void B1Accumulable::writeGradientAndP(G4int runNum){
 	//writing gradient table to file
 	std::string fileName =  std::string(GRADIENT_DIR) + "/" + IntToString(runNum) + "run_gradient.csv";
 	std::ofstream outputPathsFile_grad;
 	outputPathsFile_grad.open(fileName.c_str());
-	/*
-	for (G4int element = 0; element < NUM_OF_ELEMENTS; element ++){
-		for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
-			for (G4int det = 0; det < NUM_OF_DETECTORS; det ++){
-				outputPathsFile_grad << fSm_hat[voxel][element][det] << ',';
-			}
-			outputPathsFile_grad << '\n';
-		}
-	}
-	*/
+
+//	for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
+//		for (G4int element = 0; element < NUM_OF_ELEMENTS; element ++){
+//			outputPathsFile_grad << fSm_hat[voxel][element] << ',';
+//		}
+//		outputPathsFile_grad << '\n';
+//	}
+
 	for (std::map<GradientKey,G4double>::iterator it=fSm_hat.begin(); it!=fSm_hat.end(); ++it){
 		//writes (key,value)
-		outputPathsFile_grad << it->first.Getpixel() << ',' << it->first.Getvoxel() << ',' << it->first.Getelement() << ',' << it->second;
+		outputPathsFile_grad << it->first.Getvoxel() << ',' << it->first.Getelement() << ',' << it->second << '\n';
 	}
+
 	outputPathsFile_grad.close();
 
 	//write P array:
 	fileName =  std::string(GRADIENT_DIR) + "/" + IntToString(runNum) + "run_P.csv";
 	std::ofstream outputPathsFile_P;
 	outputPathsFile_P.open(fileName.c_str());
-	/*
-	for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
-		outputPathsFile_P <<  fP[voxel] << ',';
-	}
-	*/
+
+//	for (G4int voxel = 0; voxel < NUM_OF_VOXELS; voxel ++){
+//		outputPathsFile_P <<  fP[voxel] << ',';
+//	}
+
+
 	for (std::map<G4int,G4double>::iterator it=fP.begin(); it!=fP.end(); ++it){
 		//writes (key,value)
-		outputPathsFile_P <<  it->first << ',' << it->second;
+		outputPathsFile_P <<  it->first << ',' << it->second << '\n';
 	}
+
 	outputPathsFile_P.close();
 
 }

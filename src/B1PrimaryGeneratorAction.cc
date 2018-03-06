@@ -174,8 +174,8 @@ void B1PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	fParticleGun->SetParticleMomentumDirection(G4ThreeVector(px,py,pz));
 	energyBin = getEnergyInd();
 	energyP = energyBin*keV;
-	//fParticleGun->SetParticleEnergy(energyP);
-	fParticleGun->SetParticleEnergy(25*keV);
+	fParticleGun->SetParticleEnergy(energyP);
+	//fParticleGun->SetParticleEnergy(60*keV);
 
 	fParticleGun->GeneratePrimaryVertex(anEvent);
 	

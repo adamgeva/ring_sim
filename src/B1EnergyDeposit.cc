@@ -19,8 +19,10 @@ B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 	fscorerType =  type;
 	if (type==0){ //randomly pick the 0 scorer
 		// Get accumulable from the accumulable manager
+		if (CALC_GRADIENT == 1){
 		G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
 		fGradAccum = (B1Accumulable*)accumulableManager->GetAccumulable(0);
+		}
 	}
 }
 

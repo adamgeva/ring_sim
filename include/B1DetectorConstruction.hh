@@ -48,6 +48,7 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
     void ReadPhantomDataCT();
 
     void InitialisationOfMaterialsCT();
+    void InitialisationOfMaterialsCT_basic();
     void InitialisationOfMaterials();
 
     void ReadVoxelDensities();

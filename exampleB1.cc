@@ -58,6 +58,7 @@ B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
 int main(int argc,char** argv)
 {
+
 	// Detect interactive mode (if no arguments) and define UI session
 	G4UIExecutive* ui = 0;
 	if ( argc == 1 ) {
@@ -106,7 +107,7 @@ int main(int argc,char** argv)
 	}
 	else{
 		G4PhysListFactory factory;
-		if (GT_MODE == 1){
+		if (LIV_MODE == 1){
 			physicsList = factory.GetReferencePhysList("FTFP_BERT_LIV");
 		} else{
 			physicsList = factory.GetReferencePhysList("FTFP_BERT_EMV");
