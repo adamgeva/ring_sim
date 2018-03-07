@@ -3,7 +3,7 @@
 //comment for a single threaded mode
 #define MULTI 1
 #define NUM_OF_SCORERS 5
-#define NUM_OF_SOURCES 3 //this defines the number of runs
+#define NUM_OF_SOURCES 10 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
 #define NUM_OF_THREADS 30
@@ -47,20 +47,20 @@
 #define CENTER_TO_DET 267.38 //mm
 #define SOURCE_TO_CENTER 605.27 //mm
 #define RADIUS 605.27 //mm
-#define OFFSET_U -10 //mm
-#define OFFSET_V 25.72 //mm
+#define OFFSET_U 0 //mm
+#define OFFSET_V 0 //mm
 #define SHIFT 1 //cm
 #define GT_MODE 1
 #define LIV_MODE 0
 //XCAT
-#define NUM_OF_Z_SLICES  10
-#define NUM_OF_VOXELS_X 10 
-#define NUM_OF_VOXELS_Y 10 
-#define NUM_OF_VOXELS 1000 
+#define NUM_OF_Z_SLICES  80
+#define NUM_OF_VOXELS_X 100 
+#define NUM_OF_VOXELS_Y 100 
+#define NUM_OF_VOXELS 800000 
 #define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
-#define VOXEL_HALF_X 2.5 //mm
-#define VOXEL_HALF_Y 2.5 //mm
-#define VOXEL_HALF_Z 2.5 //mm
+#define VOXEL_HALF_X 1.15 //mm
+#define VOXEL_HALF_Y 1.15 //mm
+#define VOXEL_HALF_Z 1.15 //mm
 #define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"
 #define FILE_VOXEL_TO_MATERIALS "../run_inputs/voxels_to_materials.txt"
