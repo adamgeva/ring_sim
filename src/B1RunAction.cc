@@ -31,8 +31,36 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 
 	//rotate phantom
 	if (BUILD_PHANTOM == 1){
+
+		G4String fileName = std::string(OUTPUT_DIR) + "/angles/" + IntToString(runID) + ".csv";
+		G4int randomized_num;
 		G4double angle = M_PI/90; //2 degrees
-		fdetectorConstruction->setContainerRotation(angle * runID);
+		if (CALC_GRADIENT == 0){
+			//if we are running in forward mode: we sample and write to files:
+			//sample # of directions randomly:
+			srand (time(NULL));
+			randomized_num = rand()%180;
+			std::ofstream output;
+			output.open(fileName.c_str());
+			//write #:
+			output << randomized_num;
+			output.close();
+			fdetectorConstruction->setContainerRotation(angle * randomized_num);
+		}
+		else{
+			//if we are in inverse mode we read the files:
+			fileName = std::string(INPUT_DIR) + "/angles/" + IntToString(runID) + ".csv";
+			std::ifstream fin(fileName.c_str(), std::ios_base::in);
+			if( !fin.is_open() ) {
+			   G4Exception("Can't read angle file",
+							"",
+							FatalErrorInArgument,
+							G4String("File not found " + fileName ).c_str());
+			}
+			fin >> randomized_num;
+			fdetectorConstruction->setContainerRotation(angle * randomized_num);
+		}
+
 	}
 	if (CALC_GRADIENT==1){
 		//collect error from previous run:

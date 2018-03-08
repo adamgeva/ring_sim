@@ -3,12 +3,12 @@
 //comment for a single threaded mode
 #define MULTI 1
 #define NUM_OF_SCORERS 5
-#define NUM_OF_SOURCES 10 //this defines the number of runs
+#define NUM_OF_SOURCES 1 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
 #define NUM_OF_THREADS 30
 #define NUM_OF_BASE_MATERIALS 10 // all materials are quantized to 100 materials with different densities
-#define NUM_OF_PHOTONS 1000000 // equal to mac file
+#define NUM_OF_PHOTONS 10000000 // equal to mac file
 // verbose
 #define VERBOSE_SCORING 0
 #define VERBOSE_PHYSICS_LIST 0
@@ -36,6 +36,7 @@
 #define BUILD_DETECTORS 1
 #define BUILD_PHANTOM 1
 #define CT_PHANTOM 1 //build phantom using linear reconstruction 
+#define USE_DICOM_INIT 0
 #define CALC_GRADIENT 0
 #define WORLD_XY 210 //cm half size
 #define WORLD_Z 210 //cm half size
@@ -47,8 +48,8 @@
 #define CENTER_TO_DET 267.38 //mm
 #define SOURCE_TO_CENTER 605.27 //mm
 #define RADIUS 605.27 //mm
-#define OFFSET_U 0 //mm
-#define OFFSET_V 0 //mm
+#define OFFSET_U -10 //mm
+#define OFFSET_V 25.72 //mm
 #define SHIFT 1 //cm
 #define GT_MODE 1
 #define LIV_MODE 0
@@ -63,6 +64,7 @@
 #define VOXEL_HALF_Z 1.15 //mm
 #define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"
+#define FILE_MATERIALS_DICOM_BASIC "../run_inputs/Dicom_base_materials_new.txt"
 #define FILE_VOXEL_TO_MATERIALS "../run_inputs/voxels_to_materials.txt"
 #define FILE_VOXEL_TO_MATERIALS_ID "../run_inputs/voxels_to_materials_id.txt"
 #define FILE_VOXEL_TO_MATERIALS_TEST "../run_inputs/phantom/"
@@ -74,6 +76,7 @@
 #define FILE_DET_POS "../run_outputs_geom/detectorsPos.csv"
 #define OUTPUT_DIR "../run_outputs"
 #define OUTPUT_DIR_FLAT "../run_outputs/Flat"
+#define INPUT_DIR "../run_inputs"
 #define GRADIENT_DIR "../run_outputs_grad"
 #define ERROR_DIR "../run_inputs/Error"
 #endif /* PARAMS_HH_ */

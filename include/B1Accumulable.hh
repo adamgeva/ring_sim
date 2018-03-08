@@ -34,11 +34,12 @@ class B1Accumulable : public G4VAccumulable
 	private:
     // gradient array - built per thread and holds the current gradient of all replicas (detector elements) w.r.t voxels and elements.
     //G4double fSm_hat[NUM_OF_VOXELS][NUM_OF_ELEMENTS] = {};
-	std::map<GradientKey,G4double> fSm_hat;
+	//std::map<GradientKey,G4double> fSm_hat;
+	G4double** fSm_hat;
 
     //G4double fP[NUM_OF_VOXELS] = {};
-	std::map<G4int,G4double> fP;
-
+	//std::map<G4int,G4double> fP;
+	G4double* fP;
 	G4double* ferror_arr;
 
 

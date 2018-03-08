@@ -152,7 +152,6 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
 			//basic and wrond representation of GT materials
 			InitialisationOfMaterialsCT_basic();
 			ReadPhantomDataCT();
-
 		} else{
 			InitialisationOfMaterials();
 			ReadPhantomData();
@@ -281,8 +280,12 @@ void B1DetectorConstruction::InitialisationOfMaterialsCT_basic()
 
 
 //*******************************************************************************************************************************************************
-	//G4String fname = FILE_MATERIALS_GT_BASIC;
-    G4String fname = FILE_MATERIALS;
+    G4String fname;
+    if (USE_DICOM_INIT==1){
+    	fname = FILE_MATERIALS_DICOM_BASIC;
+    } else {
+    	fname = FILE_MATERIALS;
+    }
 	std::ifstream fin(fname.c_str(), std::ios_base::in);
 	if( !fin.is_open() ) {
 	   G4Exception("Can't read materials_file",
@@ -563,7 +566,13 @@ void B1DetectorConstruction::ReadPhantomDataCT()
   fMateIDs = new size_t[fNVoxelX*fNVoxelY*fNVoxelZ];
   for( G4int iz = 0; iz < fNVoxelZ; iz++ ) {
 	  //FILE_VOXEL_TO_MATERIALS_TEST
-    G4String fileName_id = (G4String)FILE_VOXEL_TO_MATERIALS_Y + "id" + IntToString(iz) + ".dat";
+	G4String fileName_id;
+	if (USE_DICOM_INIT == 1){
+	    fileName_id = (G4String)FILE_VOXEL_TO_MATERIALS_TEST + "id" + IntToString(iz) + ".dat";
+	}
+	else{
+	    fileName_id = (G4String)FILE_VOXEL_TO_MATERIALS_Y + "id" + IntToString(iz) + ".dat";
+	}
     std::ifstream fin_id(fileName_id);
     std::cout << "reading file: " << fileName_id << std::endl;
     for( G4int iy = 0; iy < fNVoxelY; iy++ ) {
@@ -618,7 +627,12 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	  //---- Read the material densities
 	  G4double dens;
 	  for( G4int iz = 0; iz < fNVoxelZ; iz++ ) {
-		G4String fileName_dens = (G4String)FILE_VOXEL_TO_MATERIALS_Y + "dens" + IntToString(iz) + ".dat";
+		G4String fileName_dens;
+		if (USE_DICOM_INIT == 1){
+			fileName_dens = (G4String)FILE_VOXEL_TO_MATERIALS_TEST + "dens" + IntToString(iz) + ".dat";
+		} else {
+			fileName_dens = (G4String)FILE_VOXEL_TO_MATERIALS_Y + "dens" + IntToString(iz) + ".dat";
+		}
 		std::ifstream fin_dens(fileName_dens);
 		std::cout << "reading file: " << fileName_dens << std::endl;
 	    for( G4int iy = 0; iy < fNVoxelY; iy++ ) {
