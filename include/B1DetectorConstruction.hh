@@ -58,6 +58,12 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 	// construct the phantom volumes.
 	//  This method should be implemented for each of the derived classes
 
+    //*************************************XCAT
+    void InitialisationOfMaterialsMap_XCAT();
+    void InitialisationOfMaterials_XCAT();
+    void ReadPhantomData_XCAT();
+    void ReadPhantomDataFile_XCAT(const G4String& fname, G4int sliceNumber);
+
     G4Material* BuildMaterialWithChangingDensity(const G4Material* origMate, float density, G4String newMateName );
 
   protected:
@@ -77,6 +83,11 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
      // map numberOfMaterial to G4Material. They are the list of materials as built from .geom file
 	std::map<G4int,G4Material*> fBaseMaterials;
 	// map numberOfMaterial to G4Material. They are the list of materials as built from .geom file
+
+	//***************************************XCAT
+	std::map<G4int,materialIDs> intensityToMateID;
+	// maps the intensity value in every voxel to its material ID
+
 
   private:
 	G4LogicalVolume* worldLV;
