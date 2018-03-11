@@ -99,7 +99,7 @@ G4double angleBetweenVecs(G4ThreeVector vecA, G4ThreeVector vecB) {
 	//calc angles
 	G4double alpha = acos(-(p0x*p1x + p0y*p1y + p0z*p1z)); //radians
 
-	return alpha;
+	return (M_PI - alpha);
 }
 //G4ThreeVector Mom = actualParticleChange->GetProposedMomentumDirection();
 //G4cout << "Mom = " << Mom << G4endl;

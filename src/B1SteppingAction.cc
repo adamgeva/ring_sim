@@ -69,7 +69,7 @@ void B1SteppingAction::UserSteppingAction(const G4Step* aStep)
 			   pow((endPoint->GetPosition().z() - startPoint->GetPosition().z()),2));
 	currSegmant.pathLen = Len/10.0; //from mm to cm
 
-	//currSegmant.thetaScatter = angleBetweenVecs(startPoint->GetMomentumDirection(),endPoint->GetMomentumDirection());
+	currSegmant.scatteredAngle = angleBetweenVecs(startPoint->GetMomentumDirection(),endPoint->GetMomentumDirection());
 	currSegmant.endingProcess = procName;
 
 	//TODO: this is only correct for 1 voxel case - need to generalize!

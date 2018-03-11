@@ -135,9 +135,11 @@ G4double B1EnergyDeposit::getTotalMicXS(G4Element* el, G4double Energy){
 	G4EmCalculator emCalculator;
 	G4double comptXS;
 	G4double photXS;
+	G4double raylXS;
 	photXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","phot",el,0)/cm2;
 	comptXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","compt",el,0)/cm2;
-	return photXS + comptXS;
+	raylXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","Rayl",el,0)/cm2;
+	return photXS + comptXS + raylXS;
 }
 
 
@@ -158,6 +160,17 @@ G4double B1EnergyDeposit::getComptonMicDifferentialXS(G4Element* el, G4double E0
 	return dsigma_deps * deps;
 }
 
+G4double B1EnergyDeposit::getRaylMicDifferentialXS(G4Element* el, G4double Energy, G4double angle){
+	G4EmCalculator emCalculator;
+	G4double cost = cos(angle);
+	G4double cost2 = cost * cost;
+	G4double sint = sin(angle);
+	G4double fact = (3.0/8.0);
+	G4double phase = fact * (1 + cost2) * sint ;
+	G4double raylXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","Rayl",el,0)/cm2;
+	return raylXS * phase;
+}
+
 G4double B1EnergyDeposit::getComptonMacDifferentialXS(G4Material* mat, G4double E0 , G4double E1){
 	const G4ElementVector* curr_element_vector = mat->GetElementVector();
 	//vector of number of atoms per volume
@@ -167,6 +180,19 @@ G4double B1EnergyDeposit::getComptonMacDifferentialXS(G4Material* mat, G4double 
 	G4double dsigmaMac = 0;
 	for (G4int i=0 ; i<nElements ; i++) {
 		dsigmaMac = dsigmaMac + curr_num_of_atoms[i]/(1/cm3) * getComptonMicDifferentialXS((*curr_element_vector)[i], E0 , E1);
+	}
+	return dsigmaMac;
+}
+
+G4double B1EnergyDeposit::getRaylMacDifferentialXS(G4Material* mat, G4double E0 , G4double angle){
+	const G4ElementVector* curr_element_vector = mat->GetElementVector();
+	//vector of number of atoms per volume
+	const G4double* curr_num_of_atoms =  mat->GetVecNbOfAtomsPerVolume();
+	G4int nElements = mat->GetNumberOfElements();
+	//calc dsigma macroscopic:
+	G4double dsigmaMac = 0;
+	for (G4int i=0 ; i<nElements ; i++) {
+		dsigmaMac = dsigmaMac + curr_num_of_atoms[i]/(1/cm3) * getRaylMicDifferentialXS((*curr_element_vector)[i], E0 , angle);
 	}
 	return dsigmaMac;
 }
@@ -205,7 +231,23 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 				//update gradient:
 				fGradAccum->updateSm_hat(curr_voxel,i,detIndex,final_energy * (da_di_dvox + dsigma_di_dvox));
 		}
-	} else { //no compton at the end
+	}
+	else if (seg.endingProcess == "Rayl"){
+		//calc dsigma macroscopic:
+		G4double dsigmaMac = getRaylMacDifferentialXS(seg.Mat,seg.incidentEnergy/keV,seg.scatteredAngle);
+		// iterate over elements and calc attenuation factor and scatter:
+		for (G4int i=0 ; i<nElements ; i++) {
+				G4double n_i = curr_num_of_atoms[i]/(1/cm3);
+				G4double frac_i = curr_frac_vector[i];
+				G4double N_by_A = n_i / (curr_density * frac_i);
+				G4Element* el_i =  (*curr_element_vector)[i];
+				G4double dsigma_di_dvox = N_by_A * getRaylMicDifferentialXS(el_i,seg.incidentEnergy/keV,seg.scatteredAngle) * (1/dsigmaMac);
+				G4double da_di_dvox = -1 * curr_len * N_by_A * getTotalMicXS(el_i,curr_energy*keV);
+				//update gradient:
+				fGradAccum->updateSm_hat(curr_voxel,i,detIndex,final_energy * (da_di_dvox + dsigma_di_dvox));
+		}
+	}
+	else { //no compton or rayl at the end
 		for (G4int i=0 ; i<nElements ; i++) {
 				G4double n_i = curr_num_of_atoms[i]/(1/cm3);
 				G4double frac_i = curr_frac_vector[i];

@@ -26,7 +26,9 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
     // grad calculation methods
     G4double getTotalMicXS(G4Element* el, G4double Energy);
     G4double getComptonMicDifferentialXS(G4Element* el, G4double E0 , G4double E1);
+    G4double getRaylMicDifferentialXS(G4Element* el, G4double E0, G4double angle);
     G4double getComptonMacDifferentialXS(G4Material* mat, G4double E0 , G4double E1);
+    G4double getRaylMacDifferentialXS(G4Material* mat, G4double E0 , G4double angle);
     //update the complete gradient table with current segment contribution
     void updateGradTable(segment seg, G4double final_energy, G4int detIndex);
 

@@ -46,7 +46,7 @@ void B1RunAction::BeginOfRunAction(const G4Run* run)
 				std::ofstream output;
 				output.open(fileName.c_str());
 				//write #:
-				output << randomized_num;
+				output << randomized_num << '\n';
 				output.close();
 				fdetectorConstruction->setContainerRotation(angle * randomized_num);
 

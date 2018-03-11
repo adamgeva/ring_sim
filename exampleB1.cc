@@ -52,6 +52,8 @@
 
 
 void printXSPerAtom(G4Element* el); //implemented at the end
+void printXSPerAtom_25(G4Element* el); //implemented at the end
+
 
 //global array
 B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
@@ -188,33 +190,33 @@ int main(int argc,char** argv)
 	//******************************************************************
 	//print elements cross section
 	if (PRINT_ELEMENTS_XS == 1){
-		printXSPerAtom(new G4Element("Hydrogen","H",1.0,1.008 * g/mole));
-		printXSPerAtom(new G4Element("Helium","He",2.0,4.0026 * g/mole ));
-		printXSPerAtom(new G4Element( "Lithium","Li",3.0, 6.941  * g/mole ));
-		printXSPerAtom(new G4Element("Beryllium","Be",4.0, 9.012182  * g/mole ));
-		printXSPerAtom(new G4Element("Boron","B",5.0, 10.811  * g/mole ));
-		printXSPerAtom(new G4Element( "Carbon","C",6.0, 12.011 * g/mole ));
-		printXSPerAtom(new G4Element( "Nitrogen","N",7.0, 14.007 * g/mole ));
-		printXSPerAtom(new G4Element( "Oxygen","O",8.0, 16.00  * g/mole ));
-		printXSPerAtom(new G4Element( "Fluorine","F",9.0, 18.998404  * g/mole ));
-		printXSPerAtom(new G4Element(  "Neon","Ne",10.0, 20.1797  * g/mole ));
-		printXSPerAtom(new G4Element( "Sodium","Na",11.0, 22.98977 * g/mole ));
-		printXSPerAtom(new G4Element( "Magnesium","Mg",12.0, 24.305 * g/mole ));
-		printXSPerAtom(new G4Element( "Aluminum","Al",13.0, 26.981539 * g/mole ));
-		printXSPerAtom(new G4Element( "Phosphorus","P",15.0, 30.97376 * g/mole ));
-		printXSPerAtom(new G4Element( "Sulfur","S",16.0,32.065* g/mole ));
-		printXSPerAtom(new G4Element( "Chlorine","Cl",17.0, 35.453* g/mole ));
-		printXSPerAtom(new G4Element( "Argon","Ar",18.0, 39.948 * g/mole ));
-		printXSPerAtom(new G4Element( "Potassium","K",19.0, 39.0983* g/mole ));
-		printXSPerAtom(new G4Element("Calcium","Ca",20.0, 40.078* g/mole ));
-		printXSPerAtom(new G4Element( "Scandium","Sc",21.0, 44.95591 * g/mole ));
-		printXSPerAtom(new G4Element( "Titanium","Ti",22.0, 47.867 * g/mole ));
-		printXSPerAtom(new G4Element( "Vanadium","V",23.0, 50.9415 * g/mole ));
-		printXSPerAtom(new G4Element( "Chromium","Cr",24.0, 51.9961 * g/mole ));
-		printXSPerAtom(new G4Element( "Manganese","Mn",25.0, 54.93805 * g/mole ));
-		printXSPerAtom(new G4Element( "Iron","Fe",26, 55.845* g/mole ));
-		printXSPerAtom(new G4Element( "Iodine","I",53, 126.90447 * g/mole ));
-		printXSPerAtom(new G4Element( "Lead","Pb",82, 207.2 * g/mole ));
+		printXSPerAtom_25(new G4Element("Hydrogen","H",1.0,1.008 * g/mole));
+		printXSPerAtom_25(new G4Element("Helium","He",2.0,4.0026 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Lithium","Li",3.0, 6.941  * g/mole ));
+		printXSPerAtom_25(new G4Element("Beryllium","Be",4.0, 9.012182  * g/mole ));
+		printXSPerAtom_25(new G4Element("Boron","B",5.0, 10.811  * g/mole ));
+		printXSPerAtom_25(new G4Element( "Carbon","C",6.0, 12.011 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Nitrogen","N",7.0, 14.007 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Oxygen","O",8.0, 16.00  * g/mole ));
+		printXSPerAtom_25(new G4Element( "Fluorine","F",9.0, 18.998404  * g/mole ));
+		printXSPerAtom_25(new G4Element(  "Neon","Ne",10.0, 20.1797  * g/mole ));
+		printXSPerAtom_25(new G4Element( "Sodium","Na",11.0, 22.98977 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Magnesium","Mg",12.0, 24.305 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Aluminum","Al",13.0, 26.981539 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Phosphorus","P",15.0, 30.97376 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Sulfur","S",16.0,32.065* g/mole ));
+		printXSPerAtom_25(new G4Element( "Chlorine","Cl",17.0, 35.453* g/mole ));
+		printXSPerAtom_25(new G4Element( "Argon","Ar",18.0, 39.948 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Potassium","K",19.0, 39.0983* g/mole ));
+		printXSPerAtom_25(new G4Element("Calcium","Ca",20.0, 40.078* g/mole ));
+		printXSPerAtom_25(new G4Element( "Scandium","Sc",21.0, 44.95591 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Titanium","Ti",22.0, 47.867 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Vanadium","V",23.0, 50.9415 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Chromium","Cr",24.0, 51.9961 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Manganese","Mn",25.0, 54.93805 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Iron","Fe",26, 55.845* g/mole ));
+		printXSPerAtom_25(new G4Element( "Iodine","I",53, 126.90447 * g/mole ));
+		printXSPerAtom_25(new G4Element( "Lead","Pb",82, 207.2 * g/mole ));
 	}
 
 	//**********************************************************************
@@ -259,6 +261,36 @@ void printXSPerAtom(G4Element* el){
 		outputElementFile << comptXS/cm2 << ",";
 		Energy = Energy + DeltaEnergy;
 	}
+	outputElementFile << "\n";
+	outputElementFile.close();
+
+}
+
+void printXSPerAtom_25(G4Element* el){
+	G4EmCalculator emCalculator;
+	std::string elementName = el->GetName();
+	G4int elementZ = el->GetZ();
+	G4double elementA = el->GetAtomicMassAmu();
+
+	std::ofstream outputElementFile;
+
+	std::string fileName =  "../run_outputs/ElementsXS_25/" + IntToString(elementZ) + ".csv";
+	outputElementFile.open(fileName.c_str());
+
+	G4double Energy = 25*keV; //3 is buffer
+
+	G4double comptXS;
+	G4double RaylXS;
+	G4double photXS;
+
+	// print phot
+
+	photXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","phot",el,0);
+	comptXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","compt",el,0);
+	RaylXS = emCalculator.ComputeCrossSectionPerAtom(Energy,"gamma","Rayl",el,0);
+
+	outputElementFile << elementZ << ',' << elementA << ',' << photXS/cm2 << "," << comptXS/cm2 << ',' << RaylXS/cm2;
+
 	outputElementFile << "\n";
 	outputElementFile.close();
 

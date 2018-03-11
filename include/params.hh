@@ -8,7 +8,7 @@
 #define NUM_OF_ELEMENTS 5 //this defines the number of elements
 #define NUM_OF_THREADS 38
 #define NUM_OF_BASE_MATERIALS 10 // all materials are quantized to 100 materials with different densities
-#define NUM_OF_PHOTONS 50000000 // equal to mac file
+#define NUM_OF_PHOTONS 10000000 // equal to mac file
 // verbose
 #define VERBOSE_SCORING 0
 #define VERBOSE_PHYSICS_LIST 0
@@ -35,12 +35,12 @@
 //Geometry
 #define BUILD_DETECTORS 1
 #define BUILD_PHANTOM 1
-#define XCAT 1//build XCAT phantom 
+#define XCAT 0//build XCAT phantom 
 #define FILE_XCAT_ID_TO_COMP "../run_inputs/XCAT/id_to_comp.txt" 
 #define FILE_XCAT_SLICE_PREFIX "../run_inputs/XCAT/hand/out_hand_act_" 
-#define CT_PHANTOM 0 //build phantom using linear reconstruction 
+#define CT_PHANTOM 1 //build phantom using linear reconstruction 
 #define USE_DICOM_INIT 0
-#define ROTATE_SEQUENTIALLY 1
+#define ROTATE_SEQUENTIALLY 0
 #define CALC_GRADIENT 0
 #define WORLD_XY 210 //cm half size
 #define WORLD_Z 210 //cm half size
@@ -58,14 +58,14 @@
 #define GT_MODE 1
 #define LIV_MODE 1
 //XCAT
-#define NUM_OF_Z_SLICES  80
-#define NUM_OF_VOXELS_X 100 
-#define NUM_OF_VOXELS_Y 100 
-#define NUM_OF_VOXELS 800000 
+#define NUM_OF_Z_SLICES  1
+#define NUM_OF_VOXELS_X 1 
+#define NUM_OF_VOXELS_Y 2 
+#define NUM_OF_VOXELS 2 
 #define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
-#define VOXEL_HALF_X 1.15 //mm
-#define VOXEL_HALF_Y 1.15 //mm
-#define VOXEL_HALF_Z 1.15 //mm
+#define VOXEL_HALF_X 25 //mm
+#define VOXEL_HALF_Y 25 //mm
+#define VOXEL_HALF_Z 25 //mm
 #define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"
 #define FILE_MATERIALS_DICOM_BASIC "../run_inputs/Dicom_base_materials_new.txt"
