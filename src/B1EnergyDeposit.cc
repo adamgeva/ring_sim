@@ -223,6 +223,7 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 		// iterate over elements and calc attenuation factor and scatter:
 		for (G4int i=0 ; i<nElements ; i++) {
 				G4double n_i = curr_num_of_atoms[i]/(1/cm3);
+				if (n_i == 0) continue;
 				G4double frac_i = curr_frac_vector[i];
 				G4double N_by_A = n_i / (curr_density * frac_i);
 				G4Element* el_i =  (*curr_element_vector)[i];
@@ -238,6 +239,7 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 		// iterate over elements and calc attenuation factor and scatter:
 		for (G4int i=0 ; i<nElements ; i++) {
 				G4double n_i = curr_num_of_atoms[i]/(1/cm3);
+				if (n_i == 0) continue;
 				G4double frac_i = curr_frac_vector[i];
 				G4double N_by_A = n_i / (curr_density * frac_i);
 				G4Element* el_i =  (*curr_element_vector)[i];
@@ -250,6 +252,7 @@ void B1EnergyDeposit::updateGradTable(segment seg, G4double final_energy, G4int 
 	else { //no compton or rayl at the end
 		for (G4int i=0 ; i<nElements ; i++) {
 				G4double n_i = curr_num_of_atoms[i]/(1/cm3);
+				if (n_i == 0) continue;
 				G4double frac_i = curr_frac_vector[i];
 				G4double N_by_A = n_i / (curr_density * frac_i);
 				G4Element* el_i =  (*curr_element_vector)[i];

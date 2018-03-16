@@ -28,6 +28,7 @@
 
 
 #include "G4BOptrForceCollision.hh"
+#include "G4EmCalculator.hh"
 
 
 #include "G4UserLimits.hh"
@@ -278,9 +279,25 @@ void B1DetectorConstruction::InitialisationOfMaterialsCT_basic()
     G4String name, symbol;
     G4int numberofElements;
 
+    G4Element* elH = new G4Element( name = "Hydrogen",
+                                       symbol = "H",
+                                       z = 1.0, a = 1.008  * g/mole );
+
+    G4Element* elC = new G4Element( name = "Carbon",
+   								   symbol = "C",
+   								   z = 6.0, a = 12.011 * g/mole );
+
+    G4Element* elN = new G4Element( name = "Nitrogen",
+                                       symbol = "N",
+                                       z = 7.0, a = 14.007 * g/mole );
+
     G4Element* elO = new G4Element( name = "Oxygen",
                                    symbol = "O",
                                    z = 8.0, a = 16.00  * g/mole );
+
+    G4Element* elP = new G4Element( name = "Phosphorus",
+   									symbol = "P",
+   									z= 15.0, a = 30.97376 * g/mole );
 
     G4Element* elCa = new G4Element( name="Calcium",
                                     symbol = "Ca",
@@ -318,7 +335,7 @@ void B1DetectorConstruction::InitialisationOfMaterialsCT_basic()
 		//else {density = 0.000000000000000001;}
 		material = new G4Material( name = MaterialName[mat],
 											   1*g/cm3,
-											   numberofElements = 2);
+											   numberofElements = numOfEl);
 		std::cout << "material number: " << mat << " rho: " << density << " fractions: ";
 		// read fractions
 		for (G4int i=0; i<numOfEl; i++){
@@ -328,33 +345,12 @@ void B1DetectorConstruction::InitialisationOfMaterialsCT_basic()
 		std::cout << "." << std::endl;
 
 		//adding elements according to fractions
-//		material[voxel]->AddElement(elH,fracs[0]);
-//		material[voxel]->AddElement(elHe,fracs[1]);
-//		material[voxel]->AddElement(elLi,fracs[2]);
-//		material[voxel]->AddElement(elBe,fracs[3]);
-//		material[voxel]->AddElement(elB,fracs[4]);
-//		material[voxel]->AddElement(elC,fracs[5]);
-//		material[voxel]->AddElement(elN,fracs[6]);
-		material->AddElement(elO,fracs[2]);
-//		material[voxel]->AddElement(elF,fracs[8]);
-//		material[voxel]->AddElement(elNe,fracs[9]);
-//		material[voxel]->AddElement(elNa,fracs[10]);
-//		material[voxel]->AddElement(elMg,fracs[11]);
-//		material[voxel]->AddElement(elAl,fracs[12]);
-//		material[voxel]->AddElement(elP,fracs[13]);
-//		material[voxel]->AddElement(elS,fracs[14]);
-//		material[voxel]->AddElement(elCl,fracs[15]);
-//		material[voxel]->AddElement(elAr,fracs[16]);
-//		material[voxel]->AddElement(elK,fracs[17]);
-		material->AddElement(elCa,fracs[4]);
-//		material[voxel]->AddElement(elSc,fracs[19]);
-//		material[voxel]->AddElement(elTi,fracs[20]);
-//		material[voxel]->AddElement(elV,fracs[21]);
-//		material[voxel]->AddElement(elCr,fracs[22]);
-//		material[voxel]->AddElement(elMn,fracs[23]);
-//		material[voxel]->AddElement(elFe,fracs[24]);
-//		material[voxel]->AddElement(elI,fracs[25]);
-//		material[voxel]->AddElement(elPb,fracs[26]);
+		material->AddElement(elH,fracs[0]);
+		material->AddElement(elC,fracs[1]);
+		material->AddElement(elN,fracs[2]);
+		material->AddElement(elO,fracs[3]);
+		material->AddElement(elP,fracs[4]);
+		material->AddElement(elCa,fracs[5]);
 
 		//add material to fMaterials
 		thePhantomMaterialsOriginal[mat] = material;
@@ -369,86 +365,28 @@ void B1DetectorConstruction::InitialisationOfMaterials()
     G4String name, symbol;
     G4int numberofElements;
     G4Element* elH = new G4Element( name = "Hydrogen",
-                                   symbol = "H",
-                                   z = 1.0, a = 1.008  * g/mole );
-    G4Element* elHe = new G4Element( name = "Helium",
-                                   symbol = "He",
-                                   z = 2.0, a = 4.0026  * g/mole );
-    G4Element* elLi = new G4Element( name = "Lithium",
-                                   symbol = "Li",
-                                   z = 3.0, a = 6.941  * g/mole );
-    G4Element* elBe = new G4Element( name = "Beryllium",
-                                   symbol = "Be",
-                                   z = 4.0, a = 9.012182  * g/mole );
-    G4Element* elB = new G4Element( name = "Boron",
-								   symbol = "B",
-								   z = 5.0, a = 10.811  * g/mole );
-    G4Element* elC = new G4Element( name = "Carbon",
-								   symbol = "C",
-								   z = 6.0, a = 12.011 * g/mole );
-    G4Element* elN = new G4Element( name = "Nitrogen",
-                                   symbol = "N",
-                                   z = 7.0, a = 14.007 * g/mole );
-    G4Element* elO = new G4Element( name = "Oxygen",
-                                   symbol = "O",
-                                   z = 8.0, a = 16.00  * g/mole );
-    G4Element* elF = new G4Element( name = "Fluorine",
-								   symbol = "F",
-								   z = 9.0, a = 18.998404  * g/mole );
-    G4Element* elNe = new G4Element( name = "Neon",
-								   symbol = "Ne",
-								   z = 10.0, a = 20.1797  * g/mole );
-    G4Element* elNa = new G4Element( name = "Sodium",
-                                    symbol = "Na",
-                                    z= 11.0, a = 22.98977 * g/mole );
-    G4Element* elMg = new G4Element( name = "Magnesium",
-									symbol = "Mg",
-									z= 12.0, a = 24.305 * g/mole );
-    G4Element* elAl = new G4Element( name = "Aluminum",
-									symbol = "Al",
-									z= 13.0, a = 26.981539 * g/mole );
-    G4Element* elP = new G4Element( name = "Phosphorus",
-									symbol = "P",
-									z= 15.0, a = 30.97376 * g/mole );
-    G4Element* elS = new G4Element( name = "Sulfur",
-                                   	symbol = "S",
-                                   	z = 16.0,a = 32.065* g/mole );
-    G4Element* elCl = new G4Element( name = "Chlorine",
-                                    symbol = "Cl",
-                                    z = 17.0, a = 35.453* g/mole );
-    G4Element* elAr = new G4Element( name = "Argon",
-									symbol = "Ar",
-									z= 18.0, a = 39.948 * g/mole );
-    G4Element* elK = new G4Element( name = "Potassium",
-                                   	symbol = "K",
-                                   	z = 19.0, a = 39.0983* g/mole );
-    G4Element* elCa = new G4Element( name="Calcium",
-                                    symbol = "Ca",
-                                    z = 20.0, a = 40.078* g/mole );
-    G4Element* elSc = new G4Element( name="Scandium",
-                                    symbol = "Sc",
-                                    z = 21.0, a = 44.95591 * g/mole );
-    G4Element* elTi = new G4Element( name="Titanium",
-                                    symbol = "Ti",
-                                    z = 22.0, a = 47.867 * g/mole );
-    G4Element* elV = new G4Element( name="Vanadium",
-                                    symbol = "V",
-                                    z = 23.0, a = 50.9415 * g/mole );
-    G4Element* elCr = new G4Element( name="Chromium",
-                                    symbol = "Cr",
-                                    z = 24.0, a = 51.9961 * g/mole );
-    G4Element* elMn = new G4Element( name="Manganese",
-                                    symbol = "Mn",
-                                    z = 25.0, a = 54.93805 * g/mole );
-    G4Element* elFe = new G4Element( name = "Iron",
-                                    symbol = "Fe",
-                                    z = 26, a = 55.845* g/mole );
-    G4Element* elI = new G4Element( name = "Iodine",
-                                    symbol = "I",
-                                    z = 53, a = 126.90447 * g/mole );
-    G4Element* elPb = new G4Element( name = "Lead",
-                                    symbol = "Pb",
-                                    z = 82, a = 207.2 * g/mole );
+                                           symbol = "H",
+                                           z = 1.0, a = 1.008  * g/mole );
+
+        G4Element* elC = new G4Element( name = "Carbon",
+       								   symbol = "C",
+       								   z = 6.0, a = 12.011 * g/mole );
+
+        G4Element* elN = new G4Element( name = "Nitrogen",
+                                           symbol = "N",
+                                           z = 7.0, a = 14.007 * g/mole );
+
+        G4Element* elO = new G4Element( name = "Oxygen",
+                                       symbol = "O",
+                                       z = 8.0, a = 16.00  * g/mole );
+
+        G4Element* elP = new G4Element( name = "Phosphorus",
+       									symbol = "P",
+       									z= 15.0, a = 30.97376 * g/mole );
+
+        G4Element* elCa = new G4Element( name="Calcium",
+                                        symbol = "Ca",
+                                        z = 20.0, a = 40.078* g/mole );
 
 //*******************************************************************************************************************************************************
 	G4String fname = FILE_MATERIALS;
@@ -473,7 +411,7 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 
 		material = new G4Material( name = MaterialName[mat],
 											   density = density*g/cm3,
-											   numberofElements = 2);
+											   numberofElements = NUM_OF_ELEMENTS);
 		std::cout << "material number: " << mat << " rho: " << 1 << " fractions: ";
 		// read fractions
 		for (G4int i=0; i<NUM_OF_ELEMENTS; i++){
@@ -483,33 +421,12 @@ void B1DetectorConstruction::InitialisationOfMaterials()
 		std::cout << "." << std::endl;
 
 		//adding elements according to fractions
-//		material[voxel]->AddElement(elH,fracs[0]);
-//		material[voxel]->AddElement(elHe,fracs[1]);
-//		material[voxel]->AddElement(elLi,fracs[2]);
-//		material[voxel]->AddElement(elBe,fracs[3]);
-//		material[voxel]->AddElement(elB,fracs[4]);
-//		material[voxel]->AddElement(elC,fracs[5]);
-//		material[voxel]->AddElement(elN,fracs[6]);
-		material->AddElement(elO,fracs[2]);
-//		material[voxel]->AddElement(elF,fracs[8]);
-//		material[voxel]->AddElement(elNe,fracs[9]);
-//		material[voxel]->AddElement(elNa,fracs[10]);
-//		material[voxel]->AddElement(elMg,fracs[11]);
-//		material[voxel]->AddElement(elAl,fracs[12]);
-//		material[voxel]->AddElement(elP,fracs[13]);
-//		material[voxel]->AddElement(elS,fracs[14]);
-//		material[voxel]->AddElement(elCl,fracs[15]);
-//		material[voxel]->AddElement(elAr,fracs[16]);
-//		material[voxel]->AddElement(elK,fracs[17]);
-		material->AddElement(elCa,fracs[4]);
-//		material[voxel]->AddElement(elSc,fracs[19]);
-//		material[voxel]->AddElement(elTi,fracs[20]);
-//		material[voxel]->AddElement(elV,fracs[21]);
-//		material[voxel]->AddElement(elCr,fracs[22]);
-//		material[voxel]->AddElement(elMn,fracs[23]);
-//		material[voxel]->AddElement(elFe,fracs[24]);
-//		material[voxel]->AddElement(elI,fracs[25]);
-//		material[voxel]->AddElement(elPb,fracs[26]);
+				material->AddElement(elH,fracs[0]);
+				material->AddElement(elC,fracs[1]);
+				material->AddElement(elN,fracs[2]);
+				material->AddElement(elO,fracs[3]);
+				material->AddElement(elP,fracs[4]);
+				material->AddElement(elCa,fracs[5]);
 
 		//add material to fMaterials
 		fBaseMaterials[mat] = material;
@@ -1346,25 +1263,39 @@ void B1DetectorConstruction::InitialisationOfMaterials_XCAT()
 
 	//TODO: am I calculating the density correctly?
 	 // dry_spine with water 0,3
-	G4Material* dry_spine_water = new G4Material( "dry_spine_water",
-									   density = (0.5*water->GetDensity() + 0.5*dry_spine->GetDensity())*g/cm3,
-									   numberofElements = 2);
-	dry_spine_water->AddMaterial(dry_spine,50.*perCent);
-	dry_spine_water->AddMaterial(water,50.*perCent);
+   G4Material* dry_spine_water = new G4Material("dry_spine_water",
+                                           density = 1.4*g/cm3,
+                                           numberofElements = 9);
+   dry_spine_water->AddElement(elH,0.034);
+   dry_spine_water->AddElement(elC,0.155);
+   dry_spine_water->AddElement(elN,0.042);
+   dry_spine_water->AddElement(elO,0.435);
+   dry_spine_water->AddElement(elNa,0.001);
+   dry_spine_water->AddElement(elMg,0.002);
+   dry_spine_water->AddElement(elP,0.103);
+   dry_spine_water->AddElement(elS,0.003);
+   dry_spine_water->AddElement(elCa,0.225);
 
 	 // dry_rib with water 0,4
 	G4Material* dry_rib_water = new G4Material( "dry_rib_water",
-									   density = (0.5*water->GetDensity() + 0.5*dry_rib->GetDensity())*g/cm3,
-									   numberofElements = 2);
-	dry_rib_water->AddMaterial(dry_rib,50.*perCent);
-	dry_rib_water->AddMaterial(water,50.*perCent);
-
+												density = 1.55*g/cm3,
+												numberofElements = 9);
+	dry_rib_water->AddElement(elH,0.034);
+	dry_rib_water->AddElement(elC,0.155);
+	dry_rib_water->AddElement(elN,0.042);
+	dry_rib_water->AddElement(elO,0.435);
+	dry_rib_water->AddElement(elNa,0.001);
+	dry_rib_water->AddElement(elMg,0.002);
+	dry_rib_water->AddElement(elP,0.103);
+	dry_rib_water->AddElement(elS,0.003);
+	dry_rib_water->AddElement(elCa,0.225);
 	 // skull with water 0,13
 	G4Material* skull_water = new G4Material( "skull_water",
-									   density = (0.5*water->GetDensity() + 0.5*skull->GetDensity())*g/cm3,
+									   density = (0.5*water->GetDensity())*g/cm3 + (0.5*skull->GetDensity())*g/cm3,
 									   numberofElements = 2);
 	skull_water->AddMaterial(skull,50.*perCent);
 	skull_water->AddMaterial(water,50.*perCent);
+
 
 
     //----- Put the materials in a vector
@@ -1452,6 +1383,10 @@ void B1DetectorConstruction::ReadPhantomDataFile_XCAT(const G4String& fname, G4i
     fMateIDs = new size_t[NUM_OF_VOXELS];
   }
 
+//  std::ofstream output;
+//  std::string fileName = "materails_XCAT_ID" + IntToString(sliceNumber) + ".csv";
+//  output.open(fileName.c_str());
+
   G4double mateID;
   // number of voxels from previously read slices
   G4int voxelCopyNo = (sliceNumber)*NUM_OF_PIXELS_SLICE;
@@ -1461,11 +1396,13 @@ void B1DetectorConstruction::ReadPhantomDataFile_XCAT(const G4String& fname, G4i
   G4int shift_x = 0;
   for( G4int i_y = 0; i_y < 350 ; i_y++){
 	  for( G4int i_x = 0; i_x < 350 ; i_x++){
-	    if (i_x < shift_x || i_x > (shift_x + fNVoxelX) || i_y < shift_y || i_y > (shift_y + fNVoxelY)){
+	    if (i_x < shift_x || i_x > (shift_x + fNVoxelX -1) || i_y < shift_y || i_y > (shift_y + fNVoxelY-1)){
 			fin >> ID;
 			continue;
 	    }
 		G4int voxel = (i_x - shift_x) + (i_y - shift_y)*NUM_OF_VOXELS_X + voxelCopyNo;
+
+
 
 
 		fin >> ID;
@@ -1475,9 +1412,16 @@ void B1DetectorConstruction::ReadPhantomDataFile_XCAT(const G4String& fname, G4i
 	//    	std::cout << "structureMateID = " << mateID << std::endl;
 	//    	std::cout << "ii = " << ii << " voxelCopyNo = " << voxelCopyNo << std::endl;
 	//    }
+		//hack to remove non relevant tissue
+		if (i_x > fNVoxelX-15) {mateID =22;};
 		fMateIDs[voxel] = mateID;
+//		output << mateID << "\n";
+
 	  }
   }
+
+//  output.close();
+
 }
 
 

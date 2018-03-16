@@ -54,7 +54,6 @@
 void printXSPerAtom(G4Element* el); //implemented at the end
 void printXSPerAtom_25(G4Element* el); //implemented at the end
 
-
 //global array
 B1EnergyDeposit* detectorsArray[NUM_OF_THREADS];
 
@@ -295,3 +294,5 @@ void printXSPerAtom_25(G4Element* el){
 	outputElementFile.close();
 
 }
+
+

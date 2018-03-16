@@ -5,7 +5,7 @@
 #define NUM_OF_SCORERS 5
 #define NUM_OF_SOURCES 3 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
-#define NUM_OF_ELEMENTS 5 //this defines the number of elements
+#define NUM_OF_ELEMENTS 6 //this defines the number of elements
 #define NUM_OF_THREADS 38
 #define NUM_OF_BASE_MATERIALS 10 // all materials are quantized to 100 materials with different densities
 #define NUM_OF_PHOTONS 10000000 // equal to mac file
@@ -52,23 +52,23 @@
 #define CENTER_TO_DET 267.38 //mm
 #define SOURCE_TO_CENTER 605.27 //mm
 #define RADIUS 605.27 //mm
-#define OFFSET_U -10 //mm
-#define OFFSET_V 25.72 //mm
+#define OFFSET_U 0 //mm
+#define OFFSET_V 0 //mm
 #define SHIFT 1 //cm
 #define GT_MODE 1
 #define LIV_MODE 1
 //XCAT
-#define NUM_OF_Z_SLICES  1
-#define NUM_OF_VOXELS_X 1 
-#define NUM_OF_VOXELS_Y 2 
-#define NUM_OF_VOXELS 2 
+#define NUM_OF_Z_SLICES  80
+#define NUM_OF_VOXELS_X 100 
+#define NUM_OF_VOXELS_Y 100 
+#define NUM_OF_VOXELS 800000 
 #define NUM_OF_PIXELS_SLICE (NUM_OF_VOXELS_X * NUM_OF_VOXELS_Y)
-#define VOXEL_HALF_X 25 //mm
-#define VOXEL_HALF_Y 25 //mm
-#define VOXEL_HALF_Z 25 //mm
+#define VOXEL_HALF_X 1.15 //mm
+#define VOXEL_HALF_Y 1.15 //mm
+#define VOXEL_HALF_Z 1.15 //mm
 #define FILE_SPECTRUM "../run_inputs/spectrum.txt"
 #define FILE_MATERIALS "../run_inputs/materials.txt"
-#define FILE_MATERIALS_DICOM_BASIC "../run_inputs/Dicom_base_materials_new.txt"
+#define FILE_MATERIALS_DICOM_BASIC "../run_inputs/Dicom_base_materials_new_smart_init.txt"
 #define FILE_VOXEL_TO_MATERIALS "../run_inputs/voxels_to_materials.txt"
 #define FILE_VOXEL_TO_MATERIALS_ID "../run_inputs/voxels_to_materials_id.txt"
 #define FILE_VOXEL_TO_MATERIALS_TEST "../run_inputs/phantom/"
