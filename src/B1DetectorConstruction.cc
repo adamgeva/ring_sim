@@ -536,7 +536,8 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	  }
 
 	  //char* part = getenv( "DICOM_CHANGE_MATERIAL_DENSITY" );
-	  G4double densityDiff = -1.;
+	  //G4double densityDiff = -1.;
+	  G4double densityDiff = 0.1;
 	  //if( part ) densityDiff = G4UIcommand::ConvertToDouble(part);
 
 	  std::map<G4int,G4double> densityDiffs;
@@ -566,7 +567,7 @@ void B1DetectorConstruction::ReadVoxelDensities( )
 	        //        G4cout << ix << " " << iy << " " << iz << " density " << dens << G4endl;
 	        G4int copyNo = ix + (iy)*fNVoxelX + (iz)*fNVoxelX*fNVoxelY;
 
-	        if( densityDiff != -1. ) continue;
+	        //if( densityDiff != -1. ) continue;
 
 	        //--- store the minimum and maximum density for each material (just for printing)
 	        mpite = densiMinMax.find( fMateIDs[copyNo] );

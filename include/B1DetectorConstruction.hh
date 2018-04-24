@@ -42,6 +42,10 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
     
     void setContainerRotation(G4double delta);
 
+   	std::vector<G4Material*> fMaterials;
+   	size_t* fMateIDs; // index of material of each voxel - this array is in the size of the number of voxels
+
+
   protected:
     // create the original materials
     void ReadPhantomData();
@@ -66,14 +70,16 @@ class B1DetectorConstruction : public G4VUserDetectorConstruction
 
     G4Material* BuildMaterialWithChangingDensity(const G4Material* origMate, float density, G4String newMateName );
 
+
+
   protected:
     G4LogicalVolume* fvoxel_logic;
     G4Box* fContainer_solid;
    	G4LogicalVolume* fContainer_logic;
    	G4VPhysicalVolume* fContainer_phys;
 
-   	std::vector<G4Material*> fMaterials;
-   	size_t* fMateIDs; // index of material of each voxel - this array is in the size of the number of voxels
+   	//std::vector<G4Material*> fMaterials;
+   	//size_t* fMateIDs; // index of material of each voxel - this array is in the size of the number of voxels
 
    	G4int fNVoxelX, fNVoxelY, fNVoxelZ;
 	G4double fVoxelHalfDimX, fVoxelHalfDimY, fVoxelHalfDimZ;
