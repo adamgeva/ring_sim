@@ -3,12 +3,14 @@
 //comment for a single threaded mode
 #define MULTI 1
 #define NUM_OF_SCORERS 5
-#define NUM_OF_SOURCES 3 //this defines the number of runs
+#define EXTRA_SCORERS 1
+#define NUM_EXTRA_SCORERS 11
+#define NUM_OF_SOURCES 180 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
 #define NUM_OF_ELEMENTS 6 //this defines the number of elements
-#define NUM_OF_THREADS 38
+#define NUM_OF_THREADS 20
 #define NUM_OF_BASE_MATERIALS 10 // all materials are quantized to 100 materials with different densities
-#define NUM_OF_PHOTONS 100000 // equal to mac file
+#define NUM_OF_PHOTONS 100000000 // equal to mac file
 // verbose
 #define VERBOSE_SCORING 0
 #define VERBOSE_PHYSICS_LIST 0
@@ -27,7 +29,7 @@
 #define RECORD_HIST 0 //when 0 - no histograms will be recorded in the simulation
 #define PRINT_ELEMENTS_XS 0
 //Particle Gun
-#define PARTICLE_ENERGY 32 //KeV
+#define PARTICLE_ENERGY 60 //KeV
 #define MIN_THETA 0
 #define MAX_THETA M_PI/14 
 #define MIN_PHI 0
@@ -35,13 +37,13 @@
 //Geometry
 #define BUILD_DETECTORS 1
 #define BUILD_PHANTOM 1
-#define XCAT 0//build XCAT phantom 
+#define XCAT 1//build XCAT phantom 
 #define FILE_XCAT_ID_TO_COMP "../run_inputs/XCAT/id_to_comp.txt" 
 #define FILE_XCAT_SLICE_PREFIX "../run_inputs/XCAT/hand/out_hand_act_" 
-#define CT_PHANTOM 1 //build phantom using linear reconstruction 
+#define CT_PHANTOM 0 //build phantom using linear reconstruction 
 #define USE_DICOM_INIT 0
-#define ROTATE_SEQUENTIALLY 0
-#define CALC_GRADIENT 1
+#define ROTATE_SEQUENTIALLY 1
+#define CALC_GRADIENT 0
 #define WORLD_XY 210 //cm half size
 #define WORLD_Z 210 //cm half size
 #define DETECTOR_X 0.556 //mm half size

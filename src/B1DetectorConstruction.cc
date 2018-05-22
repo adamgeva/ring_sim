@@ -1357,7 +1357,8 @@ void B1DetectorConstruction::ReadPhantomData_XCAT()
 
 
     G4int x=10000; //starting value for file names
-    G4int z_shift = 330;
+    //G4int z_shift = 330; //hand
+    G4int z_shift = 215; //knee
     for(G4int i = z_shift; i < NUM_OF_Z_SLICES + z_shift; i++ ) {
         //--- Read one data file
         G4String fileName = FILE_XCAT_SLICE_PREFIX + IntToString(x+i) + ".txt";
@@ -1393,8 +1394,10 @@ void B1DetectorConstruction::ReadPhantomDataFile_XCAT(const G4String& fname, G4i
   G4int voxelCopyNo = (sliceNumber)*NUM_OF_PIXELS_SLICE;
   materialIDs mateStruct;
   G4double ID;
-  G4int shift_y = 118;
-  G4int shift_x = 0;
+  //G4int shift_y = 118; //hand
+  G4int shift_y = 130; //knee
+  //G4int shift_x = 150; //hand
+  G4int shift_x = 80; //knee
   for( G4int i_y = 0; i_y < 350 ; i_y++){
 	  for( G4int i_x = 0; i_x < 350 ; i_x++){
 	    if (i_x < shift_x || i_x > (shift_x + fNVoxelX -1) || i_y < shift_y || i_y > (shift_y + fNVoxelY-1)){
@@ -1403,9 +1406,6 @@ void B1DetectorConstruction::ReadPhantomDataFile_XCAT(const G4String& fname, G4i
 	    }
 		G4int voxel = (i_x - shift_x) + (i_y - shift_y)*NUM_OF_VOXELS_X + voxelCopyNo;
 
-
-
-
 		fin >> ID;
 		mateStruct = intensityToMateID[ID];
 		mateID = mateStruct.mat1ID;
@@ -1413,8 +1413,11 @@ void B1DetectorConstruction::ReadPhantomDataFile_XCAT(const G4String& fname, G4i
 	//    	std::cout << "structureMateID = " << mateID << std::endl;
 	//    	std::cout << "ii = " << ii << " voxelCopyNo = " << voxelCopyNo << std::endl;
 	//    }
+		/*
 		//hack to remove non relevant tissue
-		if (i_x > fNVoxelX-15) {mateID =22;};
+		//if (i_x > fNVoxelX-15) {mateID =22;};
+		*/
+
 		fMateIDs[voxel] = mateID;
 //		output << mateID << "\n";
 
@@ -1473,12 +1476,19 @@ if (BUILD_PHANTOM==1){
 	//creating scorer for detector
 	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
 	SDman->AddNewDetector(detector2);
+	G4int total_scorers;
+	if (EXTRA_SCORERS == 1){
+		total_scorers = NUM_OF_SCORERS + NUM_EXTRA_SCORERS;
+	} else {
+		total_scorers = NUM_OF_SCORERS;
+	}
 	// setting primitive scorers
-	for (G4int i=0; i<NUM_OF_SCORERS; i++){
+	for (G4int i=0; i<total_scorers; i++){
 		G4VPrimitiveScorer* primitive;
 		primitive = new B1EnergyDeposit("eDep_" + IntToString(i),i);
 	    detector2->RegisterPrimitive(primitive);
 	}
+
     SetSensitiveDetector(detectorPixelLV,detector2);
 
 }

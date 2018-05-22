@@ -99,6 +99,10 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 		}
 	}
 
+	else if(fscorerType>4 && EXTRA_SCORERS == 1){
+		result = recordInteraction_extra(aStep,touchable,totalNumOfInteractions,fscorerType);
+	}
+
 	// this scorer is in charge of writing the path file, could be any scorer.
 	if(fscorerType==0){
 		//energy deposited in the detector - equals to the final photon energy???
@@ -121,6 +125,15 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 
 G4bool B1EnergyDeposit::recordInteraction (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i) {
 	if (totalNumOfInteractions>i){//recording all photons that did not interact in the phantom - transmission
+		return FALSE;
+	} else {
+		//G4cout << "recording" << i << G4endl;
+		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+	}
+}
+
+G4bool B1EnergyDeposit::recordInteraction_extra (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i) {
+	if (totalNumOfInteractions != (i-NUM_OF_SCORERS)){
 		return FALSE;
 	} else {
 		//G4cout << "recording" << i << G4endl;

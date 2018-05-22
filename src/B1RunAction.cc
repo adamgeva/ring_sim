@@ -125,7 +125,13 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 	if (CALC_GRADIENT == 0){ //if we calculate gradient there is no need to plot I
 		if(IsMaster()) {
 			std::ofstream output;
-			for (G4int k=0; k<NUM_OF_SCORERS; k++){
+			G4int total_scorers;
+			if (EXTRA_SCORERS == 1){
+				total_scorers = NUM_OF_SCORERS + NUM_EXTRA_SCORERS;
+			} else {
+				total_scorers = NUM_OF_SCORERS;
+			}
+			for (G4int k=0; k<total_scorers; k++){
 				std::string fileName;
 				if (GT_MODE == 1){
 					fileName = std::string(OUTPUT_DIR) + "/I_test_LIV/run_" + IntToString(runID) + "outputEnergyDep_" + IntToString(k) + ".csv";
