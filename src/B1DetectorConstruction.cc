@@ -1385,10 +1385,12 @@ void B1DetectorConstruction::ReadPhantomDataFile_XCAT(const G4String& fname, G4i
     fMateIDs = new size_t[NUM_OF_VOXELS];
   }
 
-//  std::ofstream output;
-//  std::string fileName = "materails_XCAT_ID" + IntToString(sliceNumber) + ".csv";
-//  output.open(fileName.c_str());
-
+//comment when no need to get GT
+/*
+  std::ofstream output;
+  std::string fileName = "materails_XCAT_ID" + IntToString(sliceNumber) + ".csv";
+  output.open(fileName.c_str());
+*/
   G4double mateID;
   // number of voxels from previously read slices
   G4int voxelCopyNo = (sliceNumber)*NUM_OF_PIXELS_SLICE;
@@ -1419,13 +1421,17 @@ void B1DetectorConstruction::ReadPhantomDataFile_XCAT(const G4String& fname, G4i
 		*/
 
 		fMateIDs[voxel] = mateID;
-//		output << mateID << "\n";
 
+//comment when no need to get GT
+/*
+		output << mateID << "\n";
+*/
 	  }
   }
-
-//  output.close();
-
+//comment when no need to get GT
+/*
+   output.close();
+*/
 }
 
 
