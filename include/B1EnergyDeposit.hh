@@ -38,11 +38,13 @@ class B1EnergyDeposit : public G4PSEnergyDeposit
   private:
     G4bool recordInteraction (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i);
     G4bool recordInteraction_extra (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i);
+    G4bool recordInteraction_anti_scatter (G4Step* aStep,G4TouchableHistory* touchable, G4double cos_theta);
 
       //G4int HCID;
       //G4THitsMap<G4double>* EvtMap;
     //scorer type: 0=no_scatter, 1=include_single_scatter, 2=include_multi_scatter, 3=include_single_scatter_compt, 4=include_single_scatter_Rayl
     //5=no_scatter, 6=1_scatter,7=2_scatter,8=3_scatter,9=4_scatter,10=5_scatter,11=6_scatter,12=7_scatter,13=8_scatter,14=9_scatter,15=10_scatter
+    //16=with anti-scatter grid!
     G4int fscorerType;
     std::ofstream outputPathsFile;
     // holds the gradient

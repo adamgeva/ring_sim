@@ -11,6 +11,7 @@
 #include "G4SystemOfUnits.hh"
 #include "G4EmCalculator.hh"
 
+#include <math.h>
 
 B1EnergyDeposit::B1EnergyDeposit(G4String name, G4int type)
 //per thread
@@ -54,6 +55,22 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 //	G4int ID = track->GetTrackID();
 //	G4String type = track->GetDefinition()->GetParticleType();
 
+	G4ThreeVector momentum_direction = track->GetMomentumDirection();
+	//origin
+	G4double x0 = -SOURCE_TO_CENTER*mm;
+	G4double y0 = 0;
+	G4double z0 = 0;
+	G4double diffx = track->GetPosition().getX()/mm - x0;
+	G4double diffy = track->GetPosition().getY()/mm - y0;
+	G4double diffz = track->GetPosition().getZ()/mm - z0;
+
+	G4double dot_prod = diffx * momentum_direction.getX()/mm + diffy * momentum_direction.getY()/mm + diffz * momentum_direction.getZ()/mm;
+	G4double norm_det_angle = sqrt(pow(diffx,2) + pow(diffy,2) + pow(diffz,2));
+	G4double norm_phot_angle = sqrt(pow(momentum_direction.getX(),2) + pow(momentum_direction.getY(),2) + pow(momentum_direction.getZ(),2));
+	G4double cos_theta = dot_prod/(norm_det_angle*norm_phot_angle);
+
+	//G4cout << "cos_theta " << cos_theta << G4endl;
+	//std::cout << "cos_theta " << cos_theta << std::endl;
 	G4bool result = FALSE;
 	G4VUserTrackInformation* info = track->GetUserInformation();
 	B1TrackInformation* theInfo = (B1TrackInformation*)info;
@@ -99,8 +116,11 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 		}
 	}
 
-	else if(fscorerType>4 && EXTRA_SCORERS == 1){
+	else if(fscorerType>4 && fscorerType!=16 && EXTRA_SCORERS == 1){
 		result = recordInteraction_extra(aStep,touchable,totalNumOfInteractions,fscorerType);
+	}
+	else if(fscorerType == 16){ //anti scatter grid
+		result = recordInteraction_anti_scatter(aStep,touchable,cos_theta);
 	}
 
 	// this scorer is in charge of writing the path file, could be any scorer.
@@ -138,6 +158,27 @@ G4bool B1EnergyDeposit::recordInteraction_extra (G4Step* aStep,G4TouchableHistor
 	} else {
 		//G4cout << "recording" << i << G4endl;
 		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+	}
+}
+
+G4bool B1EnergyDeposit::recordInteraction_anti_scatter (G4Step* aStep,G4TouchableHistory* touchable, G4double cos_theta) {
+	G4double theta =  acos (cos_theta) * 180.0 / PI;
+	G4bool survive;
+	if (abs(theta) > THETA_CUT){
+		survive = FALSE;
+	} else {
+		G4double p = -(FILL_FACTOR/THETA_CUT) * (abs(theta) - THETA_CUT);
+		G4double rndm = G4UniformRand();
+		if (rndm <= p) {
+			survive = TRUE;
+		} else {
+			survive = FALSE;
+		}
+	}
+	if (survive){
+		return G4PSEnergyDeposit::ProcessHits(aStep,touchable);
+	} else {
+		return FALSE;
 	}
 }
 

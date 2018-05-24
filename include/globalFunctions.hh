@@ -8,6 +8,8 @@
 #ifndef GLOBALFUNCTIONS_HH_
 #define GLOBALFUNCTIONS_HH_
 
+#define PI 3.14159265
+
 #include "G4Types.hh"
 #include <string>
 #include <sstream>
