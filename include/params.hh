@@ -5,12 +5,12 @@
 #define NUM_OF_SCORERS 5
 #define EXTRA_SCORERS 1
 #define NUM_EXTRA_SCORERS 12
-#define NUM_OF_SOURCES 180 //this defines the number of runs
+#define NUM_OF_SOURCES 1 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
 #define NUM_OF_ELEMENTS 6 //this defines the number of elements
-#define NUM_OF_THREADS 10
+#define NUM_OF_THREADS 38
 #define NUM_OF_BASE_MATERIALS 10 // all materials are quantized to 100 materials with different densities
-#define NUM_OF_PHOTONS 10000000 // equal to mac file
+#define NUM_OF_PHOTONS 50000000 // equal to mac file
 // verbose
 #define VERBOSE_SCORING 0
 #define VERBOSE_PHYSICS_LIST 0
@@ -34,17 +34,15 @@
 #define MAX_THETA M_PI/14 
 #define MIN_PHI 0
 #define MAX_PHI (2 * M_PI) 
+#define FILL_FACTOR 0.7 
+#define THETA_CUT 6 
 //Geometry
-
-#define FILL_FACTOR 0.7
-#define THETA_CUT 6
-
 #define BUILD_DETECTORS 1
 #define BUILD_PHANTOM 1
-#define XCAT 1//build XCAT phantom 
+#define XCAT 0//build XCAT phantom 
 #define FILE_XCAT_ID_TO_COMP "../run_inputs/XCAT/id_to_comp.txt" 
 #define FILE_XCAT_SLICE_PREFIX "../run_inputs/XCAT/hand/out_hand_act_" 
-#define CT_PHANTOM 0 //build phantom using linear reconstruction 
+#define CT_PHANTOM 1 //build phantom using linear reconstruction 
 #define USE_DICOM_INIT 0
 #define ROTATE_SEQUENTIALLY 1
 #define CALC_GRADIENT 0

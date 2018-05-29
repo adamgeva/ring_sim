@@ -199,6 +199,8 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
     }
 	output.close();
 
+//Only relevant when we need to print the GT
+/*
 	std::ofstream output_2;
 	std::string fileName_2 = "materails_Y_ID.csv";
 	output_2.open(fileName_2.c_str());
@@ -211,5 +213,5 @@ void B1RunAction::EndOfRunAction(const G4Run* aRun)
 		output_2 << ID << "\n";
 	}
 	output_2.close();
-
+*/
 }
