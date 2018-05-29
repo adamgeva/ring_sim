@@ -116,7 +116,7 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 		}
 	}
 
-	else if(fscorerType>4 && fscorerType!=16 && EXTRA_SCORERS == 1){
+	else if(fscorerType>4 && fscorerType!=16 ){
 		result = recordInteraction_extra(aStep,touchable,totalNumOfInteractions,fscorerType);
 	}
 	else if(fscorerType == 16){ //anti scatter grid

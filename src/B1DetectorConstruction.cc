@@ -1482,14 +1482,9 @@ if (BUILD_PHANTOM==1){
 	//creating scorer for detector
 	G4MultiFunctionalDetector* detector2 = new G4MultiFunctionalDetector("detector2");
 	SDman->AddNewDetector(detector2);
-	G4int total_scorers;
-	if (EXTRA_SCORERS == 1){
-		total_scorers = NUM_OF_SCORERS + NUM_EXTRA_SCORERS;
-	} else {
-		total_scorers = NUM_OF_SCORERS;
-	}
+
 	// setting primitive scorers
-	for (G4int i=0; i<total_scorers; i++){
+	for (G4int i=0; i<NUM_OF_SCORERS; i++){
 		G4VPrimitiveScorer* primitive;
 		primitive = new B1EnergyDeposit("eDep_" + IntToString(i),i);
 	    detector2->RegisterPrimitive(primitive);

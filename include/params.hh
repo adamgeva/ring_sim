@@ -3,8 +3,8 @@
 //comment for a single threaded mode
 #define MULTI 1
 #define NUM_OF_SCORERS 5
-#define EXTRA_SCORERS 1
-#define NUM_EXTRA_SCORERS 12
+//#define EXTRA_SCORERS 1
+//#define NUM_EXTRA_SCORERS 12
 #define NUM_OF_SOURCES 1 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
 #define NUM_OF_ELEMENTS 6 //this defines the number of elements
