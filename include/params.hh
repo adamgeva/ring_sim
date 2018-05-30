@@ -3,14 +3,14 @@
 //comment for a single threaded mode
 #define MULTI 1
 #define NUM_OF_SCORERS 5
-//#define EXTRA_SCORERS 1
-//#define NUM_EXTRA_SCORERS 12
-#define NUM_OF_SOURCES 1 //this defines the number of runs
+#define NUM_OF_BASE_SCORERS 5
+#define SINGLE_SCATTERING 0
+#define NUM_OF_SOURCES 3 //this defines the number of runs
 #define NUM_OF_SPECTRUM_BINS 150 //from spectrum MATLAB plot
 #define NUM_OF_ELEMENTS 6 //this defines the number of elements
 #define NUM_OF_THREADS 38
 #define NUM_OF_BASE_MATERIALS 10 // all materials are quantized to 100 materials with different densities
-#define NUM_OF_PHOTONS 50000000 // equal to mac file
+#define NUM_OF_PHOTONS 100000 // equal to mac file
 // verbose
 #define VERBOSE_SCORING 0
 #define VERBOSE_PHYSICS_LIST 0
@@ -44,8 +44,8 @@
 #define FILE_XCAT_SLICE_PREFIX "../run_inputs/XCAT/hand/out_hand_act_" 
 #define CT_PHANTOM 1 //build phantom using linear reconstruction 
 #define USE_DICOM_INIT 0
-#define ROTATE_SEQUENTIALLY 1
-#define CALC_GRADIENT 0
+#define ROTATE_SEQUENTIALLY 0
+#define CALC_GRADIENT 1
 #define WORLD_XY 210 //cm half size
 #define WORLD_Z 210 //cm half size
 #define DETECTOR_X 0.556 //mm half size

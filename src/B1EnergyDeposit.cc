@@ -86,7 +86,11 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	//a photon hits the detector, potoelectric absorption and the an emittion of a new photon (ID 1 for example) then this photon undergoes Rayl in the phantom and arrives at the detector with weight 1.
 	//TODO: check if correct!
 	//not recording the main photons - only the virtuals
+
 	if ((BIASING==1) && (track->GetParentID()==0)) {
+		result = FALSE;
+	}
+	else if ((SINGLE_SCATTERING==1) && (totalNumOfInteractions>1)){
 		result = FALSE;
 	}
 	//G4cout << "TrackId = " << track->GetTrackID() << " number of total interactions = " << totalNumOfInteractions << G4endl;
@@ -135,7 +139,11 @@ G4bool B1EnergyDeposit::ProcessHits(G4Step* aStep,G4TouchableHistory* touchable)
 	   		segment seg = theInfo->fpathLogList.front();
 	   		theInfo->fpathLogList.pop_front();
 	   		if (CALC_GRADIENT == 1){
-	   			updateGradTable(seg,edep,detIndex);
+	   			if (SINGLE_SCATTERING == 0){
+	   					updateGradTable(seg,edep,detIndex);
+	   			} else if (totalNumOfInteractions < 2){
+   						updateGradTable(seg,edep,detIndex);
+	   			}
 	   		}
 	   	}
 	}
@@ -153,7 +161,7 @@ G4bool B1EnergyDeposit::recordInteraction (G4Step* aStep,G4TouchableHistory* tou
 }
 
 G4bool B1EnergyDeposit::recordInteraction_extra (G4Step* aStep,G4TouchableHistory* touchable, G4int totalNumOfInteractions, G4int i) {
-	if (totalNumOfInteractions != (i-NUM_OF_SCORERS)){
+	if (totalNumOfInteractions != (i-NUM_OF_BASE_SCORERS)){
 		return FALSE;
 	} else {
 		//G4cout << "recording" << i << G4endl;
